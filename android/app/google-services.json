@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "423348992324",
+    "project_id": "buffaloes-estrus-detection",
+    "storage_bucket": "buffaloes-estrus-detection.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:423348992324:android:3f93a3344278752978ff11",
+        "android_client_info": {
+          "package_name": "com.melondev.buffaloes_farm_management"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "423348992324-uvl7407c5gdid5bprofoba0n6kgdhsdg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.melondev.buffaloes_farm_management",
+            "certificate_hash": "94b2fd4ba3716694cc7dbfc9575b87ff79e8fe8d"
+          }
+        },
+        {
+          "client_id": "423348992324-v1qeoff3nq8io7ob76u9e6a4sgvpc1l5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGWNq-odpJDT12i9kUh__vSaXRhiibyMo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "423348992324-v1qeoff3nq8io7ob76u9e6a4sgvpc1l5.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "423348992324-uebekp12jv1pptltda34sud416mg8fi9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.melondev.buffaloesFarmManagement"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
