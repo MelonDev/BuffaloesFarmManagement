@@ -11,6 +11,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
 
   cupertino_icons: ^1.0.5
   bloc: ^8.1.0
@@ -30,8 +32,12 @@ dependencies:
   bottom_bar_with_sheet: ^2.4.0
   salomon_bottom_bar: ^3.3.1
   ionicons: ^0.2.1
-
-
+  flutter_multi_formatter: ^2.8.0
+  firebase_auth: ^4.0.1
+  firebase_core: ^2.0.0
+  pin_code_fields: ^7.4.0
+  modal_bottom_sheet: ^2.1.2
+  flutter_cupertino_date_picker_fork: ^1.0.7
 
 dev_dependencies:
   flutter_test:
@@ -46,3 +52,9 @@ flutter:
     - family: Itim
       fonts:
         - asset: fonts/Itim-Regular.ttf
+  assets:
+    - assets/districts.json
+    - assets/provinces.json
+    - assets/subDistricts.json
+    - assets/zipcodes.json
+    - assets/logo.png
