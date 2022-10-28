@@ -1,12 +1,19 @@
 import 'package:buffaloes_farm_management/cubit/home/home_cubit.dart';
-import 'package:buffaloes_farm_management/pages/add_buff_activity_page.dart';
+import 'package:buffaloes_farm_management/models/TabModel.dart';
 import 'package:buffaloes_farm_management/pages/add_buff_page.dart';
-import 'package:buffaloes_farm_management/pages/farm_page.dart';
+import 'package:buffaloes_farm_management/pages/menu/farm_page.dart';
+import 'package:buffaloes_farm_management/pages/loading/home_initial_loading_page.dart';
+import 'package:buffaloes_farm_management/pages/menu/management_page.dart';
+import 'package:buffaloes_farm_management/pages/menu/notification_page.dart';
+import 'package:buffaloes_farm_management/pages/menu/more_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
+
+import 'add_activity_page.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
@@ -20,84 +27,99 @@ class HomePage extends StatelessWidget {
     }
 
     return BlocBuilder<HomeCubit, HomeState>(builder: (context, state) {
-      return AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.light.copyWith(
-          systemNavigationBarColor: Colors.white,
-          systemNavigationBarDividerColor: Colors.white,
-        ),
-        child: Scaffold(
-          backgroundColor: tabColor(state).withOpacity(0.04),
-          appBar: AppBar(
-            backgroundColor: tabColor(state),
-            elevation: 0,
-            systemOverlayStyle: SystemUiOverlayStyle(
-                statusBarIconBrightness: Brightness.light,
-                systemNavigationBarColor: Colors.white,
-                statusBarColor: tabColor(state)),
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(
-                bottom: Radius.circular(22),
-              ),
-            ),
-            title: Text(
-              tabName(state),
-              style: GoogleFonts.itim(
-                color: Colors.white,
-                fontSize: 24,
-              ),
-            ),
+      if (state is HomeInitialState) {
+        return const HomeInitialLoadingPage();
+      } else {
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: SystemUiOverlayStyle.light.copyWith(
+            statusBarIconBrightness: Brightness.light,
+            statusBarBrightness: Brightness.dark,
+            systemNavigationBarColor: Colors.white,
+            systemNavigationBarDividerColor: Colors.white,
           ),
-          floatingActionButton: isShowFab(state)
-              ? FloatingActionButton(
-                  onPressed: () {
-                    if (state is HomeFarmState) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const AddBuffPage()),
-                      );
-                    }
-                    if (state is HomeManagementState) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const AddBuffActivityPage()),
-                      );
-                    }
-                  },
-                  heroTag: "${tabTag(state)}_TAG",
-                  backgroundColor: tabColor(state),
-                  child: const Icon(Icons.add),
-                )
-              : null,
-          bottomNavigationBar: Container(
-            padding: const EdgeInsets.only(left: 16, right: 16),
-            decoration: const BoxDecoration(
-                color: Colors.white,
+          child: Scaffold(
+            backgroundColor: tabColor(state).withOpacity(0.04),
+            appBar: AppBar(
+              backgroundColor: tabColor(state),
+              elevation: 0,
+              centerTitle: false,
+              systemOverlayStyle: SystemUiOverlayStyle(
+                  statusBarIconBrightness: Brightness.light,
+                  systemNavigationBarColor: Colors.white,
+                  statusBarBrightness: Brightness.dark,
+                  statusBarColor: tabColor(state)),
+              shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(22),
-                )),
-            child: SalomonBottomBar(
-                currentIndex: tabPosition(state),
-                onTap: (int position) {
-                  tabs[position].onTap?.call();
-                  //setState(() => _currentIndex = i)
-                },
-                items: tabs
-                    .map((TabModel tab) => SalomonBottomBarItem(
-                          icon: Icon(tab.icon),
-                          title: Text(
-                            tab.name,
-                            style: GoogleFonts.itim(
-                                fontSize: 18, fontWeight: FontWeight.w500),
-                          ),
-                          selectedColor: tab.color,
-                        ))
-                    .toList()),
+                  bottom: Radius.circular(22),
+                ),
+              ),
+              title: Text(
+                tabName(state),
+                style: GoogleFonts.itim(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
+              ),
+            ),
+            floatingActionButton: isShowFab(state)
+                ? FloatingActionButton(
+                    shape: CircleBorder(),
+                    onPressed: () {
+                      if (state is HomeFarmState) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>  AddBuffPage(),
+                              fullscreenDialog: true),
+                        );
+                      }
+                      if (state is HomeManagementState) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const AddActivityPage(),
+                              fullscreenDialog: true),
+                        );
+                      }
+                    },
+                    heroTag: "${tabTag(state)}_TAG",
+                    backgroundColor: tabColor(state),
+                    child: const Icon(FontAwesomeIcons.plus),
+                  )
+                : null,
+            bottomNavigationBar: Container(
+              padding: const EdgeInsets.only(left: 16, right: 16),
+              decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(22),
+                  )),
+              child: SalomonBottomBar(
+                  currentIndex: tabPosition(state),
+                  onTap: (int position) {
+                    tabs[position].onTap?.call();
+                    //setState(() => _currentIndex = i)
+                  },
+                  items: tabs
+                      .map((TabModel tab) => SalomonBottomBarItem(
+                            icon: Icon(tab.icon),
+                            activeIcon: tab.activeIcon != null
+                                ? Icon(tab.activeIcon,size: 20,)
+                                : null,
+                            unselectedColor: Colors.black54,
+                            title: Text(
+                              tab.name,
+                              style: GoogleFonts.itim(
+                                  fontSize: 18, fontWeight: FontWeight.w500),
+                            ),
+                            selectedColor: tab.color,
+                          ))
+                      .toList()),
+            ),
+            body: tabPage(state),
           ),
-          body: tabPage(state),
-        ),
-      );
+        );
+      }
     });
   }
 
@@ -105,35 +127,39 @@ class HomePage extends StatelessWidget {
     tabs = [
       TabModel(
           name: "ฟาร์ม",
-          icon: Icons.home,
+          icon: FontAwesomeIcons.chartPie,
+          activeIcon: FontAwesomeIcons.chartPie,
           color: const Color(0xff0171BB),
           body: const FarmPage(),
           tag: "FARM",
           onTap: () {
-            context.read<HomeCubit>().farm();
+            context.read<HomeCubit>().farm(context);
           }),
       TabModel(
           name: "การจัดการ",
-          icon: Icons.favorite_border,
+          icon: FontAwesomeIcons.pager,
+          activeIcon: FontAwesomeIcons.pager,
           color: Colors.pink,
-          body: Container(),
+          body: const ManagementPage(),
           tag: "MANAGEMENT",
           onTap: () {
             context.read<HomeCubit>().management();
           }),
       TabModel(
           name: "แจ้งเตือน",
-          icon: Icons.search,
+          icon: FontAwesomeIcons.solidBell,
+          activeIcon: FontAwesomeIcons.solidBell,
           color: Colors.orange,
-          body: Container(),
+          body: const NotificationPage(),
           onTap: () {
             context.read<HomeCubit>().notification();
           }),
       TabModel(
           name: "เพิ่มเติม",
-          icon: Icons.person,
+          icon: FontAwesomeIcons.ellipsis,
+          activeIcon: FontAwesomeIcons.ellipsis,
           color: Colors.teal,
-          body: Container(),
+          body: const MorePage(),
           onTap: () {
             context.read<HomeCubit>().more();
           }),
@@ -181,21 +207,4 @@ class HomePage extends StatelessWidget {
       return 0;
     }
   }
-}
-
-class TabModel {
-  String name;
-  IconData icon;
-  Widget body;
-  Color color;
-  Function? onTap;
-  String? tag;
-
-  TabModel(
-      {required this.name,
-      required this.icon,
-      required this.body,
-      required this.color,
-      this.tag,
-      this.onTap});
 }

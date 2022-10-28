@@ -38,6 +38,7 @@ dependencies:
   pin_code_fields: ^7.4.0
   modal_bottom_sheet: ^2.1.2
   flutter_cupertino_date_picker_fork: ^1.0.7
+  font_awesome_flutter: ^10.2.1
 
 dev_dependencies:
   flutter_test:
