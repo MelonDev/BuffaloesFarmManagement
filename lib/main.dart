@@ -73,11 +73,11 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> fetchAll() async {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
     if (!kIsWeb) {
       if (Platform.isAndroid) {
-        await Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform,
-        );
         await FlutterDisplayMode.setHighRefreshRate();
       }
     }

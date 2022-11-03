@@ -1,5 +1,6 @@
 import 'package:buffaloes_farm_management/constants/ColorConstants.dart';
 import 'package:buffaloes_farm_management/constants/StyleConstants.dart';
+import 'package:buffaloes_farm_management/tools/ColorHelper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cupertino_date_picker_fork/flutter_cupertino_date_picker_fork.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 Future<DateTime?> SlidingTimePicker(BuildContext context,{DateTime? dateTime}) async {
   return await showDialog<DateTime>(
       barrierDismissible: false,
+      //barrierColor: ColorHelper.darken(Colors.pink,.3).withOpacity(0.3),
       context: context,
       builder: (BuildContext context) {
         return mSlidingTimePicker(dateTime: dateTime,);

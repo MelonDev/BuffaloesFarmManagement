@@ -1,6 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:buffaloes_farm_management/tools/DioHelper.dart';
 import 'package:dio/dio.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
@@ -39,7 +42,7 @@ class HttpService {
       var formData = FormData.fromMap(body ?? {});
       DioHelper dio = await DioHelper.init();
 
-      var response = await dio.get(path,data: body);
+      var response = await dio.get(path, data: body);
 
       return response;
     } on Exception catch (e) {
@@ -161,6 +164,20 @@ class HttpService {
       }
       return null;
     } on Exception catch (_) {
+      return null;
+    }
+  }
+
+  static Future<String?> uploadToFirebase(File file) async {
+    FirebaseStorage storage = FirebaseStorage.instance;
+    FirebaseAuth auth = FirebaseAuth.instance;
+    TaskSnapshot snapshot =
+        await storage.ref().child("images").child("${auth.currentUser?.uid}").child("${DateTime.now().millisecondsSinceEpoch}.jpg").putFile(file);
+    print(snapshot.state);
+    if (snapshot.state == TaskState.success) {
+      String downloadUrl = await snapshot.ref.getDownloadURL();
+      return downloadUrl;
+    } else {
       return null;
     }
   }

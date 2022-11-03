@@ -1,3 +1,4 @@
+import 'package:buffaloes_farm_management/components/MessagesDialog.dart';
 import 'package:buffaloes_farm_management/cubit/home/home_cubit.dart';
 import 'package:buffaloes_farm_management/models/TabModel.dart';
 import 'package:buffaloes_farm_management/pages/add_buff_page.dart';
@@ -6,6 +7,7 @@ import 'package:buffaloes_farm_management/pages/loading/home_initial_loading_pag
 import 'package:buffaloes_farm_management/pages/menu/management_page.dart';
 import 'package:buffaloes_farm_management/pages/menu/notification_page.dart';
 import 'package:buffaloes_farm_management/pages/menu/more_page.dart';
+import 'package:buffaloes_farm_management/tools/NavigatorHelper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -63,26 +65,32 @@ class HomePage extends StatelessWidget {
             ),
             floatingActionButton: isShowFab(state)
                 ? FloatingActionButton(
-                    shape: CircleBorder(),
-                    onPressed: () {
+                    shape: const CircleBorder(),
+                    onPressed: () async {
                       if (state is HomeFarmState) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>  AddBuffPage(),
-                              fullscreenDialog: true),
-                        );
+                        // bool result = await Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //       builder: (context) => const AddBuffPage(),
+                        //       fullscreenDialog: true),
+                        // );
                       }
                       if (state is HomeManagementState) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const AddActivityPage(),
-                              fullscreenDialog: true),
+                        Navigator.of(context).push(
+                          NavigatorHelper.slide(
+                            const AddBuffPage(),
+                          ),
                         );
+                        // await Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //       builder: (context) => const AddBuffPage(),
+                        //       fullscreenDialog: true),
+                        // );
                       }
                     },
-                    heroTag: "${tabTag(state)}_TAG",
+                    elevation: 20,
+                    //heroTag: "${tabTag(state)}_TAG",
                     backgroundColor: tabColor(state),
                     child: const Icon(FontAwesomeIcons.plus),
                   )
@@ -104,7 +112,10 @@ class HomePage extends StatelessWidget {
                       .map((TabModel tab) => SalomonBottomBarItem(
                             icon: Icon(tab.icon),
                             activeIcon: tab.activeIcon != null
-                                ? Icon(tab.activeIcon,size: 20,)
+                                ? Icon(
+                                    tab.activeIcon,
+                                    size: 20,
+                                  )
                                 : null,
                             unselectedColor: Colors.black54,
                             title: Text(
@@ -130,7 +141,7 @@ class HomePage extends StatelessWidget {
           icon: FontAwesomeIcons.chartPie,
           activeIcon: FontAwesomeIcons.chartPie,
           color: const Color(0xff0171BB),
-          body: const FarmPage(),
+          body: FarmPage(),
           tag: "FARM",
           onTap: () {
             context.read<HomeCubit>().farm(context);
@@ -140,7 +151,7 @@ class HomePage extends StatelessWidget {
           icon: FontAwesomeIcons.pager,
           activeIcon: FontAwesomeIcons.pager,
           color: Colors.pink,
-          body: const ManagementPage(),
+          body: ManagementPage(),
           tag: "MANAGEMENT",
           onTap: () {
             context.read<HomeCubit>().management();
@@ -150,7 +161,7 @@ class HomePage extends StatelessWidget {
           icon: FontAwesomeIcons.solidBell,
           activeIcon: FontAwesomeIcons.solidBell,
           color: Colors.orange,
-          body: const NotificationPage(),
+          body: NotificationPage(),
           onTap: () {
             context.read<HomeCubit>().notification();
           }),
