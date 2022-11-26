@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:buffaloes_farm_management/cubit/authentication/authentication_cubit.dart';
 import 'package:buffaloes_farm_management/tools/DioHelper.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -172,14 +173,22 @@ class HttpService {
   static Future<String?> uploadToFirebase(File file) async {
     FirebaseStorage storage = FirebaseStorage.instance;
     FirebaseAuth auth = FirebaseAuth.instance;
-    TaskSnapshot snapshot =
-        await storage.ref().child("images").child("${auth.currentUser?.uid}").child("${DateTime.now().millisecondsSinceEpoch}.jpg").putFile(file);
-    print(snapshot.state);
-    if (snapshot.state == TaskState.success) {
-      String downloadUrl = await snapshot.ref.getDownloadURL();
-      return downloadUrl;
-    } else {
+    String? uid = await AuthenticationCubit().currentUserUid();
+
+    if(uid != null) {
+      TaskSnapshot snapshot =
+      await storage.ref().child("images").child("$uid").child("${DateTime.now().millisecondsSinceEpoch}.jpg").putFile(file);
+      print(snapshot.state);
+      if (snapshot.state == TaskState.success) {
+        String downloadUrl = await snapshot.ref.getDownloadURL();
+        return downloadUrl;
+      } else {
+        return null;
+      }
+    }else {
       return null;
     }
+
+
   }
 }

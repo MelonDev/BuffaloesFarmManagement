@@ -45,99 +45,102 @@ class _MainHomePageState extends State<MainHomePage> {
             systemNavigationBarColor: Colors.white,
             systemNavigationBarDividerColor: Colors.white,
           ),
-          child: Scaffold(
-            backgroundColor: tabColor(state).withOpacity(0.04),
-            appBar: AppBar(
-              backgroundColor: tabColor(state),
-              elevation: 0,
-              centerTitle: false,
-              systemOverlayStyle: SystemUiOverlayStyle(
-                  statusBarIconBrightness: Brightness.light,
-                  systemNavigationBarColor: Colors.white,
-                  statusBarBrightness: Brightness.dark,
-                  statusBarColor: tabColor(state)),
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(
-                  bottom: Radius.circular(22),
-                ),
-              ),
-              title: Text(
-                tabName(state),
-                style: GoogleFonts.itim(
-                  color: Colors.white,
-                  fontSize: 24,
-                ),
-              ),
-              actions: actionsWidget(state),
-            ),
-            floatingActionButton: isShowFab(state)
-                ? FloatingActionButton(
-                    shape: const CircleBorder(),
-                    onPressed: () async {
-                      if (state is HomeFarmState) {
-                        // bool result = await Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //       builder: (context) => const AddBuffPage(),
-                        //       fullscreenDialog: true),
-                        // );
-                      }
-                      if (state is HomeManagementState) {
-                        Navigator.of(context).push(
-                          NavigatorHelper.slide(
-                            const AddBuffPage(),
-                          ),
-                        );
-                        // await Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //       builder: (context) => const AddBuffPage(),
-                        //       fullscreenDialog: true),
-                        // );
-                      }
-                    },
-                    elevation: 20,
-                    //heroTag: "${tabTag(state)}_TAG",
-                    backgroundColor: tabColor(state),
-                    child: const Icon(FontAwesomeIcons.plus),
-                  )
-                : null,
-            bottomNavigationBar: Container(
-              padding: const EdgeInsets.only(left: 16, right: 16),
-              decoration: const BoxDecoration(
-                  color: Colors.white,
+          child: Container(
+            color: Colors.black,
+            child:Scaffold(
+              backgroundColor: tabColor(state).withOpacity(0.14),
+              appBar: AppBar(
+                backgroundColor: tabColor(state),
+                elevation: 0,
+                centerTitle: false,
+                systemOverlayStyle: SystemUiOverlayStyle(
+                    statusBarIconBrightness: Brightness.light,
+                    systemNavigationBarColor: Colors.white,
+                    statusBarBrightness: Brightness.dark,
+                    statusBarColor: tabColor(state)),
+                shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(22),
-                  )),
-              child: SalomonBottomBar(
-                  currentIndex: currentTab,
-                  onTap: (int position) {
-                    setState(() {
-                      currentTab = position;
-                    });
-                    tabs[position].onTap?.call();
-                    //setState(() => _currentIndex = i)
-                  },
-                  items: tabs
-                      .map((TabModel tab) => SalomonBottomBarItem(
-                            icon: Icon(tab.icon),
-                            activeIcon: tab.activeIcon != null
-                                ? Icon(
-                                    tab.activeIcon,
-                                    size: 20,
-                                  )
-                                : null,
-                            unselectedColor: Colors.black54,
-                            title: Text(
-                              tab.name,
-                              style: GoogleFonts.itim(
-                                  fontSize: 18, fontWeight: FontWeight.w500),
-                            ),
-                            selectedColor: tab.color,
-                          ))
-                      .toList()),
-            ),
-            body: tabPage(state),
+                    bottom: Radius.circular(22),
+                  ),
+                ),
+                title: Text(
+                  tabName(state),
+                  style: GoogleFonts.itim(
+                    color: Colors.white,
+                    fontSize: 24,
+                  ),
+                ),
+                actions: actionsWidget(state),
+              ),
+              floatingActionButton: isShowFab(state)
+                  ? FloatingActionButton(
+                shape: const CircleBorder(),
+                onPressed: () async {
+                  if (state is HomeFarmState) {
+                    // bool result = await Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //       builder: (context) => const AddBuffPage(),
+                    //       fullscreenDialog: true),
+                    // );
+                  }
+                  if (state is HomeManagementState) {
+                    Navigator.of(context).push(
+                      NavigatorHelper.slide(
+                        const AddBuffPage(),
+                      ),
+                    );
+                    // await Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //       builder: (context) => const AddBuffPage(),
+                    //       fullscreenDialog: true),
+                    // );
+                  }
+                },
+                elevation: 20,
+                //heroTag: "${tabTag(state)}_TAG",
+                backgroundColor: tabColor(state),
+                child: const Icon(FontAwesomeIcons.plus),
+              )
+                  : null,
+              bottomNavigationBar: Container(
+                padding: const EdgeInsets.only(left: 16, right: 16),
+                decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(22),
+                    )),
+                child: SalomonBottomBar(
+                    currentIndex: currentTab,
+                    onTap: (int position) {
+                      setState(() {
+                        currentTab = position;
+                      });
+                      tabs[position].onTap?.call();
+                      //setState(() => _currentIndex = i)
+                    },
+                    items: tabs
+                        .map((TabModel tab) => SalomonBottomBarItem(
+                      icon: Icon(tab.icon),
+                      activeIcon: tab.activeIcon != null
+                          ? Icon(
+                        tab.activeIcon,
+                        size: 20,
+                      )
+                          : null,
+                      unselectedColor: Colors.black54,
+                      title: Text(
+                        tab.name,
+                        style: GoogleFonts.itim(
+                            fontSize: 18, fontWeight: FontWeight.w500),
+                      ),
+                      selectedColor: tab.color,
+                    ))
+                        .toList()),
+              ),
+              body: tabPage(state),
+            )
           ),
         );
       }

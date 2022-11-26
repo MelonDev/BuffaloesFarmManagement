@@ -53,8 +53,10 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
     await storage.read(key: "farm_name".toUpperCase());
 
     if(farm_name == null){
+      String? uid = await AuthenticationCubit().currentUserUid();
+
       AuthenticateModel? model =
-      await AuthenticationService.login(token: auth.currentUser?.uid);
+      await AuthenticationService.login(token: uid);
 
       if (model != null) {
         if (model.access_token != null && model.refresh_token != null) {
@@ -81,12 +83,14 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
     FlutterSecureStorage storage = FlutterSecureStorage();
     String? phoneNumber = await storage.read(key: "phone_number".toUpperCase());
 
+    String? uid = await AuthenticationCubit().currentUserUid();
+
     AuthenticateModel? authentication = await AuthenticationService.register(
         farmName: farmNameController.text,
         firstName: firstNameController.text,
         lastName: lastNameController.text,
         phoneNumber: phoneNumber ?? "",
-        token: auth.currentUser?.uid ?? "",
+        token: uid ?? "",
         province: province?.PROVINCE_NAME ?? "",
         district: district?.DISTRICT_NAME ?? "",
         subDistrict: subDistrict?.SUB_DISTRICT_NAME ?? "");
@@ -178,88 +182,93 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
           //           fontSize: 18)),
           //   icon: Icon(Ionicons.checkmark_outline, color: Colors.white),
           // ),
-          body: Container(
-              decoration: const BoxDecoration(
-                  color: kBGColor,
-                  borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(22),
-                  )),
-              padding:
-                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 30),
-              height: MediaQuery.of(context).size.height,
-              child: ListView(
-                padding: const EdgeInsets.only(bottom: 30),
-                children: <Widget>[
-                  const SizedBox(height: 20),
-                  textField(hint: "ชื่อฟาร์ม",controller: farmNameController),
-                  const SizedBox(height: 12),
-                  const Padding(
-                    padding: EdgeInsets.only(left: 30, right: 30),
-                    child: Divider(
-                      color: Colors.grey,
+          body: Center(
+            child:Container(
+                decoration: const BoxDecoration(
+                    color: kBGColor,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(22),
+                    )),
+                constraints: const BoxConstraints(
+                    maxWidth: 500
+                ),
+                padding:
+                const EdgeInsets.symmetric(vertical: 8.0, horizontal: 30),
+                height: MediaQuery.of(context).size.height,
+                child: ListView(
+                  padding: const EdgeInsets.only(bottom: 30),
+                  children: <Widget>[
+                    const SizedBox(height: 20),
+                    textField(hint: "ชื่อฟาร์ม",controller: farmNameController),
+                    const SizedBox(height: 12),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 30, right: 30),
+                      child: Divider(
+                        color: Colors.grey,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 6),
-                  textHeader(title: "รายละเอียด"),
-                  textField(hint: "ชื่อ",controller: firstNameController),
-                  const SizedBox(height: 8),
-                  textField(hint: "นามสกุล",controller: lastNameController),
-                  const SizedBox(height: 12),
-                  const Padding(
-                    padding: EdgeInsets.only(left: 30, right: 30),
-                    child: Divider(
-                      color: Colors.grey,
+                    const SizedBox(height: 6),
+                    textHeader(title: "รายละเอียด"),
+                    textField(hint: "ชื่อ",controller: firstNameController),
+                    const SizedBox(height: 8),
+                    textField(hint: "นามสกุล",controller: lastNameController),
+                    const SizedBox(height: 12),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 30, right: 30),
+                      child: Divider(
+                        color: Colors.grey,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 6),
-                  textHeader(title: "ที่อยู่"),
-                  textField(hint: "",controller: addressController),
-                  const SizedBox(height: 8),
-                  textField(
-                      hint: "จังหวัด",
-                      value: province?.PROVINCE_NAME,
-                      readOnly: true,
-                      enabled: true,
-                      onTap: () {
-                        provinceDialog();
-                      }),
-                  const SizedBox(height: 8),
-                  textField(
-                      hint: "อำเภอ",
-                      value: district?.DISTRICT_NAME,
-                      readOnly: true,
-                      enabled: province != null,
-                      onTap: () {
-                        districtDialog();
-                      }),
-                  const SizedBox(height: 8),
-                  textField(
-                      hint: "ตำบล",
-                      value: subDistrict?.SUB_DISTRICT_NAME,
-                      readOnly: true,
-                      enabled: district != null,
-                      onTap: () {
-                        subDistrictDialog();
-                      }),
-                  const SizedBox(height: 12),
-                  const Padding(
-                    padding: EdgeInsets.only(left: 30, right: 30),
-                    child: Divider(
-                      color: Colors.grey,
+                    const SizedBox(height: 6),
+                    textHeader(title: "ที่อยู่"),
+                    textField(hint: "",controller: addressController),
+                    const SizedBox(height: 8),
+                    textField(
+                        hint: "จังหวัด",
+                        value: province?.PROVINCE_NAME,
+                        readOnly: true,
+                        enabled: true,
+                        onTap: () {
+                          provinceDialog();
+                        }),
+                    const SizedBox(height: 8),
+                    textField(
+                        hint: "อำเภอ",
+                        value: district?.DISTRICT_NAME,
+                        readOnly: true,
+                        enabled: province != null,
+                        onTap: () {
+                          districtDialog();
+                        }),
+                    const SizedBox(height: 8),
+                    textField(
+                        hint: "ตำบล",
+                        value: subDistrict?.SUB_DISTRICT_NAME,
+                        readOnly: true,
+                        enabled: district != null,
+                        onTap: () {
+                          subDistrictDialog();
+                        }),
+                    const SizedBox(height: 12),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 30, right: 30),
+                      child: Divider(
+                        color: Colors.grey,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 6),
-                  button(
-                      enabled: isEnabledConfirmButton(),
-                      title: "ยืนยัน",
-                      function: () {
-                        onSubmit();
-                      }),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                ],
-              )),
+                    const SizedBox(height: 6),
+                    button(
+                        enabled: isEnabledConfirmButton(),
+                        title: "ยืนยัน",
+                        function: () {
+                          onSubmit();
+                        }),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                  ],
+                ))
+          ),
         )),)
       );
     } else if(initial == false) {
