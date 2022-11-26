@@ -69,6 +69,8 @@ class _MyAppState extends State<MyApp> {
   Color bgColor = bgButtonColor;
   TextEditingController numberController = TextEditingController();
 
+  String? uid;
+
   @override
   void initState() {
     super.initState();
@@ -86,19 +88,25 @@ class _MyAppState extends State<MyApp> {
         await FlutterDisplayMode.setHighRefreshRate();
       }
     }
+
+    String? uid = await AuthenticationCubit().currentUserUid();
+
     setState(() {
       loaded = true;
+      this.uid = uid;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     if (loaded) {
-      print(FirebaseAuth.instance.currentUser?.uid);
+      //print(FirebaseAuth.instance.currentUser?.uid);
+      print(AuthenticationCubit().currentUserUid());
 
       context
           .read<AuthenticationCubit>()
           .checking(context, useNavigator: false);
+
       return MaterialApp(
         localizationsDelegates: const [
           GlobalCupertinoLocalizations.delegate,
@@ -111,7 +119,7 @@ class _MyAppState extends State<MyApp> {
         ],
         locale: const Locale.fromSubtags(languageCode: 'th'),
         debugShowCheckedModeBanner: false,
-        home: FirebaseAuth.instance.currentUser != null
+        home: uid != null
             ? const InitialFarmPage()
             : LoginPage(),
         theme: ThemeData(
