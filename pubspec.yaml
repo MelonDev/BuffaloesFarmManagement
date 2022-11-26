@@ -1,9 +1,9 @@
 name: buffaloes_farm_management
 description: A new Flutter project.
 
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: 'none'
 
-version: 1.0.0+1
+version: 1.0.0+3
 
 environment:
   sdk: ">=2.17.6 <3.0.0"
@@ -45,11 +45,20 @@ dependencies:
   cached_network_image: ^3.2.2
   custom_sliding_segmented_control: ^1.7.3
 
+  syncfusion_flutter_charts: ^20.3.58
+  fl_chart: ^0.55.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
+  flutter_launcher_icons: ^0.11.0
   flutter_lints: ^2.0.1
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/logo_white_96.png"
 
 flutter:
 

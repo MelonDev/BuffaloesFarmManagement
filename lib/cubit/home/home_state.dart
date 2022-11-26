@@ -6,7 +6,7 @@ abstract class HomeState {}
 class HomeInitialState extends HomeState {}
 
 class HomeFarmState extends HomeState {
-  List<BuffModel>? data;
+  Map<String, dynamic>? data;
 
   HomeFarmState({this.data});
 }
@@ -22,7 +22,7 @@ class HomeManagementState extends HomeState {
 class LoadingHomeManagementState extends HomeManagementState {}
 
 class HomeNotificationState extends HomeState {
-  List<BuffModel>? data;
+  List<NotificationModel>? data;
 
   HomeNotificationState({this.data});
 }

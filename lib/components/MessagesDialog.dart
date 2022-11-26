@@ -95,13 +95,16 @@ void messageDialog(BuildContext context,
 
 void bottomDialog(BuildContext context, Widget child,{double? height}) {
   showMaterialModalBottomSheet(
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(24.0),
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.only(topLeft: Radius.circular(24),topRight: Radius.circular(24)),
     ),
     context: context,
     expand: false,
-    backgroundColor: const Color(0xFF0C0C0C),
-    barrierColor: Colors.black.withOpacity(0.94),
+    //backgroundColor: const Color(0xFF0C0C0C),
+    backgroundColor: const Color(0xFF060606),
+    barrierColor: Colors.black.withOpacity(0.96),
     builder: (context) =>  SizedBox(height: height,child: child),
-  );
+  ).whenComplete(() {
+    FocusManager.instance.primaryFocus?.unfocus();
+  });
 }

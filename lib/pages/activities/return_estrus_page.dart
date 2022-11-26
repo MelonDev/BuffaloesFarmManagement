@@ -1,6 +1,9 @@
+import 'package:buffaloes_farm_management/components/CustomTextFormField.dart';
+import 'package:buffaloes_farm_management/components/MessagesDialog.dart';
 import 'package:buffaloes_farm_management/components/SlidingTimePicker.dart';
 import 'package:buffaloes_farm_management/constants/ColorConstants.dart';
 import 'package:buffaloes_farm_management/constants/StyleConstants.dart';
+import 'package:buffaloes_farm_management/service/FarmService.dart';
 import 'package:buffaloes_farm_management/tools/ColorHelper.dart';
 import 'package:custom_sliding_segmented_control/custom_sliding_segmented_control.dart';
 import 'package:flutter/material.dart';
@@ -11,19 +14,15 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 class ReturnEstrusPage extends StatefulWidget {
-  const ReturnEstrusPage({Key? key}) : super(key: key);
+  ReturnEstrusPage({Key? key, required this.buffId}) : super(key: key);
+
+  String buffId;
 
   @override
   _ReturnEstrusPageState createState() => _ReturnEstrusPageState();
 }
 
 class _ReturnEstrusPageState extends State<ReturnEstrusPage> {
-  TextEditingController tfName = TextEditingController();
-  TextEditingController tfTag = TextEditingController();
-  TextEditingController tfFather = TextEditingController();
-  TextEditingController tfMother = TextEditingController();
-  TextEditingController tfSource = TextEditingController();
-
   Color primaryColor = Colors.indigo;
   Color backgroundColor = const Color(0xFF050505);
   Color tabColor = ColorHelper.darken(Colors.indigo, .1);
@@ -31,14 +30,43 @@ class _ReturnEstrusPageState extends State<ReturnEstrusPage> {
   bool isSaving = false, isSaved = false;
 
   int notify = 0;
-  int type = 0;
   int result = 0;
 
-  DateTime? pickedDatetime;
   DateTime? pickedBirthDatetime;
 
+  onSubmit() async {
+    setState(() {
+      isSaving = true;
+    });
+    String? message = await FarmService.addReturnEstrus(
+        buffId: widget.buffId,
+        estrusResult: result == 0 ? true : false,
+        messageResult: "");
 
+    if (message != null) {
+      if (message == "SUCCESS") {
+        isSaved = true;
 
+        if (!mounted) return;
+        messageDialog(context, title: "แจ้งเตือน", message: "บันทึกเรียบร้อย",
+            function: () {
+          //context.read<HomeCubit>().management();
+          Navigator.of(context).pop(true);
+        });
+      } else {
+        if (!mounted) return;
+        messageDialog(context, title: "แจ้งเตือน", message: message);
+      }
+    } else {
+      if (!mounted) return;
+      messageDialog(context,
+          title: "แจ้งเตือน", message: "ไม่สามารถเชื่อมต่อได้");
+    }
+
+    setState(() {
+      isSaving = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,86 +79,80 @@ class _ReturnEstrusPageState extends State<ReturnEstrusPage> {
         statusBarBrightness: Brightness.dark,
         //systemNavigationBarContrastEnforced: true,
       ),
-      child: Scaffold(
-        backgroundColor: backgroundColor,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          shadowColor: Colors.transparent,
-          elevation: 0.0,
-          surfaceTintColor: backgroundColor,
-          systemOverlayStyle: SystemUiOverlayStyle(
-            statusBarIconBrightness: Brightness.light,
-            statusBarColor: backgroundColor,
-          ),
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(
-              bottom: Radius.circular(22),
+      child: GestureDetector(
+          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+          child: Scaffold(
+            backgroundColor: backgroundColor,
+            appBar: AppBar(
+              backgroundColor: Colors.transparent,
+              shadowColor: Colors.transparent,
+              elevation: 0.0,
+              surfaceTintColor: backgroundColor,
+              systemOverlayStyle: SystemUiOverlayStyle(
+                statusBarIconBrightness: Brightness.light,
+                statusBarColor: backgroundColor,
+              ),
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(
+                  bottom: Radius.circular(22),
+                ),
+              ),
+              centerTitle: true,
+              title: Text(
+                "เพิ่มการกลัับสัด",
+                style: GoogleFonts.itim(
+                  color: Colors.white,
+                  fontSize: 23,
+                ),
+              ),
+              titleSpacing: 0,
+              leading: IconButton(
+                icon: const Icon(FontAwesomeIcons.xmark,
+                    color: Colors.white, size: 24),
+                onPressed: () {
+                  if (isSaving == false) {
+                    Navigator.of(context).pop(false);
+                  }
+                },
+              ),
+              actions: [
+              ],
             ),
-          ),
-          centerTitle: true,
-          title: Text(
-            "เพิ่มการกลัับสัด",
-            style: GoogleFonts.itim(
-              color: Colors.white,
-              fontSize: 23,
-            ),
-          ),
-          titleSpacing: 0,
-          leading: IconButton(
-            icon: const Icon(FontAwesomeIcons.xmark,
-                color: Colors.white, size: 24),
-            onPressed: () {
-              if (isSaving == false) {
-                Navigator.of(context).pop(false);
-              }
-            },
-          ),
-          actions: [
-            // Container(
-            //   padding: const EdgeInsets.only(right: 6),
-            //   child: IconButton(
-            //     icon: const Icon(FontAwesomeIcons.penToSquare, color: Colors.white,size: 22),
-            //     onPressed: () {
-            //       if (isSaving == false) {
-            //         Navigator.of(context).pop(false);
-            //       }
-            //     },
-            //   ),
-            // )
-          ],
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: submitButtonEnabled()
-            ? FloatingActionButton.extended(
-          onPressed: () {},
-          heroTag: null,
-          backgroundColor:
-          ColorHelper.lighten(primaryColor, .1).withOpacity(0.6),
-          extendedPadding: const EdgeInsets.only(left: 74, right: 74),
-          extendedIconLabelSpacing: 12,
-          elevation: 0,
-          //splashColor: Colors.greenAccent.withOpacity(0.4),
-          splashColor: Colors.white,
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(14))),
-          label: Text("บันทึก",
-              style: GoogleFonts.itim(
-                //color: primaryColor,
-                  color: Colors.white.withOpacity(0.9),
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18)),
-          icon: Icon(FontAwesomeIcons.solidFloppyDisk,
-              color: Colors.white.withOpacity(0.9)),
-        )
-            : null,
-        body: isSaving == true || isSaved == true
-            ? const Center(
-            child: SpinKitThreeBounce(
-              color: Colors.white,
-              size: 50.0,
-            ))
-            : body(context),
-      ),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
+            floatingActionButton: submitButtonEnabled()
+                ? FloatingActionButton.extended(
+                    onPressed: () {
+                      onSubmit();
+                    },
+                    heroTag: null,
+                    backgroundColor:
+                        ColorHelper.lighten(primaryColor, .1).withOpacity(0.6),
+                    extendedPadding: const EdgeInsets.only(left: 74, right: 74),
+                    extendedIconLabelSpacing: 12,
+                    elevation: 0,
+                    //splashColor: Colors.greenAccent.withOpacity(0.4),
+                    splashColor: Colors.white,
+                    shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(14))),
+                    label: Text("บันทึก",
+                        style: GoogleFonts.itim(
+                            //color: primaryColor,
+                            color: Colors.white.withOpacity(0.9),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18)),
+                    icon: Icon(FontAwesomeIcons.solidFloppyDisk,
+                        color: Colors.white.withOpacity(0.9)),
+                  )
+                : null,
+            body: isSaving == true || isSaved == true
+                ? const Center(
+                    child: SpinKitThreeBounce(
+                    color: Colors.white,
+                    size: 50.0,
+                  ))
+                : body(context),
+          )),
     );
   }
 
@@ -160,8 +182,8 @@ class _ReturnEstrusPageState extends State<ReturnEstrusPage> {
               tabBar(
                 initialValue: result,
                 children: {
-                  0: buildSegment("กลับสัด", 0,result),
-                  1: buildSegment("ไม่กลับสัด", 1,result),
+                  0: buildSegment("กลับสัด", 0, result),
+                  1: buildSegment("ไม่กลับสัด", 1, result),
                 },
                 callback: (value) {
                   setState(() {
@@ -172,14 +194,12 @@ class _ReturnEstrusPageState extends State<ReturnEstrusPage> {
               const SizedBox(height: 20),
               textHeader(title: "วันที่คาดว่าจะคลอด"),
               textField(
-                hint: "วัน/เดือน/ปี",
+                enabled: false,
+                hint: "",
                 readOnly: true,
-                value: pickedBirthDatetime != null
-                    ? DateFormat('d MMMM y', 'th').format(pickedBirthDatetime!)
-                    : null,
+                value: getBirthDate(),
                 onTap: () async {
-                  DateTime? selectdDateTime = await SlidingTimePicker(
-                      context,
+                  DateTime? selectdDateTime = await SlidingTimePicker(context,
                       dateTime: pickedBirthDatetime);
                   if (selectdDateTime != null) {
                     setState(() {
@@ -189,12 +209,12 @@ class _ReturnEstrusPageState extends State<ReturnEstrusPage> {
                   }
                 },
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 16),
               tabBar(
                 initialValue: notify,
                 children: {
-                  0: buildSegment("แจ้งเตือน", 0,notify),
-                  1: buildSegment("ไม่แจ้งเตือน", 1,notify),
+                  0: buildSegment("แจ้งเตือน", 0, notify),
+                  1: buildSegment("ไม่แจ้งเตือน", 1, notify),
                 },
                 callback: (value) {
                   setState(() {
@@ -210,7 +230,7 @@ class _ReturnEstrusPageState extends State<ReturnEstrusPage> {
         ));
   }
 
-  Widget divider(){
+  Widget divider() {
     return Container(
       width: double.infinity,
       height: 1,
@@ -219,17 +239,14 @@ class _ReturnEstrusPageState extends State<ReturnEstrusPage> {
         gradient: LinearGradient(
             colors: [
               Colors.transparent,
-              ColorHelper.lighten(primaryColor)
-                  .withOpacity(0.2),
-              ColorHelper.lighten(primaryColor)
-                  .withOpacity(0.5),
-              ColorHelper.lighten(primaryColor)
-                  .withOpacity(0.2),
+              ColorHelper.lighten(primaryColor).withOpacity(0.2),
+              ColorHelper.lighten(primaryColor).withOpacity(0.5),
+              ColorHelper.lighten(primaryColor).withOpacity(0.2),
               Colors.transparent,
             ],
-            begin:  Alignment.centerLeft,
+            begin: Alignment.centerLeft,
             end: Alignment.centerRight,
-            stops: const [0.0,0.15 ,0.5,0.85,1.0],
+            stops: const [0.0, 0.15, 0.5, 0.85, 1.0],
             tileMode: TileMode.repeated),
       ),
     );
@@ -250,72 +267,49 @@ class _ReturnEstrusPageState extends State<ReturnEstrusPage> {
 
   Widget textField(
       {TextEditingController? controller,
-        String? value,
-        bool readOnly = false,
-        Function? onTap,
-        bool enabled = true,
-        TextAlign textAlign = TextAlign.start,
-        required String hint}) {
-    return Container(
-        height: 44,
-        margin: const EdgeInsets.only(top: 0),
-        child: TextFormField(
-          readOnly: readOnly,
-          enabled: enabled,
-          textInputAction: TextInputAction.next,
-          textAlign: textAlign,
-
-          controller: controller ?? TextEditingController(text: value),
-          style: const TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.w400,
-              fontFamily: 'Itim'),
-          //maxLength: 10,
-          // inputFormatters: [
-          //   MaskedInputFormatter('###-###-####')
-          // ],
-          //initialValue: value,
-          onEditingComplete: () {
-            FocusScope.of(context).nextFocus();
-            setState(() {});
-          },
-
-          onTap: () {
-            onTap?.call();
-          },
-          keyboardType: TextInputType.text,
-          decoration: InputDecoration(
-            hintText: hint,
-            fillColor: enabled
-                ? Colors.white.withOpacity(0.05)
-                : bgDisabledTextFieldColor,
-            filled: true,
-            hintStyle: hintText,
-            contentPadding: fieldSearchPadding,
-            enabledBorder: textFieldInputBorder,
-            disabledBorder: textFieldInputBorder,
-            focusedBorder: textFieldInputBorder,
-          ),
-        ));
+      String? value,
+      bool readOnly = false,
+      VoidCallback? onTap,
+      bool enabled = true,
+      bool required = false,
+      TextAlign textAlign = TextAlign.start,
+      required String hint}) {
+    return CustomTextFormField.create(
+        hint: hint,
+        readOnly: readOnly,
+        textInputAction: TextInputAction.next,
+        controller: controller,
+        enabled: enabled,
+        onTap: onTap,
+        required: required,
+        value: value,
+        darkMode: true,
+        isTransparentBorder: true,
+        onEditingComplete: () {
+          FocusScope.of(context).nextFocus();
+          setState(() {});
+        },
+        enabledColor: Colors.white.withOpacity(0.05),
+        disabledColor: Colors.black.withOpacity(0.3),
+        textAlign: textAlign);
   }
 
   Widget tabBar(
       {required Map<int, Widget> children,
-        required int initialValue,
-        required Function(int) callback}) {
+      required int initialValue,
+      required Function(int) callback}) {
     return Container(
       alignment: Alignment.topLeft,
       margin: const EdgeInsets.only(left: 0, right: 0),
       padding: const EdgeInsets.all(4),
       child: CustomSlidingSegmentedControl<int>(
         decoration: BoxDecoration(
-          color: ColorHelper.lighten(backgroundColor, .2),
+          color: ColorHelper.lighten(backgroundColor, .14),
           borderRadius: BorderRadius.circular(10),
         ),
         //thumbColor: Colors.white,
         thumbDecoration: BoxDecoration(
-          color: ColorHelper.lighten(primaryColor, .1).withOpacity(0.6),
+          color: ColorHelper.lighten(primaryColor, .06).withOpacity(0.7),
           borderRadius: BorderRadius.circular(10),
           boxShadow: [
             BoxShadow(
@@ -337,7 +331,7 @@ class _ReturnEstrusPageState extends State<ReturnEstrusPage> {
     );
   }
 
-  Widget buildSegment(String text, int number,int selectedValue) {
+  Widget buildSegment(String text, int number, int selectedValue) {
     return Container(
       padding: const EdgeInsets.only(left: 6, right: 6, top: 4, bottom: 4),
       child: Text(
@@ -358,6 +352,33 @@ class _ReturnEstrusPageState extends State<ReturnEstrusPage> {
     } else {
       return true;
     }
+  }
+
+  String getBirthDate() {
+    DateTime tempDate = DateTime.now();
+    print(tempDate);
+    tempDate = tempDate.add(const Duration(days: 310));
+    pickedBirthDatetime = tempDate;
+
+    return "${tempDate.day} ${getMonthName(tempDate.month - 1)} ${tempDate.year + 543}";
+  }
+
+  String getMonthName(int month) {
+    List<String> MONTHS = const [
+      'มกราคม',
+      'กุมภาพันธ์',
+      'มีนาคม',
+      'เมษายน',
+      'พฤษภาคม',
+      'มิถุนายน',
+      'กรกฎาคม',
+      'สิงหาคม',
+      'กันยายน',
+      'ตุลาคม',
+      'พฤศจิกายน',
+      'ธันวาคม'
+    ];
+    return MONTHS[month];
   }
 
   OutlineInputBorder textFieldInputBorder = const OutlineInputBorder(

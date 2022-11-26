@@ -1,6 +1,7 @@
+import 'package:buffaloes_farm_management/components/CustomTextFormField.dart';
+import 'package:buffaloes_farm_management/components/MessagesDialog.dart';
 import 'package:buffaloes_farm_management/components/SlidingTimePicker.dart';
-import 'package:buffaloes_farm_management/constants/ColorConstants.dart';
-import 'package:buffaloes_farm_management/constants/StyleConstants.dart';
+import 'package:buffaloes_farm_management/service/FarmService.dart';
 import 'package:buffaloes_farm_management/tools/ColorHelper.dart';
 import 'package:custom_sliding_segmented_control/custom_sliding_segmented_control.dart';
 import 'package:flutter/material.dart';
@@ -8,10 +9,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 
 class BreedingPage extends StatefulWidget {
-  const BreedingPage({Key? key}) : super(key: key);
+  BreedingPage({Key? key, required this.buffId}) : super(key: key);
+
+  String buffId;
 
   @override
   _BreedingPageState createState() => _BreedingPageState();
@@ -19,10 +21,10 @@ class BreedingPage extends StatefulWidget {
 
 class _BreedingPageState extends State<BreedingPage> {
   TextEditingController tfName = TextEditingController();
-  TextEditingController tfTag = TextEditingController();
-  TextEditingController tfFather = TextEditingController();
-  TextEditingController tfMother = TextEditingController();
-  TextEditingController tfSource = TextEditingController();
+  TextEditingController tfEarTag = TextEditingController();
+
+  TextEditingController tfDateTime = TextEditingController();
+
 
   Color primaryColor = Colors.pink;
   Color backgroundColor = const Color(0xFF050505);
@@ -35,10 +37,56 @@ class _BreedingPageState extends State<BreedingPage> {
   int result = 0;
 
   DateTime? pickedDatetime;
-  DateTime? pickedBirthDatetime;
 
 
+  @override
+  void initState() {
+    super.initState();
 
+    tfDateTime.text = getCurrentDate();
+  }
+
+  onSubmit() async {
+    setState(() {
+      isSaving = true;
+    });
+    if (tfName.text.isNotEmpty) {
+      String? result = await FarmService.addBreeding(
+        buffId: widget.buffId,
+        artificialInsemination: type == 0 ? true : false,
+        breederName: tfName.text,
+        date: pickedDatetime ?? DateTime.now()
+      );
+
+      if (result != null) {
+        if (result == "SUCCESS") {
+          isSaved = true;
+
+          if (!mounted) return;
+          messageDialog(context, title: "แจ้งเตือน", message: "บันทึกเรียบร้อย",
+              function: () {
+            //context.read<HomeCubit>().management();
+            Navigator.of(context).pop(true);
+          });
+        } else {
+          if (!mounted) return;
+          messageDialog(context, title: "แจ้งเตือน", message: result);
+        }
+      } else {
+        if (!mounted) return;
+        messageDialog(context,
+            title: "แจ้งเตือน", message: "ไม่สามารถเชื่อมต่อได้");
+      }
+    } else {
+      if (tfName.text.isEmpty) {
+        messageDialog(context,
+            title: "แจ้งเตือน", message: "กรุณากรอกชื่อพ่อพันธุ์");
+      }
+    }
+    setState(() {
+      isSaving = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,86 +99,80 @@ class _BreedingPageState extends State<BreedingPage> {
         statusBarBrightness: Brightness.dark,
         //systemNavigationBarContrastEnforced: true,
       ),
-      child: Scaffold(
-        backgroundColor: backgroundColor,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          shadowColor: Colors.transparent,
-          elevation: 0.0,
-          surfaceTintColor: backgroundColor,
-          systemOverlayStyle: SystemUiOverlayStyle(
-            statusBarIconBrightness: Brightness.light,
-            statusBarColor: backgroundColor,
-          ),
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(
-              bottom: Radius.circular(22),
+      child: GestureDetector(
+          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+          child: Scaffold(
+            backgroundColor: backgroundColor,
+            appBar: AppBar(
+              backgroundColor: Colors.transparent,
+              shadowColor: Colors.transparent,
+              elevation: 0.0,
+              surfaceTintColor: backgroundColor,
+              systemOverlayStyle: SystemUiOverlayStyle(
+                statusBarIconBrightness: Brightness.light,
+                statusBarColor: backgroundColor,
+              ),
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(
+                  bottom: Radius.circular(22),
+                ),
+              ),
+              centerTitle: true,
+              title: Text(
+                "เพิ่มการรักษาโรค",
+                style: GoogleFonts.itim(
+                  color: Colors.white,
+                  fontSize: 23,
+                ),
+              ),
+              titleSpacing: 0,
+              leading: IconButton(
+                icon: const Icon(FontAwesomeIcons.xmark,
+                    color: Colors.white, size: 24),
+                onPressed: () {
+                  if (isSaving == false) {
+                    Navigator.of(context).pop(false);
+                  }
+                },
+              ),
+              actions: [
+              ],
             ),
-          ),
-          centerTitle: true,
-          title: Text(
-            "เพิ่มการรักษาโรค",
-            style: GoogleFonts.itim(
-              color: Colors.white,
-              fontSize: 23,
-            ),
-          ),
-          titleSpacing: 0,
-          leading: IconButton(
-            icon: const Icon(FontAwesomeIcons.xmark,
-                color: Colors.white, size: 24),
-            onPressed: () {
-              if (isSaving == false) {
-                Navigator.of(context).pop(false);
-              }
-            },
-          ),
-          actions: [
-            // Container(
-            //   padding: const EdgeInsets.only(right: 6),
-            //   child: IconButton(
-            //     icon: const Icon(FontAwesomeIcons.penToSquare, color: Colors.white,size: 22),
-            //     onPressed: () {
-            //       if (isSaving == false) {
-            //         Navigator.of(context).pop(false);
-            //       }
-            //     },
-            //   ),
-            // )
-          ],
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: submitButtonEnabled()
-            ? FloatingActionButton.extended(
-                onPressed: () {},
-                heroTag: null,
-                backgroundColor:
-                    ColorHelper.lighten(primaryColor, .1).withOpacity(0.6),
-                extendedPadding: const EdgeInsets.only(left: 74, right: 74),
-                extendedIconLabelSpacing: 12,
-                elevation: 0,
-                //splashColor: Colors.greenAccent.withOpacity(0.4),
-                splashColor: Colors.white,
-                shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(14))),
-                label: Text("บันทึก",
-                    style: GoogleFonts.itim(
-                        //color: primaryColor,
-                        color: Colors.white.withOpacity(0.9),
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18)),
-                icon: Icon(FontAwesomeIcons.solidFloppyDisk,
-                    color: Colors.white.withOpacity(0.9)),
-              )
-            : null,
-        body: isSaving == true || isSaved == true
-            ? const Center(
-                child: SpinKitThreeBounce(
-                color: Colors.white,
-                size: 50.0,
-              ))
-            : body(context),
-      ),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
+            floatingActionButton: submitButtonEnabled()
+                ? FloatingActionButton.extended(
+                    onPressed: () {
+                      onSubmit();
+                    },
+                    heroTag: null,
+                    backgroundColor:
+                        ColorHelper.lighten(primaryColor, .1).withOpacity(0.6),
+                    extendedPadding: const EdgeInsets.only(left: 74, right: 74),
+                    extendedIconLabelSpacing: 12,
+                    elevation: 0,
+                    //splashColor: Colors.greenAccent.withOpacity(0.4),
+                    splashColor: Colors.white,
+                    shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(14))),
+                    label: Text("บันทึก",
+                        style: GoogleFonts.itim(
+                            //color: primaryColor,
+                            color: Colors.white.withOpacity(0.9),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18)),
+                    icon: Icon(FontAwesomeIcons.solidFloppyDisk,
+                        color: Colors.white.withOpacity(0.9)),
+                  )
+                : null,
+            body: isSaving == true || isSaved == true
+                ? const Center(
+                    child: SpinKitThreeBounce(
+                    color: Colors.white,
+                    size: 50.0,
+                  ))
+                : body(context),
+          )),
     );
   }
 
@@ -143,7 +185,7 @@ class _BreedingPageState extends State<BreedingPage> {
             bottom: Radius.circular(22),
           ),
         ),
-        height: 402,
+        height: 412,
         padding: const EdgeInsets.only(
           left: 20,
           right: 20,
@@ -160,8 +202,8 @@ class _BreedingPageState extends State<BreedingPage> {
               tabBar(
                 initialValue: type,
                 children: {
-                  0: buildSegment("ผสมเทียม", 0,type),
-                  1: buildSegment("ผสมจริง", 1,type),
+                  0: buildSegment("ผสมเทียม", 0, type),
+                  1: buildSegment("ผสมจริง", 1, type),
                 },
                 callback: (value) {
                   setState(() {
@@ -171,38 +213,38 @@ class _BreedingPageState extends State<BreedingPage> {
               ),
               const SizedBox(height: 20),
               textHeader(title: "รายละเอียดน้ำเชื้อพ่อพันธุ์"),
-              textField(hint: "ชื่อพ่อพันธุ์", controller: tfName),
+              textField(
+                  hint: "ชื่อพ่อพันธุ์", controller: tfName, required: true),
               const SizedBox(height: 8),
-              textField(hint: "เบอร์หูพ่อพันธุ์", controller: tfTag),
+              textField(hint: "เบอร์หูพ่อพันธุ์", controller: tfEarTag),
               const SizedBox(height: 14),
               divider(),
               const SizedBox(height: 6),
-
               textHeader(title: "การกลับสัด"),
               textField(
-                hint: "วัน/เดือน/ปี",
+                enabled: true,
+                hint: "",
+                //hint: "วัน/เดือน/ปี",
                 readOnly: true,
-                value: pickedDatetime != null
-                    ? DateFormat('d MMMM y', 'th').format(pickedDatetime!)
-                    : null,
+                controller: tfDateTime,
                 onTap: () async {
-                  DateTime? selectdDateTime = await SlidingTimePicker(
-                      context,
+                  DateTime? selectdDateTime = await SlidingTimePicker(context,
                       dateTime: pickedDatetime);
                   if (selectdDateTime != null) {
                     setState(() {
                       pickedDatetime = selectdDateTime;
+                      tfDateTime.text = dateTimeToString(selectdDateTime);
                     });
                     //x = "${DateFormat.Hm().format(selectdDateTime)}:00";
                   }
                 },
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 16),
               tabBar(
                 initialValue: notify,
                 children: {
-                  0: buildSegment("แจ้งเตือน", 0,notify),
-                  1: buildSegment("ไม่แจ้งเตือน", 1,notify),
+                  0: buildSegment("แจ้งเตือน", 0, notify),
+                  1: buildSegment("ไม่แจ้งเตือน", 1, notify),
                 },
                 callback: (value) {
                   setState(() {
@@ -218,7 +260,7 @@ class _BreedingPageState extends State<BreedingPage> {
         ));
   }
 
-  Widget divider(){
+  Widget divider() {
     return Container(
       width: double.infinity,
       height: 1,
@@ -227,17 +269,14 @@ class _BreedingPageState extends State<BreedingPage> {
         gradient: LinearGradient(
             colors: [
               Colors.transparent,
-              ColorHelper.lighten(primaryColor)
-                  .withOpacity(0.2),
-              ColorHelper.lighten(primaryColor)
-                  .withOpacity(0.5),
-              ColorHelper.lighten(primaryColor)
-                  .withOpacity(0.2),
+              ColorHelper.lighten(primaryColor).withOpacity(0.2),
+              ColorHelper.lighten(primaryColor).withOpacity(0.5),
+              ColorHelper.lighten(primaryColor).withOpacity(0.2),
               Colors.transparent,
             ],
-            begin:  Alignment.centerLeft,
+            begin: Alignment.centerLeft,
             end: Alignment.centerRight,
-            stops: const [0.0,0.15 ,0.5,0.85,1.0],
+            stops: const [0.0, 0.15, 0.5, 0.85, 1.0],
             tileMode: TileMode.repeated),
       ),
     );
@@ -260,52 +299,29 @@ class _BreedingPageState extends State<BreedingPage> {
       {TextEditingController? controller,
       String? value,
       bool readOnly = false,
-      Function? onTap,
+      VoidCallback? onTap,
       bool enabled = true,
+      bool required = false,
       TextAlign textAlign = TextAlign.start,
       required String hint}) {
-    return Container(
-        height: 44,
-        margin: const EdgeInsets.only(top: 0),
-        child: TextFormField(
-          readOnly: readOnly,
-          enabled: enabled,
-          textInputAction: TextInputAction.next,
-          textAlign: textAlign,
-
-          controller: controller ?? TextEditingController(text: value),
-          style: const TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.w400,
-              fontFamily: 'Itim'),
-          //maxLength: 10,
-          // inputFormatters: [
-          //   MaskedInputFormatter('###-###-####')
-          // ],
-          //initialValue: value,
-          onEditingComplete: () {
-            FocusScope.of(context).nextFocus();
-            setState(() {});
-          },
-
-          onTap: () {
-            onTap?.call();
-          },
-          keyboardType: TextInputType.text,
-          decoration: InputDecoration(
-            hintText: hint,
-            fillColor: enabled
-                ? Colors.white.withOpacity(0.05)
-                : bgDisabledTextFieldColor,
-            filled: true,
-            hintStyle: hintText,
-            contentPadding: fieldSearchPadding,
-            enabledBorder: textFieldInputBorder,
-            disabledBorder: textFieldInputBorder,
-            focusedBorder: textFieldInputBorder,
-          ),
-        ));
+    return CustomTextFormField.create(
+        hint: hint,
+        readOnly: readOnly,
+        textInputAction: TextInputAction.next,
+        controller: controller,
+        enabled: enabled,
+        onTap: onTap,
+        required: required,
+        value: value,
+        darkMode: true,
+        isTransparentBorder: true,
+        onEditingComplete: () {
+          FocusScope.of(context).nextFocus();
+          setState(() {});
+        },
+        enabledColor: Colors.white.withOpacity(0.05),
+        disabledColor: Colors.black.withOpacity(0.3),
+        textAlign: textAlign);
   }
 
   Widget tabBar(
@@ -318,12 +334,12 @@ class _BreedingPageState extends State<BreedingPage> {
       padding: const EdgeInsets.all(4),
       child: CustomSlidingSegmentedControl<int>(
         decoration: BoxDecoration(
-          color: ColorHelper.lighten(backgroundColor, .2),
+          color: ColorHelper.lighten(backgroundColor, .14),
           borderRadius: BorderRadius.circular(10),
         ),
         //thumbColor: Colors.white,
         thumbDecoration: BoxDecoration(
-          color: ColorHelper.lighten(primaryColor, .1).withOpacity(0.6),
+          color: ColorHelper.lighten(primaryColor, .0).withOpacity(0.7),
           borderRadius: BorderRadius.circular(10),
           boxShadow: [
             BoxShadow(
@@ -345,7 +361,7 @@ class _BreedingPageState extends State<BreedingPage> {
     );
   }
 
-  Widget buildSegment(String text, int number,int selectedValue) {
+  Widget buildSegment(String text, int number, int selectedValue) {
     return Container(
       padding: const EdgeInsets.only(left: 6, right: 6, top: 4, bottom: 4),
       child: Text(
@@ -366,6 +382,36 @@ class _BreedingPageState extends State<BreedingPage> {
     } else {
       return true;
     }
+  }
+
+  String getCurrentDate({DateTime? tempDate}) {
+    tempDate ??= DateTime.now();
+    tempDate = tempDate.add(const Duration(days: 21));
+    pickedDatetime = tempDate;
+
+    return dateTimeToString(tempDate);
+  }
+
+  String dateTimeToString(DateTime datetime){
+    return "${datetime.day} ${getMonthName(datetime.month-1)} ${datetime.year + 543}";
+  }
+
+  String getMonthName(int month) {
+    List<String> MONTHS = const [
+      'มกราคม',
+      'กุมภาพันธ์',
+      'มีนาคม',
+      'เมษายน',
+      'พฤษภาคม',
+      'มิถุนายน',
+      'กรกฎาคม',
+      'สิงหาคม',
+      'กันยายน',
+      'ตุลาคม',
+      'พฤศจิกายน',
+      'ธันวาคม'
+    ];
+    return MONTHS[month];
   }
 
   OutlineInputBorder textFieldInputBorder = const OutlineInputBorder(

@@ -12,7 +12,7 @@ class DioHelper {
 
   DioHelper({required this.dio});
 
-  static const String _baseUrl = "https://meloncloud.herokuapp.com/api/v2/buff";
+  static const String _baseUrl = "https://api.melonkemo.com/v1/buffaloes";
   String token = "";
   FlutterSecureStorage storage = const FlutterSecureStorage();
 

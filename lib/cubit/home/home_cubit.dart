@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:bloc/bloc.dart';
 import 'package:buffaloes_farm_management/cubit/authentication/authentication_cubit.dart';
 import 'package:buffaloes_farm_management/models/BuffModel.dart';
+import 'package:buffaloes_farm_management/models/NotificationModel.dart';
 import 'package:buffaloes_farm_management/service/FarmService.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,10 +16,10 @@ class HomeCubit extends Cubit<HomeState> {
 
   farm(BuildContext context) async {
     emit(LoadingHomeFarmState());
-    List<BuffModel>? buffs = await FarmService.buffs();
+    Map<String, dynamic>? data = await FarmService.summary();
 
     //context.read<AuthenticationCubit>().signOut(context);
-    emit(HomeFarmState(data: buffs));
+    emit(HomeFarmState(data: data));
   }
 
   management() async {
@@ -30,8 +31,9 @@ class HomeCubit extends Cubit<HomeState> {
 
   notification() async {
     emit(LoadingHomeNotificationState());
+    List<NotificationModel>? notifications = await FarmService.notifications();
 
-    emit(HomeNotificationState());
+    emit(HomeNotificationState(data: notifications));
   }
 
   more() async {

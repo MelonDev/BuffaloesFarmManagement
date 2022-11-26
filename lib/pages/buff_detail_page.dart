@@ -1,7 +1,14 @@
 import 'package:age_calculator/age_calculator.dart';
 import 'package:buffaloes_farm_management/components/MessagesDialog.dart';
 import 'package:buffaloes_farm_management/constants/ColorConstants.dart';
+import 'package:buffaloes_farm_management/models/activity/ActivityFunctionModel.dart';
+import 'package:buffaloes_farm_management/models/activity/BaseActivityModel.dart';
+import 'package:buffaloes_farm_management/models/activity/BreedingActivityModel.dart';
 import 'package:buffaloes_farm_management/models/BuffModel.dart';
+import 'package:buffaloes_farm_management/models/activity/DewormingActivityModel.dart';
+import 'package:buffaloes_farm_management/models/activity/DiseaseTreatmentActivityModel.dart';
+import 'package:buffaloes_farm_management/models/activity/ReturnEstrusActivityModel.dart';
+import 'package:buffaloes_farm_management/models/activity/VaccineInjectionActivityModel.dart';
 import 'package:buffaloes_farm_management/service/FarmService.dart';
 import 'package:buffaloes_farm_management/tools/ColorHelper.dart';
 import 'package:buffaloes_farm_management/tools/NavigatorHelper.dart';
@@ -31,14 +38,12 @@ class BuffDetailPage extends StatefulWidget {
 }
 
 class _BuffDetailPageState extends State<BuffDetailPage> {
-  static RectTween _createRectTween(Rect? begin, Rect? end) {
-    return MaterialRectCenterArcTween(begin: begin, end: end);
-  }
-
   Color primaryColor = Colors.pink;
   Color backgroundPrimaryColor = const Color(0xFF050505);
 
   BuffModel? buff;
+  bool initialLoading = true;
+
 
   @override
   void initState() {
@@ -52,6 +57,7 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
   onLoad() async {
     BuffModel? buff = await FarmService.buff(widget.id);
     setState(() {
+      initialLoading = false;
       this.buff = buff;
     });
   }
@@ -130,55 +136,73 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
                           fontSize: 28),
                     ),
                   ),
-                  button(
-                    "การผสมพันธุ์",
-                    icon: FontAwesomeIcons.venusMars,
-                    color: primaryColor,
-                    onTap: () async {
-                      await Navigator.of(context).push(
-                          NavigatorHelper.slide(const BreedingPage()));
-                    },
-                  ),
+                  Row(children: [
+                    Expanded(
+                      flex: 49,
+                      child: largeButton(
+                        "การผสมพันธุ์",
+                        icon: FontAwesomeIcons.venusMars,
+                        color: primaryColor,
+                        onTap: () async {
+                          await Navigator.of(context)
+                              .push(NavigatorHelper.slide(BreedingPage(
+                            buffId: widget.id,
+                          )));
+                          onLoad();
+                        },
+                      ),
+                    ),
+                    Expanded(flex: 2, child: Container()),
+                    Expanded(
+                      flex: 49,
+                      child: largeButton(
+                        "การฉีดวัคซีน",
+                        icon: FontAwesomeIcons.crutch,
+                        color: Colors.blue,
+                        onTap: () async {
+                          await Navigator.of(context)
+                              .push(NavigatorHelper.slide(VaccineInjectionPage(
+                            buffId: widget.id,
+                          )));
+                          onLoad();
+                        },
+                      ),
+                    )
+                  ]),
                   const SizedBox(height: 8),
-                  button(
-                    "การกลับสัด",
-                    icon: FontAwesomeIcons.stethoscope,
-                    color: Colors.indigo,
-                    onTap: () async {
-                      await Navigator.of(context).push(
-                          NavigatorHelper.slide(const ReturnEstrusPage()));
-                    },
-                  ),
-                  const SizedBox(height: 8),
-                  button(
-                    "การฉีดวัคซีน",
-                    icon: FontAwesomeIcons.crutch,
-                    color: Colors.blue,
-                    onTap: () async {
-                      await Navigator.of(context).push(
-                          NavigatorHelper.slide(const VaccineInjectionPage()));
-                    },
-                  ),
-                  const SizedBox(height: 8),
-                  button(
-                    "การถ่ายพยาธิ",
-                    icon: FontAwesomeIcons.prescriptionBottleMedical,
-                    color: Colors.yellow,
-                    onTap: () async {
-                      await Navigator.of(context).push(
-                          NavigatorHelper.slide(const DewormingPage()));
-                    },
-                  ),
-                  const SizedBox(height: 8),
-                  button(
-                    "การรักษาโรค",
-                    icon: FontAwesomeIcons.virusCovid,
-                    color: Colors.green,
-                    onTap: () async {
-                      await Navigator.of(context).push(
-                          NavigatorHelper.slide(const DiseaseTreatmentPage()));
-                    },
-                  ),
+                  Row(children: [
+                    Expanded(
+                      flex: 49,
+                      child: largeButton(
+                        "การถ่ายพยาธิ",
+                        icon: FontAwesomeIcons.prescriptionBottleMedical,
+                        color: Colors.amber,
+                        onTap: () async {
+                          await Navigator.of(context)
+                              .push(NavigatorHelper.slide(DewormingPage(
+                            buffId: widget.id,
+                          )));
+                          onLoad();
+                        },
+                      ),
+                    ),
+                    Expanded(flex: 2, child: Container()),
+                    Expanded(
+                      flex: 49,
+                      child: largeButton(
+                        "การรักษาโรค",
+                        icon: FontAwesomeIcons.virusCovid,
+                        color: Colors.green,
+                        onTap: () async {
+                          await Navigator.of(context)
+                              .push(NavigatorHelper.slide(DiseaseTreatmentPage(
+                            buffId: widget.id,
+                          )));
+                          onLoad();
+                        },
+                      ),
+                    )
+                  ]),
                   const SizedBox(height: 26),
                 ],
               ),
@@ -199,6 +223,62 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
     );
   }
 
+  Widget largeButton(String title,
+      {Function? onTap, IconData? icon, Color? color}) {
+    return SizedBox(
+        height: 100, // <-- Your height
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+            onTap?.call();
+          },
+          style: ButtonStyle(
+            overlayColor: MaterialStateProperty.all(
+                ColorHelper.lighten(color ?? primaryColor, .4)
+                    .withOpacity(0.1)),
+            elevation: MaterialStateProperty.all(0),
+            backgroundColor: MaterialStateProperty.all(
+                ColorHelper.lighten(color ?? primaryColor, .05)
+                    .withOpacity(0.6)),
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+            ),
+          ),
+          child: Align(
+              alignment: Alignment.center,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  const SizedBox(
+                    width: 0,
+                    height: 10,
+                  ),
+                  Icon(
+                    icon ?? FontAwesomeIcons.ellipsis,
+                    color: ColorHelper.lighten(color ?? primaryColor, .52)
+                        .withOpacity(0.8),
+                    size: 34,
+                  ),
+                  const SizedBox(
+                    width: 16,
+                    height: 14,
+                  ),
+                  Text(
+                    title,
+                    style: TextStyle(
+                        fontSize: 20,
+                        color: ColorHelper.lighten(color ?? primaryColor, .52)
+                            .withOpacity(0.8)),
+                  )
+                ],
+              )),
+        ));
+  }
+
   Widget button(String title, {Function? onTap, IconData? icon, Color? color}) {
     return SizedBox(
         height: 48, // <-- Your height
@@ -213,11 +293,11 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
                     .withOpacity(0.1)),
             elevation: MaterialStateProperty.all(0),
             backgroundColor: MaterialStateProperty.all(
-                ColorHelper.lighten(color ?? primaryColor, .2)
-                    .withOpacity(0.1)),
+                ColorHelper.lighten(color ?? primaryColor, .12)
+                    .withOpacity(0.3)),
             shape: MaterialStateProperty.all<RoundedRectangleBorder>(
               RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
+                borderRadius: BorderRadius.circular(16.0),
               ),
             ),
           ),
@@ -231,7 +311,7 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
                   const SizedBox(width: 0),
                   Icon(
                     icon ?? FontAwesomeIcons.ellipsis,
-                    color: ColorHelper.lighten(color ?? primaryColor, .4)
+                    color: ColorHelper.lighten(color ?? primaryColor, .42)
                         .withOpacity(0.8),
                     size: 18,
                   ),
@@ -240,7 +320,7 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
                     title,
                     style: TextStyle(
                         fontSize: 20,
-                        color: ColorHelper.lighten(color ?? primaryColor, .4)
+                        color: ColorHelper.lighten(color ?? primaryColor, .42)
                             .withOpacity(0.8)),
                   )
                 ],
@@ -248,9 +328,13 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
         ));
   }
 
-  card(BuildContext context, BuffModel model,
-      {bool active = false, BuffActivityLog log = BuffActivityLog.unknown}) {
-    IconData icon = getActivityLogIcon(log);
+  card(BuildContext context,
+      {String? message,
+      String? subMessage,
+      bool active = false,
+      BuffActivityLog log = BuffActivityLog.unknown,
+      ActivityFunctionModel? function}) {
+    IconData icon = active ? getActivityLogIcon(log) : FontAwesomeIcons.check;
     Color color = getActivityLogColor(log);
 
     return GestureDetector(
@@ -263,7 +347,7 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
                   // color: ColorHelper.lighten(primaryColor, .5)
                   //     .withOpacity(0.1),
                   color: active
-                      ? ColorHelper.lighten(color, .1).withOpacity(0.5)
+                      ? ColorHelper.lighten(color, .1).withOpacity(0.65)
                       : ColorHelper.lighten(color, .3).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(18)),
               //width: 10,
@@ -300,7 +384,7 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "หัวข้อ",
+                            getActivityLogTitle(log),
                             style: GoogleFonts.itim(
                                 color: active
                                     ? ColorHelper.lighten(color, .46)
@@ -313,7 +397,7 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
                           Row(
                             children: [
                               Text(
-                                "ข้อความ 1",
+                                message ?? "",
                                 style: GoogleFonts.itim(
                                     color: active
                                         ? ColorHelper.lighten(color, .46)
@@ -327,7 +411,7 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
                           Row(
                             children: [
                               Text(
-                                "ข้อความ 2",
+                                subMessage ?? "",
                                 style: GoogleFonts.itim(
                                     color: active
                                         ? ColorHelper.lighten(color, .46)
@@ -337,6 +421,51 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
                               ),
                             ],
                           ),
+                          SizedBox(
+                              width: 0,
+                              height: active && (function != null) ? 12 : 2),
+                          active && function != null
+                              ? ElevatedButton(
+                                  onPressed: function.function,
+                                  style: ButtonStyle(
+                                    overlayColor: MaterialStateProperty.all(
+                                        ColorHelper.darken(color, .4)
+                                            .withOpacity(0.1)),
+                                    elevation: MaterialStateProperty.all(0),
+                                    backgroundColor: MaterialStateProperty.all(
+                                        ColorHelper.darken(color, .4)
+                                            .withOpacity(0.5)),
+                                    shape: MaterialStateProperty.all<
+                                        RoundedRectangleBorder>(
+                                      RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(30.0),
+                                      ),
+                                    ),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        function.icon,
+                                        color: ColorHelper.lighten(
+                                            color, .4)
+                                            .withOpacity(0.8),
+                                        size: 18,
+                                      ),
+                                      Container(width: 12),
+                                      Text(
+                                        function.name,
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            color: ColorHelper.lighten(
+                                                color, .4)
+                                                .withOpacity(0.8)),
+                                      )
+                                    ],
+                                  ),
+                                )
+                              : Container()
                         ]),
                   )
                 ],
@@ -346,6 +475,20 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
   }
 
   Widget body(BuildContext context, BuffModel model) {
+    print("body");
+    List<Widget> activeWidget = [];
+    List<Widget> activities = [];
+    for (var item in model.history) {
+      Widget? w = getActivityLogWidget(context, item, active: false);
+      Widget? wA = getActivityLogWidget(context, item, active: true);
+      if (w != null) {
+        activities.add(w);
+      }
+      if (wA != null) {
+        activeWidget.add(wA);
+      }
+    }
+
     return Container(
       child: RefreshIndicator(
         color: primaryColor,
@@ -372,33 +515,71 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
               titleArea(model),
               const SizedBox(width: 0, height: 8),
               columnBody(context, model),
-              const SizedBox(width: 0, height: 8),
-              Container(
-                margin: const EdgeInsets.only(left: 6),
-                child: Text(
-                  "สถานะ",
-                  style: GoogleFonts.itim(
-                      color: Colors.white.withOpacity(0.96), fontSize: 24),
-                ),
-              ),
-              const SizedBox(width: 0, height: 4),
-              card(context, model, active: true, log: BuffActivityLog.unknown),
-              const SizedBox(width: 0, height: 8),
-              Container(
-                margin: const EdgeInsets.only(left: 6),
-                child: Text(
-                  "ประวัติ",
-                  style: GoogleFonts.itim(
-                      color: Colors.white.withOpacity(0.96), fontSize: 24),
-                ),
-              ),
-              const SizedBox(width: 0, height: 4),
-              card(context, model, log: BuffActivityLog.breeding),
-              card(context, model, log: BuffActivityLog.returnEstrus),
-              card(context, model, log: BuffActivityLog.vaccineInjection),
-              card(context, model, log: BuffActivityLog.deworming),
-              card(context, model, log: BuffActivityLog.diseaseTreatment),
-            ],
+              //card(context, model, log: BuffActivityLog.breeding),
+              //card(context, model, log: BuffActivityLog.returnEstrus),
+              //card(context, model, log: BuffActivityLog.vaccineInjection),
+              //card(context, model, log: BuffActivityLog.deworming),
+              //card(context, model, log: BuffActivityLog.diseaseTreatment),
+            ]
+              ..addAll([
+                initialLoading
+                    ? const SizedBox(width: 0, height: 8)
+                    : Container(),
+                initialLoading
+                    ? Container(
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(22),
+                          ),
+                        ),
+                        height: 180,
+                        child: const Center(
+                            child: SpinKitThreeBounce(
+                          color: Colors.white,
+                          size: 40.0,
+                        )))
+                    : Container()
+              ])
+              ..addAll([
+                activeWidget.isNotEmpty
+                    ? const SizedBox(width: 0, height: 8)
+                    : Container(),
+                activeWidget.isNotEmpty
+                    ? Container(
+                        margin: const EdgeInsets.only(left: 6),
+                        child: Text(
+                          "สถานะปัจจุบัน",
+                          style: GoogleFonts.itim(
+                              color: Colors.white.withOpacity(0.96),
+                              fontSize: 24),
+                        ),
+                      )
+                    : Container(),
+                activeWidget.isNotEmpty
+                    ? const SizedBox(width: 0, height: 4)
+                    : Container(),
+              ])
+              ..addAll(activeWidget)
+              ..addAll([
+                activities.isNotEmpty
+                    ? const SizedBox(width: 0, height: 8)
+                    : Container(),
+                activities.isNotEmpty
+                    ? Container(
+                        margin: const EdgeInsets.only(left: 6),
+                        child: Text(
+                          "ประวัติ",
+                          style: GoogleFonts.itim(
+                              color: Colors.white.withOpacity(0.96),
+                              fontSize: 24),
+                        ),
+                      )
+                    : Container(),
+                activities.isNotEmpty
+                    ? const SizedBox(width: 0, height: 4)
+                    : Container(),
+              ])
+              ..addAll(activities),
           ),
         ),
         onRefresh: () async {
@@ -584,7 +765,7 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
       DateTime tempDate = DateFormat("yyyy-MM-dd").parse(birthDate);
       DateFormat format = DateFormat("dd MMMM yyyy");
       var formattedDate = format.format(tempDate);
-      return "${tempDate.day} ${getMonthName(tempDate.month)} ${tempDate.year + 543}";
+      return "${tempDate.day} ${getMonthName(tempDate.month - 1)} ${tempDate.year + 543}";
     }
     return "ไม่ระบุ";
   }
@@ -605,6 +786,75 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
       }
     }
     return "ไม่ระบุ";
+  }
+
+  Widget? getActivityLogWidget(BuildContext context, BaseActivityModel item,
+      {bool active = false}) {
+    if (item is BreedingActivityModel) {
+      return item.status == active
+          ? card(context,
+              message: "กลับสัด: ${getBirthDate(item.date)}",
+              subMessage:
+                  "รูปแบบ: ${item.artificial_insemination! ? "ผสมเทียม" : "ผสมจริง"}",
+              active: active,
+              log: BuffActivityLog.breeding,
+              function: ActivityFunctionModel(
+                  name: "เริ่มต้นกลับสัด",
+                  icon: FontAwesomeIcons.stethoscope,
+                  function: () async {
+                    await Navigator.of(context)
+                        .push(NavigatorHelper.slide(ReturnEstrusPage(
+                      buffId: widget.id,
+                    )));
+                    onLoad();
+                  }))
+          : null;
+    } else if (item is ReturnEstrusActivityModel) {
+      return item.status == active
+          ? card(context,
+              message:
+                  "ผล: ${item.estrus_result != null ? (item.estrus_result! ? "กลับสัด" : "ไม่กลับสัด") : ""}",
+              subMessage: "คาดว่าจะคลอด: ${getBirthDate(item.date)}",
+              active: active,
+              log: BuffActivityLog.returnEstrus)
+          : null;
+    } else if (item is VaccineInjectionActivityModel) {
+      return item.status == active
+          ? card(context,
+              message: "ชนิด: ${getVaccineName(item)}",
+              subMessage:
+                  "ครั้งต่อไป: ${item.date != null ? getBirthDate(item.date) : "-"}",
+              active: active,
+              log: BuffActivityLog.vaccineInjection)
+          : null;
+    } else if (item is DewormingActivityModel) {
+      return item.status == active
+          ? card(context,
+              message: "ชนิด: ${item.name}",
+              subMessage:
+                  "ครั้งต่อไป: ${item.next_deworming_date != null ? getBirthDate(item.next_deworming_date) : "-"}",
+              active: active,
+              log: BuffActivityLog.deworming)
+          : null;
+    } else if (item is DiseaseTreatmentActivityModel) {
+      return item.status == active
+          ? card(context,
+              message: "อาการ: ${item.symptom}",
+              subMessage: "ยาที่ใช้: ${item.drugs ?? "-"}",
+              active: active,
+              log: BuffActivityLog.diseaseTreatment,
+          function: ActivityFunctionModel(
+          name: "อัปเดตสถานะ",
+          icon: FontAwesomeIcons.stethoscope,
+          function: () async {
+
+            //onLoad();
+          })
+      )
+          : null;
+    } else {
+      return null;
+    }
   }
 
   String getGenderName(String? gender) {
@@ -691,6 +941,68 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
       default:
         {
           return Colors.blueGrey;
+        }
+    }
+  }
+
+  String getActivityLogTitle(BuffActivityLog log) {
+    switch (log) {
+      case BuffActivityLog.breeding:
+        {
+          return "ผสมพันธุ์";
+        }
+      case BuffActivityLog.returnEstrus:
+        {
+          return "กลับสัด";
+        }
+      case BuffActivityLog.vaccineInjection:
+        {
+          return "ฉีดวัคซีน";
+        }
+      case BuffActivityLog.deworming:
+        {
+          return "ถ่ายพยาธิ";
+        }
+      case BuffActivityLog.diseaseTreatment:
+        {
+          return "รักษาโรค";
+        }
+      default:
+        {
+          return "ไม่พบชื่อ";
+        }
+    }
+  }
+
+  String getVaccineName(VaccineInjectionActivityModel model) {
+    switch (model.vaccine_name) {
+      case "Foot-mouth Disease":
+        {
+          return "ปากเท้าเปื่อย";
+        }
+      case "Swollen Neck Disease":
+        {
+          return "คอบวม";
+        }
+      case "Anthrax Disease":
+        {
+          return "แอนแทรกซ์";
+        }
+      case "Blackleg Disease":
+        {
+          return "แบลคเลก (ไข้ขา)";
+        }
+      case "Brucellosis Disease":
+        {
+          return "แท้งติดต่อ";
+        }
+      case "Other":
+        {
+          return model.vaccine_name ?? "";
+        }
+      default:
+        {
+          return "ไม่พบชื่อ";
         }
     }
   }

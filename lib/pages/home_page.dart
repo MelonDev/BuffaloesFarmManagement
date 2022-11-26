@@ -8,6 +8,7 @@ import 'package:buffaloes_farm_management/pages/menu/management_page.dart';
 import 'package:buffaloes_farm_management/pages/menu/notification_page.dart';
 import 'package:buffaloes_farm_management/pages/menu/more_page.dart';
 import 'package:buffaloes_farm_management/tools/NavigatorHelper.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -170,7 +171,7 @@ class HomePage extends StatelessWidget {
           icon: FontAwesomeIcons.ellipsis,
           activeIcon: FontAwesomeIcons.ellipsis,
           color: Colors.teal,
-          body: const MorePage(),
+          body: MorePage(),
           onTap: () {
             context.read<HomeCubit>().more();
           }),

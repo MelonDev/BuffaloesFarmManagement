@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:buffaloes_farm_management/components/CustomTextFormField.dart';
 import 'package:buffaloes_farm_management/components/MessagesDialog.dart';
 import 'package:buffaloes_farm_management/constants/ColorConstants.dart';
 import 'package:buffaloes_farm_management/constants/StyleConstants.dart';
@@ -152,6 +153,8 @@ class _AddBuffPage extends State<AddBuffPage> {
             statusBarBrightness: Brightness.dark,
             //systemNavigationBarContrastEnforced: true,
           ),
+    child: GestureDetector(
+    onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
           child: Scaffold(
             backgroundColor: primaryColor,
             appBar: AppBar(
@@ -177,7 +180,8 @@ class _AddBuffPage extends State<AddBuffPage> {
               ),
               titleSpacing: 0,
               leading: IconButton(
-                icon: const Icon(FontAwesomeIcons.xmark, color: Colors.white,size: 24),
+                icon: const Icon(FontAwesomeIcons.xmark,
+                    color: Colors.white, size: 24),
                 onPressed: () {
                   if (isSaving == false) {
                     Navigator.of(context).pop(false);
@@ -231,7 +235,7 @@ class _AddBuffPage extends State<AddBuffPage> {
                     size: 50.0,
                   ))
                 : body(context),
-          ),
+          ),)
         ));
   }
 
@@ -260,15 +264,17 @@ class _AddBuffPage extends State<AddBuffPage> {
               imageArea(),
               const SizedBox(height: 8),
               textHeader(title: "รายละเอียด"),
-              textField(hint: "ชื่อ", controller: tfName),
+              const SizedBox(height: 4),
+              textField(hint: "ชื่อ", controller: tfName, required: true),
               const SizedBox(height: 8),
-              textField(hint: "เบอร์หู", controller: tfTag),
+              textField(hint: "เบอร์หู", controller: tfTag, required: true),
               const SizedBox(height: 8),
               Row(
                 children: [
                   Expanded(
                     child: textField(
                       hint: "วัน/เดือน/ปี เกิด",
+                      required: true,
                       readOnly: true,
                       value: pickedDatetime != null
                           ? DateFormat('d MMMM y', 'th').format(pickedDatetime!)
@@ -301,6 +307,7 @@ class _AddBuffPage extends State<AddBuffPage> {
               tabBar(),
               const SizedBox(height: 20),
               textHeader(title: "พันธุ์"),
+              const SizedBox(height: 4),
               textField(hint: "ชื่อพ่อ", controller: tfFather),
               const SizedBox(height: 8),
               textField(hint: "ชื่อแม่", controller: tfMother),
@@ -394,46 +401,20 @@ class _AddBuffPage extends State<AddBuffPage> {
       {TextEditingController? controller,
       String? value,
       bool readOnly = false,
-      Function? onTap,
+      VoidCallback? onTap,
       bool enabled = true,
+      bool required = false,
       TextAlign textAlign = TextAlign.start,
       required String hint}) {
-    return Container(
-        height: 44,
-        margin: const EdgeInsets.only(top: 0),
-        child: TextFormField(
-          readOnly: readOnly,
-          enabled: enabled,
-          textInputAction: TextInputAction.next,
-          textAlign: textAlign,
-
-          controller: controller ?? TextEditingController(text: value),
-          style: textFieldStyle,
-          //maxLength: 10,
-          // inputFormatters: [
-          //   MaskedInputFormatter('###-###-####')
-          // ],
-          //initialValue: value,
-          onEditingComplete: () {
-            FocusScope.of(context).nextFocus();
-            setState(() {});
-          },
-
-          onTap: () {
-            onTap?.call();
-          },
-          keyboardType: TextInputType.text,
-          decoration: InputDecoration(
-            hintText: hint,
-            fillColor: enabled ? Colors.white : bgDisabledTextFieldColor,
-            filled: true,
-            hintStyle: hintText,
-            contentPadding: fieldSearchPadding,
-            enabledBorder: textFieldInputBorder,
-            disabledBorder: textFieldInputBorder,
-            focusedBorder: textFieldInputBorder,
-          ),
-        ));
+    return CustomTextFormField.create(
+        hint: hint,
+        readOnly: readOnly,
+        controller: controller,
+        enabled: enabled,
+        onTap: onTap,
+        required: required,
+        value: value,
+        textAlign: textAlign);
   }
 
   Widget tabBar() {

@@ -14,6 +14,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "423348992324-45ec48ojv81liva5ijqqork503ns52v1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.melondev.buffaloes_farm_management",
+            "certificate_hash": "944bb35f47290b90cfa1a11524192e20fa548cc0"
+          }
+        },
+        {
+          "client_id": "423348992324-8df97l1v9ipu2s068i2kpqicoo8sba9g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.melondev.buffaloes_farm_management",
+            "certificate_hash": "97eb1f51d966b2dee10b6d38683878bf3dbff4ac"
+          }
+        },
+        {
           "client_id": "423348992324-uvl7407c5gdid5bprofoba0n6kgdhsdg.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

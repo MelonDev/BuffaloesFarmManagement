@@ -20,6 +20,7 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import '../home_page.dart';
 import '../loading/main_initial_loading_page.dart';
+import '../main_home_page.dart';
 
 class InitialFarmPage extends StatefulWidget {
   const InitialFarmPage({Key? key}) : super(key: key);
@@ -120,7 +121,8 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
             statusBarColor: bgButtonColor
             //systemNavigationBarContrastEnforced: true,
             ),
-        child: Material(
+        child: Material(child: GestureDetector(
+            onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
             child: Scaffold(
           backgroundColor: bgButtonColor,
           appBar: PreferredSize(
@@ -258,7 +260,7 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
                   ),
                 ],
               )),
-        )),
+        )),)
       );
     } else if(initial == false) {
       return const MainInitialLoadingPage();
@@ -409,7 +411,6 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
           readOnly: readOnly,
           enabled: enabled,
           textInputAction: TextInputAction.next,
-
           controller: controller ?? TextEditingController(text: value),
           style: textFieldStyle,
           //maxLength: 10,
@@ -423,7 +424,9 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
           },
           keyboardType: TextInputType.text,
           decoration: InputDecoration(
-            hintText: hint,
+            labelText: hint,
+            labelStyle: hintText,
+            floatingLabelStyle: labelText,
             fillColor: enabled ? Colors.white : bgDisabledTextFieldColor,
             filled: true,
             hintStyle: hintText,
@@ -459,7 +462,7 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
   toHomePage(){
     context.read<HomeCubit>().farm(context);
     Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => HomePage()),
+        MaterialPageRoute(builder: (context) => const MainHomePage()),
             (Route<dynamic> route) => false);
   }
 }

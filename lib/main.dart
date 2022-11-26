@@ -21,10 +21,14 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'cubit/authentication/authentication_cubit.dart';
+import 'cubit/service/service_cubit.dart';
 import 'firebase_options.dart';
 
 void main() {
+  Intl.defaultLocale = "th";
+
   WidgetsFlutterBinding.ensureInitialized();
 
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -48,6 +52,7 @@ class RootApp extends StatelessWidget {
       BlocProvider<HomeCubit>(create: (context) => HomeCubit()),
       BlocProvider<AuthenticationCubit>(
           create: (context) => AuthenticationCubit()),
+      BlocProvider<ServiceCubit>(create: (context) => ServiceCubit()),
     ], child: const MyApp());
   }
 }
@@ -89,6 +94,8 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     if (loaded) {
+      print(FirebaseAuth.instance.currentUser?.uid);
+
       context
           .read<AuthenticationCubit>()
           .checking(context, useNavigator: false);
@@ -99,7 +106,8 @@ class _MyAppState extends State<MyApp> {
           GlobalWidgetsLocalizations.delegate,
         ],
         supportedLocales: const [
-          Locale.fromSubtags(languageCode: 'th')          //Locale('en', 'US'), // English
+          Locale.fromSubtags(languageCode: 'th')
+          //Locale('en', 'US'), // English
         ],
         locale: const Locale.fromSubtags(languageCode: 'th'),
         debugShowCheckedModeBanner: false,
