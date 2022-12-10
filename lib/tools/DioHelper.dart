@@ -17,8 +17,14 @@ class DioHelper {
   FlutterSecureStorage storage = const FlutterSecureStorage();
 
   initializeToken() async {
+    String? user_uid = await storage.read(key: "user_uid".toUpperCase());
+    print("user_uid: ${user_uid}");
+
     String? accessToken = await storage.read(key: "access_token".toUpperCase());
+    print("accessToken: ${accessToken}");
     token = accessToken ?? "";
+    print("token: ${token}");
+
     initApiClient();
   }
 
@@ -26,7 +32,8 @@ class DioHelper {
     dio.interceptors.clear();
     dio.interceptors.add(InterceptorsWrapper(
         onRequest: (RequestOptions options, RequestInterceptorHandler handler) {
-      options.headers['Cookie'] = "access_token_cookie=$token";
+      options.headers['Authorization'] = "Bearer $token";
+
       return handler.next(options); //continue
     }, onResponse: (Response response, ResponseInterceptorHandler handler) {
       return handler.next(response); // continue
@@ -37,12 +44,12 @@ class DioHelper {
           try {
             String? refreshToken =
                 await storage.read(key: "refresh_token".toUpperCase());
-            dio.options.headers['Cookie'] =
-                "refresh_token_cookie=$refreshToken";
+            dio.options.headers['Authorization'] =
+                "Bearer $refreshToken";
 
             Dio anotherDio = Dio();
-            anotherDio.options.headers['Cookie'] =
-                "refresh_token_cookie=$refreshToken";
+            anotherDio.options.headers['Authorization'] =
+                "Bearer $refreshToken";
 
             Response<dynamic> data = await anotherDio.post("$_baseUrl/refresh");
             String newToken = data.data['access_token'];
@@ -50,8 +57,8 @@ class DioHelper {
             await storage.write(
                 key: "access_token".toUpperCase(), value: newToken);
 
-            response.requestOptions.headers["Cookie"] =
-                "access_token_cookie=$newToken";
+            response.requestOptions.headers['Authorization'] =
+                "Bearer $newToken";
 
             Response newResponse = await anotherDio.request(
                 "$_baseUrl${error.requestOptions.path}",

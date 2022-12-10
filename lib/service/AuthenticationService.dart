@@ -22,6 +22,11 @@ class AuthenticationService {
           AuthenticateModel? result =
           AuthenticateModel.fromJson(response.data);
 
+          print(result.access_token);
+          print(result.refresh_token);
+          print(result.farm_name);
+
+
           FlutterSecureStorage storage = const FlutterSecureStorage();
           await storage.write(key: "access_token".toUpperCase(), value: result.access_token);
           await storage.write(key: "refresh_token".toUpperCase(), value: result.refresh_token);
