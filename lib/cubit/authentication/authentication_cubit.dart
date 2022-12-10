@@ -4,6 +4,7 @@ import 'package:buffaloes_farm_management/pages/home_page.dart';
 import 'package:buffaloes_farm_management/pages/authentication/initial_farm_page.dart';
 import 'package:buffaloes_farm_management/pages/authentication/login_page.dart';
 import 'package:buffaloes_farm_management/pages/authentication/sms_pin_page.dart';
+import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,18 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
   FirebaseAuth auth = FirebaseAuth.instance;
   FlutterSecureStorage secureStorage = const FlutterSecureStorage();
   ConfirmationResult? confirmationResult;
+
+  test(BuildContext context) async {
+    print("TEST");
+    Dio dio = Dio();
+    String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWJqZWN0Ijp7InVzZXJuYW1lIjoidXNlcm5hbWUiLCJyb2xlIjoidXNlciJ9LCJ0eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjcwMzYxOTU3LCJpYXQiOjE2NzAzNTgzNTcsImp0aSI6IjUzNmEzNDhjLWUyNzctNGE4OC04YTJiLWIxMjQyZDhhMDcyNCJ9.LTSk9jS_clOi1V_mkqOE0N3ebQgjQa_UI0cVzV96Fdc";
+    String url = "https://api.melonkemo.com/poc/jwt/users/me";
+    dio.options.headers['content-Type'] = 'application/json';
+    dio.options.headers["Authorization"] = "Bearer $token";
+    print(dio.options.headers);
+    var response = await dio.get(url);
+    print(response);
+  }
 
   checking(BuildContext context, {bool useNavigator = true}) async{
     //signOut(context);

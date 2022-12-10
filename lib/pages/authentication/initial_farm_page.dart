@@ -55,6 +55,8 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
     if(farm_name == null){
       String? uid = await AuthenticationCubit().currentUserUid();
 
+      print("UID: $uid");
+
       AuthenticateModel? model =
       await AuthenticationService.login(token: uid);
 

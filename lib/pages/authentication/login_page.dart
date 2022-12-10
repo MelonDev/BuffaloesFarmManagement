@@ -19,6 +19,8 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context
+        .read<AuthenticationCubit>().test(context);
     return BlocBuilder<AuthenticationCubit, AuthenticationState>(
         builder: (ct, state) {
       return AnnotatedRegion<SystemUiOverlayStyle>(
