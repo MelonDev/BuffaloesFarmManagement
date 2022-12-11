@@ -162,7 +162,7 @@ class NotificationPage extends StatelessWidget {
               decoration: BoxDecoration(
                   // color: ColorHelper.lighten(primaryColor, .5)
                   //     .withOpacity(0.1),
-                  color: ColorHelper.lighten(primaryColor, .4).withOpacity(0.1),
+                  color: ColorHelper.lighten(primaryColor, .45).withOpacity(0.99),
                   borderRadius: BorderRadius.circular(12)),
               //width: 10,
               //height: 150,
@@ -177,15 +177,15 @@ class NotificationPage extends StatelessWidget {
                     alignment: Alignment.center,
                     margin: const EdgeInsets.only(left: 10, top: 10),
                     decoration: BoxDecoration(
-                      color: ColorHelper.lighten(primaryColor, .1)
-                          .withOpacity(0.65),
+                      color: ColorHelper.darken(primaryColor, .2)
+                          .withOpacity(0.9),
+
                       borderRadius: BorderRadius.circular(14),
                     ),
                     child: Icon(
                       icon,
                       size: 19,
-                      color: ColorHelper.darken(primaryColor, .44)
-                          .withOpacity(0.8),
+                      color: ColorHelper.lighten(primaryColor, .44).withOpacity(0.99),
                     ),
                   ),
                   Container(
@@ -198,8 +198,9 @@ class NotificationPage extends StatelessWidget {
                           Text(
                             getNotificationTitle(type),
                             style: GoogleFonts.itim(
-                                color: ColorHelper.lighten(primaryColor, .2)
-                                    .withOpacity(0.8),
+                              fontWeight: FontWeight.bold,
+                                color: ColorHelper.darken(primaryColor, .2)
+                                    .withOpacity(0.9),
                                 fontSize: 24),
                           ),
                           const SizedBox(width: 0, height: 0),
@@ -208,8 +209,8 @@ class NotificationPage extends StatelessWidget {
                               Text(
                                 message ?? "",
                                 style: GoogleFonts.itim(
-                                    color: ColorHelper.lighten(primaryColor, .4)
-                                        .withOpacity(0.94),
+                                    color: ColorHelper.darken(primaryColor, .15)
+                                        .withOpacity(0.9),
                                     fontSize: 16),
                               ),
                               // Container(
@@ -237,8 +238,8 @@ class NotificationPage extends StatelessWidget {
                               Text(
                                 subMessage ?? "",
                                 style: GoogleFonts.itim(
-                                    color: ColorHelper.lighten(primaryColor, .4)
-                                        .withOpacity(0.94),
+                                    color: ColorHelper.darken(primaryColor, .15)
+                                        .withOpacity(0.9),
                                     fontSize: 14),
                               ),
                             ],
@@ -373,7 +374,7 @@ class NotificationPage extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.only(left: 12, bottom: 0, top: 12),
-      //margin: EdgeInsets.only(bottom: 6),
+      margin: const EdgeInsets.only(top: 4),
       alignment: Alignment.bottomLeft,
       color: Colors.transparent,
       child: Column(
@@ -392,7 +393,7 @@ class NotificationPage extends StatelessWidget {
             style: GoogleFonts.itim(
                 //color: ColorHelper.lighten(primaryColor, .3).withOpacity(0.7),
                 color: ColorHelper.lighten(primaryColor, .42).withOpacity(0.84),
-                fontSize: 20),
+                fontSize: 22),
           ),
           const SizedBox(
             height: 8,

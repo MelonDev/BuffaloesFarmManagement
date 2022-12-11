@@ -103,78 +103,83 @@ class _DiseaseTreatmentPageState extends State<DiseaseTreatmentPage> {
       ),
     child: GestureDetector(
     onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-      child: Scaffold(
-        backgroundColor:backgroundColor,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          shadowColor: Colors.transparent,
-          elevation: 0.0,
-          surfaceTintColor: backgroundColor,
-          systemOverlayStyle: SystemUiOverlayStyle(
-            statusBarIconBrightness: Brightness.light,
-            statusBarColor: backgroundColor,
-          ),
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(
-              bottom: Radius.circular(22),
-            ),
-          ),
-          centerTitle: true,
-          title: Text(
-            "เพิ่มการรักษาโรค",
-            style: GoogleFonts.itim(
-              color: Colors.white,
-              fontSize: 23,
-            ),
-          ),
-          titleSpacing: 0,
-          leading: IconButton(
-            icon: const Icon(FontAwesomeIcons.xmark,
-                color: Colors.white, size: 24),
-            onPressed: () {
-              if (isSaving == false) {
-                Navigator.of(context).pop(false);
-              }
-            },
-          ),
-          actions: [
-
-          ],
+    child: Container(
+    color: backgroundColor,
+    child: Center(
+    child: Container(
+    constraints: const BoxConstraints(maxWidth: 500),child: Scaffold(
+      backgroundColor:backgroundColor,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        shadowColor: Colors.transparent,
+        elevation: 0.0,
+        surfaceTintColor: backgroundColor,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarIconBrightness: Brightness.light,
+          statusBarColor: backgroundColor,
         ),
-        floatingActionButtonLocation:
-        FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: submitButtonEnabled()
-            ? FloatingActionButton.extended(
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(22),
+          ),
+        ),
+        centerTitle: true,
+        title: Text(
+          "เพิ่มการรักษาโรค",
+          style: GoogleFonts.itim(
+            color: Colors.white,
+            fontSize: 23,
+          ),
+        ),
+        titleSpacing: 0,
+        leading: IconButton(
+          icon: const Icon(FontAwesomeIcons.xmark,
+              color: Colors.white, size: 24),
           onPressed: () {
-            onSubmit();
+            if (isSaving == false) {
+              Navigator.of(context).pop(false);
+            }
           },
-          heroTag: null,
-          backgroundColor: ColorHelper.lighten(primaryColor,.1).withOpacity(0.6),
-          extendedPadding: const EdgeInsets.only(left: 74, right: 74),
-          extendedIconLabelSpacing: 12,
-          elevation: 0,
-          //splashColor: Colors.greenAccent.withOpacity(0.4),
-          splashColor: Colors.white,
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(14))),
-          label: Text("บันทึก",
-              style: GoogleFonts.itim(
-                //color: primaryColor,
-                  color: Colors.white.withOpacity(0.9),
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18)),
-          icon: Icon(FontAwesomeIcons.solidFloppyDisk,
-              color: Colors.white.withOpacity(0.9)),
-        )
-            : null,
-        body: isSaving == true || isSaved == true
-            ? const Center(
-            child: SpinKitThreeBounce(
-              color: Colors.white,
-              size: 50.0,
-            ))
-            : body(context),
-      )),
+        ),
+        actions: [
+
+        ],
+      ),
+      floatingActionButtonLocation:
+      FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: submitButtonEnabled()
+          ? FloatingActionButton.extended(
+        onPressed: () {
+          onSubmit();
+        },
+        heroTag: null,
+        backgroundColor: ColorHelper.lighten(primaryColor,.1).withOpacity(0.6),
+        extendedPadding: const EdgeInsets.only(left: 74, right: 74),
+        extendedIconLabelSpacing: 12,
+        elevation: 0,
+        //splashColor: Colors.greenAccent.withOpacity(0.4),
+        splashColor: Colors.white,
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(14))),
+        label: Text("บันทึก",
+            style: GoogleFonts.itim(
+              //color: primaryColor,
+                color: Colors.white.withOpacity(0.9),
+                fontWeight: FontWeight.bold,
+                fontSize: 18)),
+        icon: Icon(FontAwesomeIcons.solidFloppyDisk,
+            color: Colors.white.withOpacity(0.9)),
+      )
+          : null,
+      body: isSaving == true || isSaved == true
+          ? const Center(
+          child: SpinKitThreeBounce(
+            color: Colors.white,
+            size: 50.0,
+          ))
+          : body(context),
+    ))))
+      ),
     );
   }
 

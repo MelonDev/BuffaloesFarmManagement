@@ -43,7 +43,6 @@ class _DewormingPageState extends State<DewormingPage> {
           nextDewormingDuration: int.tryParse(tfDuration.text),
           date: DateTime.now());
 
-
       if (response != null) {
         if (response == "SUCCESS") {
           isSaved = true;
@@ -87,77 +86,85 @@ class _DewormingPageState extends State<DewormingPage> {
       ),
       child: GestureDetector(
           onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-          child: Scaffold(
-            backgroundColor: backgroundColor,
-            appBar: AppBar(
-              backgroundColor: Colors.transparent,
-              shadowColor: Colors.transparent,
-              elevation: 0.0,
-              surfaceTintColor: backgroundColor,
-              systemOverlayStyle: SystemUiOverlayStyle(
-                statusBarIconBrightness: Brightness.light,
-                statusBarColor: backgroundColor,
-              ),
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(
-                  bottom: Radius.circular(22),
-                ),
-              ),
-              centerTitle: true,
-              title: Text(
-                "เพิ่มการถ่ายพยาธิ",
-                style: GoogleFonts.itim(
-                  color: Colors.white,
-                  fontSize: 23,
-                ),
-              ),
-              titleSpacing: 0,
-              leading: IconButton(
-                icon: const Icon(FontAwesomeIcons.xmark,
-                    color: Colors.white, size: 24),
-                onPressed: () {
-                  if (isSaving == false) {
-                    Navigator.of(context).pop(false);
-                  }
-                },
-              ),
-              actions: [],
-            ),
-            floatingActionButtonLocation:
-                FloatingActionButtonLocation.centerFloat,
-            floatingActionButton: submitButtonEnabled()
-                ? FloatingActionButton.extended(
-                    onPressed: () {
-                      onSubmit();
-                    },
-                    heroTag: null,
-                    backgroundColor:
-                        ColorHelper.darken(primaryColor, .1).withOpacity(0.7),
-                    extendedPadding: const EdgeInsets.only(left: 74, right: 74),
-                    extendedIconLabelSpacing: 12,
-                    elevation: 0,
-                    //splashColor: Colors.greenAccent.withOpacity(0.4),
-                    splashColor: Colors.white,
-                    shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(14))),
-                    label: Text("บันทึก",
-                        style: GoogleFonts.itim(
-                            //color: primaryColor,
-                            color: Colors.white.withOpacity(0.99),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18)),
-                    icon: Icon(FontAwesomeIcons.solidFloppyDisk,
-                        color: Colors.white.withOpacity(0.9)),
-                  )
-                : null,
-            body: isSaving == true || isSaved == true
-                ? const Center(
-                    child: SpinKitThreeBounce(
-                    color: Colors.white,
-                    size: 50.0,
-                  ))
-                : body(context),
-          )),
+          child: Container(
+              color: backgroundColor,
+              child: Center(
+                  child: Container(
+                      constraints: const BoxConstraints(maxWidth: 500),
+                      child: Scaffold(
+                        backgroundColor: backgroundColor,
+                        appBar: AppBar(
+                          backgroundColor: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          elevation: 0.0,
+                          surfaceTintColor: backgroundColor,
+                          systemOverlayStyle: SystemUiOverlayStyle(
+                            statusBarIconBrightness: Brightness.light,
+                            statusBarColor: backgroundColor,
+                          ),
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(
+                              bottom: Radius.circular(22),
+                            ),
+                          ),
+                          centerTitle: true,
+                          title: Text(
+                            "เพิ่มการถ่ายพยาธิ",
+                            style: GoogleFonts.itim(
+                              color: Colors.white,
+                              fontSize: 23,
+                            ),
+                          ),
+                          titleSpacing: 0,
+                          leading: IconButton(
+                            icon: const Icon(FontAwesomeIcons.xmark,
+                                color: Colors.white, size: 24),
+                            onPressed: () {
+                              if (isSaving == false) {
+                                Navigator.of(context).pop(false);
+                              }
+                            },
+                          ),
+                          actions: [],
+                        ),
+                        floatingActionButtonLocation:
+                            FloatingActionButtonLocation.centerFloat,
+                        floatingActionButton: submitButtonEnabled()
+                            ? FloatingActionButton.extended(
+                                onPressed: () {
+                                  onSubmit();
+                                },
+                                heroTag: null,
+                                backgroundColor:
+                                    ColorHelper.darken(primaryColor, .1)
+                                        .withOpacity(0.7),
+                                extendedPadding:
+                                    const EdgeInsets.only(left: 74, right: 74),
+                                extendedIconLabelSpacing: 12,
+                                elevation: 0,
+                                //splashColor: Colors.greenAccent.withOpacity(0.4),
+                                splashColor: Colors.white,
+                                shape: const RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(14))),
+                                label: Text("บันทึก",
+                                    style: GoogleFonts.itim(
+                                        //color: primaryColor,
+                                        color: Colors.white.withOpacity(0.99),
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18)),
+                                icon: Icon(FontAwesomeIcons.solidFloppyDisk,
+                                    color: Colors.white.withOpacity(0.9)),
+                              )
+                            : null,
+                        body: isSaving == true || isSaved == true
+                            ? const Center(
+                                child: SpinKitThreeBounce(
+                                color: Colors.white,
+                                size: 50.0,
+                              ))
+                            : body(context),
+                      ))))),
     );
   }
 

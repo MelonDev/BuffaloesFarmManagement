@@ -36,6 +36,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
   checking(BuildContext context, {bool useNavigator = true}) async{
     //signOut(context);
     String? uid = await currentUserUid();
+    print("uid: $uid");
     if (uid != null) {
       //emit(UnauthenticationState());
       emit(AuthenticatedState());
@@ -119,12 +120,16 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
   }
 
   _send(BuildContext context, String number) async {
+    print("_send");
     await auth.verifyPhoneNumber(
       phoneNumber: number,
       verificationCompleted: (PhoneAuthCredential credential) async {
         await auth.signInWithCredential(credential);
         FlutterSecureStorage storage = const FlutterSecureStorage();
+        String? uid = auth.currentUser?.uid;
+        await storage.write(key: "user_uid".toUpperCase(), value: uid);
         await storage.write(key: "phone_number".toUpperCase(), value: number);
+
         emit(AuthenticatedState());
         checking(context);
       },
