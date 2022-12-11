@@ -145,187 +145,203 @@ class _AddBuffPage extends State<AddBuffPage> {
         createRectTween: _createRectTween,
         tag: "MANAGEMENT_TAG",
         child: AnnotatedRegion<SystemUiOverlayStyle>(
-          value: SystemUiOverlayStyle.light.copyWith(
-            systemNavigationBarColor: primaryColor,
-            systemNavigationBarDividerColor: primaryColor,
-            systemNavigationBarIconBrightness: Brightness.light,
-            statusBarIconBrightness: Brightness.light,
-            statusBarBrightness: Brightness.dark,
-            //systemNavigationBarContrastEnforced: true,
-          ),
-    child: GestureDetector(
-    onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-          child: Scaffold(
-            backgroundColor: primaryColor,
-            appBar: AppBar(
-              backgroundColor: Colors.transparent,
-              shadowColor: Colors.transparent,
-              elevation: 0.0,
-              surfaceTintColor: primaryColor,
-              systemOverlayStyle: const SystemUiOverlayStyle(
-                statusBarIconBrightness: Brightness.light,
-              ),
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(
-                  bottom: Radius.circular(22),
-                ),
-              ),
-              centerTitle: true,
-              title: Text(
-                "เพิ่มกระบือ",
-                style: GoogleFonts.itim(
-                  color: Colors.white,
-                  fontSize: 24,
-                ),
-              ),
-              titleSpacing: 0,
-              leading: IconButton(
-                icon: const Icon(FontAwesomeIcons.xmark,
-                    color: Colors.white, size: 24),
-                onPressed: () {
-                  if (isSaving == false) {
-                    Navigator.of(context).pop(false);
-                  }
-                },
-              ),
-              actions: [
-                // Container(
-                //   padding: const EdgeInsets.only(right: 6),
-                //   child: IconButton(
-                //     icon: const Icon(FontAwesomeIcons.penToSquare, color: Colors.white,size: 22),
-                //     onPressed: () {
-                //       if (isSaving == false) {
-                //         Navigator.of(context).pop(false);
-                //       }
-                //     },
-                //   ),
-                // )
-              ],
+            value: SystemUiOverlayStyle.light.copyWith(
+              systemNavigationBarColor: primaryColor,
+              systemNavigationBarDividerColor: primaryColor,
+              systemNavigationBarIconBrightness: Brightness.light,
+              statusBarIconBrightness: Brightness.light,
+              statusBarBrightness: Brightness.dark,
+              //systemNavigationBarContrastEnforced: true,
             ),
-            floatingActionButtonLocation:
-                FloatingActionButtonLocation.centerFloat,
-            floatingActionButton: submitButtonEnabled()
-                ? FloatingActionButton.extended(
-                    onPressed: () {
-                      onSubmit();
-                    },
-                    heroTag: null,
-                    backgroundColor: Colors.black.withOpacity(0.5),
-                    extendedPadding: const EdgeInsets.only(left: 74, right: 74),
-                    extendedIconLabelSpacing: 12,
-                    elevation: 0,
-                    //splashColor: Colors.greenAccent.withOpacity(0.4),
-                    splashColor: Colors.white,
-                    shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(14))),
-                    label: Text("บันทึก",
-                        style: GoogleFonts.itim(
-                            //color: primaryColor,
-                            color: Colors.white.withOpacity(0.96),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18)),
-                    icon: Icon(FontAwesomeIcons.solidFloppyDisk,
-                        color: Colors.white.withOpacity(0.96)),
-                  )
-                : null,
-            body: isSaving == true || isSaved == true
-                ? const Center(
-                    child: SpinKitThreeBounce(
-                    color: Colors.white,
-                    size: 50.0,
-                  ))
-                : body(context),
-          ),)
-        ));
+            child: GestureDetector(
+              onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+              child: Scaffold(
+                backgroundColor: primaryColor,
+                appBar: PreferredSize(
+                    preferredSize: const Size.fromHeight(50.0),
+                    child: Container(
+                        height: 60,
+                        child: Center(
+                            child: Container(
+                                constraints:
+                                    const BoxConstraints(maxWidth: 500),
+                                child: AppBar(
+                                  backgroundColor: Colors.transparent,
+                                  shadowColor: Colors.transparent,
+                                  elevation: 0.0,
+                                  surfaceTintColor: primaryColor,
+                                  systemOverlayStyle:
+                                      const SystemUiOverlayStyle(
+                                    statusBarIconBrightness: Brightness.light,
+                                  ),
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.vertical(
+                                      bottom: Radius.circular(22),
+                                    ),
+                                  ),
+                                  centerTitle: true,
+                                  title: Text(
+                                    "เพิ่มกระบือ",
+                                    style: GoogleFonts.itim(
+                                      color: Colors.white,
+                                      fontSize: 24,
+                                    ),
+                                  ),
+                                  titleSpacing: 0,
+                                  leading: IconButton(
+                                    icon: const Icon(FontAwesomeIcons.xmark,
+                                        color: Colors.white, size: 24),
+                                    onPressed: () {
+                                      if (isSaving == false) {
+                                        Navigator.of(context).pop(false);
+                                      }
+                                    },
+                                  ),
+                                  actions: [
+                                    // Container(
+                                    //   padding: const EdgeInsets.only(right: 6),
+                                    //   child: IconButton(
+                                    //     icon: const Icon(FontAwesomeIcons.penToSquare, color: Colors.white,size: 22),
+                                    //     onPressed: () {
+                                    //       if (isSaving == false) {
+                                    //         Navigator.of(context).pop(false);
+                                    //       }
+                                    //     },
+                                    //   ),
+                                    // )
+                                  ],
+                                ))))),
+                floatingActionButtonLocation:
+                    FloatingActionButtonLocation.centerFloat,
+                floatingActionButton: submitButtonEnabled()
+                    ? FloatingActionButton.extended(
+                        onPressed: () {
+                          onSubmit();
+                        },
+                        heroTag: null,
+                        backgroundColor: Colors.black.withOpacity(0.5),
+                        extendedPadding:
+                            const EdgeInsets.only(left: 74, right: 74),
+                        extendedIconLabelSpacing: 12,
+                        elevation: 0,
+                        //splashColor: Colors.greenAccent.withOpacity(0.4),
+                        splashColor: Colors.white,
+                        shape: const RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(14))),
+                        label: Text("บันทึก",
+                            style: GoogleFonts.itim(
+                                //color: primaryColor,
+                                color: Colors.white.withOpacity(0.96),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18)),
+                        icon: Icon(FontAwesomeIcons.solidFloppyDisk,
+                            color: Colors.white.withOpacity(0.96)),
+                      )
+                    : null,
+                body: isSaving == true || isSaved == true
+                    ? const Center(
+                        child: SpinKitThreeBounce(
+                        color: Colors.white,
+                        size: 50.0,
+                      ))
+                    : body(context),
+              ),
+            )));
   }
 
   body(BuildContext context) {
     return Container(
-        decoration: const BoxDecoration(
-          color: kBGColor,
-          borderRadius: BorderRadius.vertical(
-            top: Radius.circular(22),
-            bottom: Radius.circular(22),
+        child: Center(
+      child: Container(
+          constraints: const BoxConstraints(maxWidth: 500),
+          decoration: const BoxDecoration(
+            color: kBGColor,
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(22),
+              bottom: Radius.circular(22),
+            ),
           ),
-        ),
-        padding: const EdgeInsets.only(
-          left: 20,
-          right: 20,
-        ),
-        //height: 460,
-        margin: EdgeInsets.only(
-            left: 16, right: 16, bottom: submitButtonEnabled() ? 90 : 16),
-        //height: MediaQuery.of(context).size.height,
-        child: Form(
-          child: ListView(
-            padding: const EdgeInsets.only(bottom: 0),
-            children: <Widget>[
-              const SizedBox(height: 20),
-              imageArea(),
-              const SizedBox(height: 8),
-              textHeader(title: "รายละเอียด"),
-              const SizedBox(height: 4),
-              textField(hint: "ชื่อ", controller: tfName, required: true),
-              const SizedBox(height: 8),
-              textField(hint: "เบอร์หู", controller: tfTag, required: true),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  Expanded(
-                    child: textField(
-                      hint: "วัน/เดือน/ปี เกิด",
-                      required: true,
-                      readOnly: true,
-                      value: pickedDatetime != null
-                          ? DateFormat('d MMMM y', 'th').format(pickedDatetime!)
-                          : null,
-                      onTap: () async {
-                        DateTime? selectdDateTime = await SlidingTimePicker(
-                            context,
-                            dateTime: pickedDatetime);
-                        if (selectdDateTime != null) {
-                          setState(() {
-                            pickedDatetime = selectdDateTime;
-                          });
-                          //x = "${DateFormat.Hm().format(selectdDateTime)}:00";
-                        }
-                      },
-                    ),
-                  ),
-                  Container(width: 10),
-                  Container(
-                      width: 76,
+          padding: const EdgeInsets.only(
+            left: 20,
+            right: 20,
+          ),
+          //height: 460,
+          margin: EdgeInsets.only(
+              left: 16, right: 16, bottom: submitButtonEnabled() ? 90 : 16),
+          //height: MediaQuery.of(context).size.height,
+          child: Form(
+            child: ListView(
+              padding: const EdgeInsets.only(bottom: 0),
+              children: <Widget>[
+                const SizedBox(height: 20),
+                imageArea(),
+                const SizedBox(height: 8),
+                textHeader(title: "รายละเอียด"),
+                const SizedBox(height: 4),
+                textField(hint: "ชื่อ", controller: tfName, required: true),
+                const SizedBox(height: 8),
+                textField(hint: "เบอร์หู", controller: tfTag, required: true),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Expanded(
                       child: textField(
-                          hint: pickedDatetime != null
-                              ? "${DateTime.now().year - pickedDatetime!.year} ปี"
-                              : "0 ปี",
-                          textAlign: TextAlign.center,
-                          enabled: false))
-                ],
-              ),
-              const SizedBox(height: 8),
-              tabBar(),
-              const SizedBox(height: 20),
-              textHeader(title: "พันธุ์"),
-              const SizedBox(height: 4),
-              textField(hint: "ชื่อพ่อ", controller: tfFather),
-              const SizedBox(height: 8),
-              textField(hint: "ชื่อแม่", controller: tfMother),
-              const SizedBox(height: 20),
-              const Padding(
-                padding: EdgeInsets.only(left: 30, right: 30),
-                child: Divider(
-                  color: Colors.grey,
+                        hint: "วัน/เดือน/ปี เกิด",
+                        required: true,
+                        readOnly: true,
+                        value: pickedDatetime != null
+                            ? DateFormat('d MMMM y', 'th')
+                                .format(pickedDatetime!)
+                            : null,
+                        onTap: () async {
+                          DateTime? selectdDateTime = await SlidingTimePicker(
+                              context,
+                              dateTime: pickedDatetime);
+                          if (selectdDateTime != null) {
+                            setState(() {
+                              pickedDatetime = selectdDateTime;
+                            });
+                            //x = "${DateFormat.Hm().format(selectdDateTime)}:00";
+                          }
+                        },
+                      ),
+                    ),
+                    Container(width: 10),
+                    Container(
+                        width: 76,
+                        child: textField(
+                            hint: pickedDatetime != null
+                                ? "${DateTime.now().year - pickedDatetime!.year} ปี"
+                                : "0 ปี",
+                            textAlign: TextAlign.center,
+                            enabled: false))
+                  ],
                 ),
-              ),
-              const SizedBox(height: 8),
-              textField(hint: "แหล่งที่มา", controller: tfSource),
-              const SizedBox(
-                height: 40,
-              ),
-            ],
-          ),
-        ));
+                const SizedBox(height: 8),
+                tabBar(),
+                const SizedBox(height: 20),
+                textHeader(title: "พันธุ์"),
+                const SizedBox(height: 4),
+                textField(hint: "ชื่อพ่อ", controller: tfFather),
+                const SizedBox(height: 8),
+                textField(hint: "ชื่อแม่", controller: tfMother),
+                const SizedBox(height: 20),
+                const Padding(
+                  padding: EdgeInsets.only(left: 30, right: 30),
+                  child: Divider(
+                    color: Colors.grey,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                textField(hint: "แหล่งที่มา", controller: tfSource),
+                const SizedBox(
+                  height: 40,
+                ),
+              ],
+            ),
+          )),
+    ));
   }
 
   Widget textHeader({required String title}) {

@@ -73,152 +73,169 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
         statusBarBrightness: Brightness.dark,
         //systemNavigationBarContrastEnforced: true,
       ),
-      child: Scaffold(
-        backgroundColor: backgroundPrimaryColor,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          shadowColor: Colors.transparent,
-          elevation: 0.0,
-          surfaceTintColor: Colors.transparent,
-          systemOverlayStyle: SystemUiOverlayStyle(
-              statusBarIconBrightness: Brightness.light,
-              statusBarColor: backgroundPrimaryColor),
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(
-              bottom: Radius.circular(22),
-            ),
-          ),
-          centerTitle: true,
-          title: Text(
-            "รายละเอียด",
-            style: GoogleFonts.itim(
-              color: Colors.white,
-              fontSize: 24,
-            ),
-          ),
-          titleSpacing: 0,
-          leading: IconButton(
-            icon: const Icon(FontAwesomeIcons.xmark,
-                color: Colors.white, size: 24),
-            onPressed: () {
-              Navigator.of(context).pop(false);
-            },
-          ),
-          actions: [
-            Container(
-              padding: const EdgeInsets.only(right: 6),
-              child: IconButton(
-                icon: const Icon(FontAwesomeIcons.penToSquare,
-                    color: Colors.white, size: 22),
-                onPressed: () {
-                  Navigator.of(context).pop(false);
-                },
-              ),
-            )
-          ],
-        ),
-        floatingActionButton: FloatingActionButton(
-          shape: const CircleBorder(),
-          onPressed: () async {
-            bottomDialog(
-              context,
-              height: 320,
-              ListView(
-                padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
-                children: [
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 16, left: 6),
-                    child: Text(
-                      "เลือกการจัดการ",
-                      style: GoogleFonts.itim(
-                          color: ColorHelper.lighten(Colors.white, .2)
-                              .withOpacity(0.86),
-                          fontSize: 28),
-                    ),
+      child: Container(
+        color: backgroundPrimaryColor,
+        child: Center(
+          child: Container(
+              constraints:
+              const BoxConstraints(maxWidth: 500),
+            child: Scaffold(
+              backgroundColor: backgroundPrimaryColor,
+              appBar: AppBar(
+                backgroundColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+                elevation: 0.0,
+                surfaceTintColor: Colors.transparent,
+                systemOverlayStyle: SystemUiOverlayStyle(
+                    statusBarIconBrightness: Brightness.light,
+                    statusBarColor: backgroundPrimaryColor),
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(
+                    bottom: Radius.circular(22),
                   ),
-                  Row(children: [
-                    Expanded(
-                      flex: 49,
-                      child: largeButton(
-                        "การผสมพันธุ์",
-                        icon: FontAwesomeIcons.venusMars,
-                        color: primaryColor,
-                        onTap: () async {
-                          await Navigator.of(context)
-                              .push(NavigatorHelper.slide(BreedingPage(
-                            buffId: widget.id,
-                          )));
-                          onLoad();
-                        },
-                      ),
+                ),
+                centerTitle: true,
+                title: Text(
+                  "รายละเอียด",
+                  style: GoogleFonts.itim(
+                    color: Colors.white,
+                    fontSize: 24,
+                  ),
+                ),
+                titleSpacing: 0,
+                leading: IconButton(
+                  icon: const Icon(FontAwesomeIcons.xmark,
+                      color: Colors.white, size: 24),
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                  },
+                ),
+                actions: [
+                  Container(
+                    padding: const EdgeInsets.only(right: 6),
+                    child: IconButton(
+                      icon: const Icon(FontAwesomeIcons.penToSquare,
+                          color: Colors.white, size: 22),
+                      onPressed: () {
+                        Navigator.of(context).pop(false);
+                      },
                     ),
-                    Expanded(flex: 2, child: Container()),
-                    Expanded(
-                      flex: 49,
-                      child: largeButton(
-                        "การฉีดวัคซีน",
-                        icon: FontAwesomeIcons.crutch,
-                        color: Colors.blue,
-                        onTap: () async {
-                          await Navigator.of(context)
-                              .push(NavigatorHelper.slide(VaccineInjectionPage(
-                            buffId: widget.id,
-                          )));
-                          onLoad();
-                        },
-                      ),
-                    )
-                  ]),
-                  const SizedBox(height: 8),
-                  Row(children: [
-                    Expanded(
-                      flex: 49,
-                      child: largeButton(
-                        "การถ่ายพยาธิ",
-                        icon: FontAwesomeIcons.prescriptionBottleMedical,
-                        color: Colors.amber,
-                        onTap: () async {
-                          await Navigator.of(context)
-                              .push(NavigatorHelper.slide(DewormingPage(
-                            buffId: widget.id,
-                          )));
-                          onLoad();
-                        },
-                      ),
-                    ),
-                    Expanded(flex: 2, child: Container()),
-                    Expanded(
-                      flex: 49,
-                      child: largeButton(
-                        "การรักษาโรค",
-                        icon: FontAwesomeIcons.virusCovid,
-                        color: Colors.green,
-                        onTap: () async {
-                          await Navigator.of(context)
-                              .push(NavigatorHelper.slide(DiseaseTreatmentPage(
-                            buffId: widget.id,
-                          )));
-                          onLoad();
-                        },
-                      ),
-                    )
-                  ]),
-                  const SizedBox(height: 26),
+                  )
                 ],
               ),
-            );
-          },
-          elevation: 20,
-          backgroundColor: const Color(0xFFF0F0F0),
-          child: Icon(FontAwesomeIcons.plus, color: backgroundPrimaryColor),
+              floatingActionButton: FloatingActionButton(
+                shape: const CircleBorder(),
+                onPressed: () async {
+                  bottomDialog(
+                    context,
+                    height: 320,
+                    Container(
+                      child: Center(
+                        child: Container(
+                            constraints:
+                            const BoxConstraints(maxWidth: 500),
+                          child: ListView(
+                            padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
+                            children: [
+                              Container(
+                                margin: const EdgeInsets.only(bottom: 16, left: 6),
+                                child: Text(
+                                  "เลือกการจัดการ",
+                                  style: GoogleFonts.itim(
+                                      color: ColorHelper.lighten(Colors.white, .2)
+                                          .withOpacity(0.86),
+                                      fontSize: 28),
+                                ),
+                              ),
+                              Row(children: [
+                                Expanded(
+                                  flex: 49,
+                                  child: largeButton(
+                                    "การผสมพันธุ์",
+                                    icon: FontAwesomeIcons.venusMars,
+                                    color: primaryColor,
+                                    onTap: () async {
+                                      await Navigator.of(context)
+                                          .push(NavigatorHelper.slide(BreedingPage(
+                                        buffId: widget.id,
+                                      )));
+                                      onLoad();
+                                    },
+                                  ),
+                                ),
+                                Expanded(flex: 2, child: Container()),
+                                Expanded(
+                                  flex: 49,
+                                  child: largeButton(
+                                    "การฉีดวัคซีน",
+                                    icon: FontAwesomeIcons.crutch,
+                                    color: Colors.blue,
+                                    onTap: () async {
+                                      await Navigator.of(context)
+                                          .push(NavigatorHelper.slide(VaccineInjectionPage(
+                                        buffId: widget.id,
+                                      )));
+                                      onLoad();
+                                    },
+                                  ),
+                                )
+                              ]),
+                              const SizedBox(height: 8),
+                              Row(children: [
+                                Expanded(
+                                  flex: 49,
+                                  child: largeButton(
+                                    "การถ่ายพยาธิ",
+                                    icon: FontAwesomeIcons.prescriptionBottleMedical,
+                                    color: Colors.amber,
+                                    onTap: () async {
+                                      await Navigator.of(context)
+                                          .push(NavigatorHelper.slide(DewormingPage(
+                                        buffId: widget.id,
+                                      )));
+                                      onLoad();
+                                    },
+                                  ),
+                                ),
+                                Expanded(flex: 2, child: Container()),
+                                Expanded(
+                                  flex: 49,
+                                  child: largeButton(
+                                    "การรักษาโรค",
+                                    icon: FontAwesomeIcons.virusCovid,
+                                    color: Colors.green,
+                                    onTap: () async {
+                                      await Navigator.of(context)
+                                          .push(NavigatorHelper.slide(DiseaseTreatmentPage(
+                                        buffId: widget.id,
+                                      )));
+                                      onLoad();
+                                    },
+                                  ),
+                                )
+                              ]),
+                              const SizedBox(height: 26),
+                            ],
+                          )
+                        )
+                      ),
+                    ),
+                  );
+                },
+                elevation: 20,
+                backgroundColor: const Color(0xFFF0F0F0),
+                child: Icon(FontAwesomeIcons.plus, color: backgroundPrimaryColor),
+              ),
+              body: buff == null
+                  ? const Center(
+                  child: SpinKitThreeBounce(
+                    color: Colors.white,
+                    size: 50.0,
+                  ))
+                  : body(context, buff!),
+            )
+          )
         ),
-        body: buff == null
-            ? const Center(
-                child: SpinKitThreeBounce(
-                color: Colors.white,
-                size: 50.0,
-              ))
-            : body(context, buff!),
       ),
     );
   }

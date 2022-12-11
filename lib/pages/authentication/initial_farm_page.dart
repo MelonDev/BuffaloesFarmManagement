@@ -49,6 +49,8 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
 
   load() async {
 
+    print("LOAD");
+
     String? farm_name =
     await storage.read(key: "farm_name".toUpperCase());
 

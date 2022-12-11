@@ -18,12 +18,12 @@ class DioHelper {
 
   initializeToken() async {
     String? user_uid = await storage.read(key: "user_uid".toUpperCase());
-    print("user_uid: ${user_uid}");
+    print("user_uid: $user_uid");
 
     String? accessToken = await storage.read(key: "access_token".toUpperCase());
-    print("accessToken: ${accessToken}");
+    print("accessToken: $accessToken");
     token = accessToken ?? "";
-    print("token: ${token}");
+    print("token: $token");
 
     initApiClient();
   }

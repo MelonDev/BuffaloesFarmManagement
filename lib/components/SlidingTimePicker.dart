@@ -40,6 +40,8 @@ class _mSlidingTimePickerState extends State<mSlidingTimePicker> {
   Widget build(BuildContext context) {
     return Center(
         child: Container(
+          constraints:
+          const BoxConstraints(maxWidth: 400),
       height: 280,
       margin: const EdgeInsets.all(30),
       //constraints: maxHeightContain,
@@ -80,7 +82,7 @@ class _mSlidingTimePickerState extends State<mSlidingTimePicker> {
                   mode: CupertinoDatePickerMode.date,
                   use24hFormat: true,
                   minimumYear: DateTime.now().year - 30,
-                  maximumYear: DateTime.now().year,
+                  maximumYear: DateTime.now().year + 1,
                   dateOrder: DatePickerDateOrder.dmy,
                   onDateTimeChanged: (DateTime value) {
                     print(value);

@@ -348,6 +348,16 @@ class FarmService {
             List<NotificationModel> list = data.map<NotificationModel>((item) {
               return NotificationModel.fromJson(item);
             }).toList();
+
+            list.sort((a, b) {
+              var adate = a.notify_datetime;
+              var bdate = b.notify_datetime;
+              if(adate != null && bdate != null){
+                return adate.compareTo(bdate);
+              }
+              return 0;
+            });
+
             return list;
           }
         }
