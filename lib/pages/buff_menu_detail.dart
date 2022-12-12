@@ -15,7 +15,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 class BuffMenuDetail extends StatelessWidget {
-  BuffMenuDetail({Key? key,required this.title}) : super(key: key);
+  BuffMenuDetail({Key? key, required this.title}) : super(key: key);
 
   String title;
 
@@ -39,103 +39,99 @@ class BuffMenuDetail extends StatelessWidget {
           statusBarBrightness: Brightness.dark,
           //systemNavigationBarContrastEnforced: true,
         ),
-        child: GestureDetector(
-          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-          child: Scaffold(
-              backgroundColor: backgroundColor,
-              appBar: PreferredSize(
-                  preferredSize: const Size.fromHeight(50.0),
-                  child: Container(
-                      height: 60 + statusBarHeight,
-                      child: Center(
-                          child: Container(
-                              constraints: const BoxConstraints(maxWidth: 500),
-                              child: AppBar(
-                                backgroundColor: tintColor,
-                                shadowColor: Colors.transparent,
-                                elevation: 0.0,
-                                surfaceTintColor: backgroundColor,
-                                systemOverlayStyle: SystemUiOverlayStyle(
-                                  statusBarIconBrightness: Brightness.light,
-                                  statusBarColor: tintColor
+        child: Container(
+          color: backgroundColor,
+            child: Center(
+                child: Container(
+                    constraints: const BoxConstraints(maxWidth: 500),
+                    child: GestureDetector(
+                      onTap: () =>
+                          FocusManager.instance.primaryFocus?.unfocus(),
+                      child: Scaffold(
+                          backgroundColor: backgroundColor,
+                          appBar: PreferredSize(
+                              preferredSize: const Size.fromHeight(50.0),
+                              child: Container(
+                                  height: 60 + statusBarHeight,
+                                  child: Center(
+                                      child: Container(
+                                          constraints: const BoxConstraints(
+                                              maxWidth: 500),
+                                          child: AppBar(
+                                            backgroundColor: tintColor,
+                                            shadowColor: Colors.transparent,
+                                            elevation: 0.0,
+                                            surfaceTintColor: backgroundColor,
+                                            systemOverlayStyle:
+                                                SystemUiOverlayStyle(
+                                                    statusBarIconBrightness:
+                                                        Brightness.light,
+                                                    statusBarColor: tintColor),
+                                            shape: const RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.vertical(
+                                                bottom: Radius.circular(22),
+                                              ),
+                                            ),
+                                            centerTitle: true,
+                                            title: Text(
+                                              title,
+                                              style: GoogleFonts.itim(
+                                                color: Colors.white,
+                                                fontSize: 24,
+                                              ),
+                                            ),
+                                            titleSpacing: 0,
+                                            leading: IconButton(
+                                              icon: const Icon(
+                                                  FontAwesomeIcons.xmark,
+                                                  color: Colors.white,
+                                                  size: 24),
+                                              onPressed: () {
+                                                Navigator.of(context)
+                                                    .pop(false);
+                                              },
+                                            ),
+                                          ))))),
+                          floatingActionButton: FloatingActionButton(
+                            shape: const CircleBorder(),
+                            onPressed: () async {
+                              Navigator.of(context).push(
+                                NavigatorHelper.slide(
+                                  const AddBuffPage(),
                                 ),
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.vertical(
-                                    bottom: Radius.circular(22),
+                              );
+                            },
+                            elevation: 20,
+                            backgroundColor: primaryColor,
+                            child: const Icon(FontAwesomeIcons.plus),
+                          ),
+                          body: BlocBuilder<HomeCubit, HomeState>(
+                              builder: (context, state) {
+                            if (state is HomeManagementState) {
+                              return Container(
+                                  decoration: const BoxDecoration(
+                                    color: Colors.transparent,
                                   ),
-                                ),
-                                centerTitle: true,
-                                title: Text(
-                                  title,
-                                  style: GoogleFonts.itim(
-                                    color: Colors.white,
-                                    fontSize: 24,
-                                  ),
-                                ),
-                                titleSpacing: 0,
-                                leading: IconButton(
-                                  icon: const Icon(FontAwesomeIcons.xmark,
-                                      color: Colors.white, size: 24),
-                                  onPressed: () {
-                                    Navigator.of(context).pop(false);
-                                  },
-                                ),
-                              ))))),
-              floatingActionButton: FloatingActionButton(
-                shape: const CircleBorder(),
-                onPressed: () async {
-                  Navigator.of(context).push(
-                    NavigatorHelper.slide(
-                      const AddBuffPage(),
-                    ),
-                  );
-                },
-                elevation: 20,
-                backgroundColor: primaryColor,
-                child: const Icon(FontAwesomeIcons.plus),
-              ),
-              body:
-                  BlocBuilder<HomeCubit, HomeState>(builder: (context, state) {
-                if (state is HomeManagementState) {
-                  return Container(
-                      decoration: const BoxDecoration(
-                        color: Colors.transparent,
-                      ),
-                      child: state is LoadingHomeManagementState
-                          ? loading()
-                          : body(context, state));
-                } else {
-                  return Container();
-                }
-              })),
-        ));
-    return BlocBuilder<HomeCubit, HomeState>(builder: (context, state) {
-      if (state is HomeManagementState) {
-        return Container(
-            decoration: const BoxDecoration(
-              color: Colors.transparent,
-            ),
-            child: state is LoadingHomeManagementState
-                ? loading()
-                : body(context, state));
-      } else {
-        return Container();
-      }
-    });
+                                  child: state is LoadingHomeManagementState
+                                      ? loading()
+                                      : body(context, state));
+                            } else {
+                              return Container();
+                            }
+                          })),
+                    )))));
   }
 
   body(BuildContext context, HomeManagementState state) {
     return Container(
-      child: Center(
-          child: Container(
-              constraints: const BoxConstraints(maxWidth: 500),
-              child: RefreshIndicator(
-                color: primaryColor,
-                child: child(context, state),
-                onRefresh: () async {
-                  context.read<HomeCubit>().management();
-                },
-              ))),
+      child: RefreshIndicator(
+        color: primaryColor,
+        child: child(context, state),
+        onRefresh: () async {
+          context.read<HomeCubit>().management();
+        },
+      ),
     );
   }
 
