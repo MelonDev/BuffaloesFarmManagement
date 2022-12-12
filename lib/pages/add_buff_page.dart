@@ -141,6 +141,8 @@ class _AddBuffPage extends State<AddBuffPage> {
 
   @override
   Widget build(BuildContext context) {
+    double statusBarHeight = MediaQuery.of(context).viewPadding.top;
+
     return Hero(
         createRectTween: _createRectTween,
         tag: "MANAGEMENT_TAG",
@@ -160,7 +162,7 @@ class _AddBuffPage extends State<AddBuffPage> {
                 appBar: PreferredSize(
                     preferredSize: const Size.fromHeight(50.0),
                     child: Container(
-                        height: 60,
+                        height: 60 + statusBarHeight,
                         child: Center(
                             child: Container(
                                 constraints:
