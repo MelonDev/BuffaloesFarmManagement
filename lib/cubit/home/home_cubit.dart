@@ -22,11 +22,17 @@ class HomeCubit extends Cubit<HomeState> {
     emit(HomeFarmState(data: data));
   }
 
-  management() async {
+  management({String? code}) async {
     emit(LoadingHomeManagementState());
-    List<BuffModel>? buffs = await FarmService.buffs();
+    print(code);
+    if(code != null) {
+      List<BuffModel>? buffs = await FarmService.buffs(code);
 
-    emit(HomeManagementState(data: buffs));
+      emit(HomeManagementState(data: buffs));
+    }else {
+      emit(HomeManagementState(data: null));
+
+    }
   }
 
   notification() async {

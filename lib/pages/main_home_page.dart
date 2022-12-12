@@ -5,6 +5,7 @@ import 'package:buffaloes_farm_management/pages/add_buff_page.dart';
 import 'package:buffaloes_farm_management/pages/menu/farm_page.dart';
 import 'package:buffaloes_farm_management/pages/loading/home_initial_loading_page.dart';
 import 'package:buffaloes_farm_management/pages/menu/management_page.dart';
+import 'package:buffaloes_farm_management/pages/menu/new_management_page.dart';
 import 'package:buffaloes_farm_management/pages/menu/notification_page.dart';
 import 'package:buffaloes_farm_management/pages/menu/more_page.dart';
 import 'package:buffaloes_farm_management/tools/ColorHelper.dart';
@@ -35,6 +36,8 @@ class _MainHomePageState extends State<MainHomePage> {
       initialTabPage(context);
     }
 
+    double statusBarHeight = MediaQuery.of(context).viewPadding.top;
+
     return BlocBuilder<HomeCubit, HomeState>(builder: (context, state) {
       if (state is HomeInitialState) {
         return const HomeInitialLoadingPage();
@@ -53,7 +56,7 @@ class _MainHomePageState extends State<MainHomePage> {
                 appBar: PreferredSize(
                     preferredSize: const Size.fromHeight(50.0),
                     child: Container(
-                      height: 60,
+                      height: 60 + statusBarHeight,
                       child: Center(
                         child: Container(
                           constraints: const BoxConstraints(maxWidth: 700),
@@ -254,7 +257,7 @@ class _MainHomePageState extends State<MainHomePage> {
           icon: FontAwesomeIcons.pager,
           activeIcon: FontAwesomeIcons.pager,
           color: Colors.pink,
-          body: ManagementPage(),
+          body: NewManagementPage(),
           tag: "MANAGEMENT",
           onTap: () {
             context.read<HomeCubit>().management();
@@ -328,7 +331,7 @@ class _MainHomePageState extends State<MainHomePage> {
           }
         },
         style: ButtonStyle(
-          overlayColor: MaterialStateProperty.all(tabColor(state)),
+          overlayColor: MaterialStateProperty.all(ColorHelper.darken(tabColor(state))),
           elevation: MaterialStateProperty.all(0),
           backgroundColor: MaterialStateProperty.all(tabColor(state)),
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -408,7 +411,7 @@ class _MainHomePageState extends State<MainHomePage> {
             Text(
               item.name,
               style: TextStyle(
-                  fontWeight: active ? FontWeight.bold : FontWeight.normal,
+                  fontWeight: FontWeight.normal,
                   fontSize: active ? 19 : 17,
                   color: active ? item.color : Colors.black.withOpacity(0.4)),
             ),

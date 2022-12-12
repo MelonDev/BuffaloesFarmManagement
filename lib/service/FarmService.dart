@@ -52,11 +52,10 @@ class FarmService {
     }
   }
 
-  static Future<List<BuffModel>?> buffs() async {
+  static Future<List<BuffModel>?> buffs(String code) async {
     try {
       Map<String, String> body = {
-        //"email": "",
-        //"password": "",
+        "type": code,
       };
       var response = await HttpService.getForm(path: '/buffs', body: body);
       if (response != null) {
