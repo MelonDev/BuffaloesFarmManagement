@@ -253,7 +253,7 @@ class _MainHomePageState extends State<MainHomePage> {
             context.read<HomeCubit>().farm(context);
           }),
       TabModel(
-          name: "การจัดการ",
+          name: "การบันทึกข้อมูล",
           icon: FontAwesomeIcons.pager,
           activeIcon: FontAwesomeIcons.pager,
           color: Colors.pink,
