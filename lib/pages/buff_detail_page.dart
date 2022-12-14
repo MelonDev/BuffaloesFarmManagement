@@ -9,6 +9,7 @@ import 'package:buffaloes_farm_management/models/activity/DewormingActivityModel
 import 'package:buffaloes_farm_management/models/activity/DiseaseTreatmentActivityModel.dart';
 import 'package:buffaloes_farm_management/models/activity/ReturnEstrusActivityModel.dart';
 import 'package:buffaloes_farm_management/models/activity/VaccineInjectionActivityModel.dart';
+import 'package:buffaloes_farm_management/pages/activities/induction_page.dart';
 import 'package:buffaloes_farm_management/service/FarmService.dart';
 import 'package:buffaloes_farm_management/tools/ColorHelper.dart';
 import 'package:buffaloes_farm_management/tools/NavigatorHelper.dart';
@@ -151,12 +152,12 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
                                 Expanded(
                                   flex: 49,
                                   child: largeButton(
-                                    "การผสมพันธุ์",
+                                    "การเหนี่ยวนำ",
                                     icon: FontAwesomeIcons.venusMars,
                                     color: primaryColor,
                                     onTap: () async {
                                       await Navigator.of(context)
-                                          .push(NavigatorHelper.slide(BreedingPage(
+                                          .push(NavigatorHelper.slide(InductionPage(
                                         buffId: widget.id,
                                       )));
                                       onLoad();
@@ -830,8 +831,8 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
       return item.status == active
           ? card(context,
               message:
-                  "ผล: ${item.estrus_result != null ? (item.estrus_result! ? "กลับสัด" : "ไม่กลับสัด") : ""}",
-              subMessage: "คาดว่าจะคลอด: ${getBirthDate(item.date)}",
+              "คาดว่าจะคลอด: ${getBirthDate(item.date)}",
+              subMessage: item.end_date != null ? "ถึง: ${getBirthDate(item.end_date)}" : null,
               active: active,
               log: BuffActivityLog.returnEstrus)
           : null;
@@ -970,7 +971,7 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
         }
       case BuffActivityLog.returnEstrus:
         {
-          return "กลับสัด";
+          return "ตั้งท้อง";
         }
       case BuffActivityLog.vaccineInjection:
         {

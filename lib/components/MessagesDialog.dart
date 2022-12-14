@@ -93,7 +93,7 @@ void messageDialog(BuildContext context,
   );
 }
 
-void bottomDialog(BuildContext context, Widget child,{double? height}) {
+void bottomDialog(BuildContext context, Widget child,{double? height,Color? backgroundColor}) {
   showMaterialModalBottomSheet(
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.only(topLeft: Radius.circular(24),topRight: Radius.circular(24)),
@@ -101,7 +101,7 @@ void bottomDialog(BuildContext context, Widget child,{double? height}) {
     context: context,
     expand: false,
     //backgroundColor: const Color(0xFF0C0C0C),
-    backgroundColor: const Color(0xFF060606),
+    backgroundColor: backgroundColor ?? const Color(0xFF060606),
     barrierColor: Colors.black.withOpacity(0.96),
     builder: (context) =>  SizedBox(height: height,child: child),
   ).whenComplete(() {

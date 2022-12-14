@@ -354,17 +354,18 @@ class FarmPage extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      activityIndicator(
+                      /*activityIndicator(
                           color: Colors.pink,
                           text: 'รอการกลับสัด',
                           alignment: Alignment.topCenter,
                           value: data['BREEDING'] ?? 0),
                       const SizedBox(
                         height: 4,
-                      ),
+                      ),*/
                       activityIndicator(
                           color: Colors.indigo,
                           text: 'รอคลอด',
+                          alignment: Alignment.topCenter,
                           value: data['RETURN_ESTRUS'] ?? 0),
                       const SizedBox(
                         height: 4,
@@ -441,6 +442,7 @@ class FarmPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
+            width: 65,
               padding:
                   const EdgeInsets.only(left: 12, right: 12, top: 4, bottom: 4),
               margin: const EdgeInsets.only(top: 0),

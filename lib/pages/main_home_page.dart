@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:buffaloes_farm_management/components/MessagesDialog.dart';
 import 'package:buffaloes_farm_management/cubit/home/home_cubit.dart';
 import 'package:buffaloes_farm_management/models/TabModel.dart';
@@ -104,7 +105,7 @@ class _MainHomePageState extends State<MainHomePage> {
                               if (state is HomeManagementState) {
                                 Navigator.of(context).push(
                                   NavigatorHelper.slide(
-                                    const AddBuffPage(),
+                                    AddBuffPage(),
                                   ),
                                 );
                               }
@@ -147,11 +148,15 @@ class _MainHomePageState extends State<MainHomePage> {
                                               )
                                             : null,
                                         unselectedColor: Colors.black54,
-                                        title: Text(
-                                          tab.name,
-                                          style: GoogleFonts.itim(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.w500),
+                                        title: Container(
+                                          constraints: const BoxConstraints(maxWidth:120),
+                                          child: AutoSizeText(
+                                            tab.name,
+                                            maxLines: 1,
+                                            style: GoogleFonts.itim(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.w500),
+                                          ),
                                         ),
                                         selectedColor: tab.color,
                                       ))
@@ -253,7 +258,7 @@ class _MainHomePageState extends State<MainHomePage> {
             context.read<HomeCubit>().farm(context);
           }),
       TabModel(
-          name: "การบันทึกข้อมูล",
+          name: "บันทึกข้อมูล",
           icon: FontAwesomeIcons.pager,
           activeIcon: FontAwesomeIcons.pager,
           color: Colors.pink,
@@ -325,7 +330,7 @@ class _MainHomePageState extends State<MainHomePage> {
           if (state is HomeManagementState) {
             Navigator.of(context).push(
               NavigatorHelper.slide(
-                const AddBuffPage(),
+                AddBuffPage(),
               ),
             );
           }
@@ -408,8 +413,9 @@ class _MainHomePageState extends State<MainHomePage> {
               size: 16,
             ),
             Container(width: 8),
-            Text(
+            AutoSizeText(
               item.name,
+              maxLines: 1,
               style: TextStyle(
                   fontWeight: FontWeight.normal,
                   fontSize: active ? 19 : 17,

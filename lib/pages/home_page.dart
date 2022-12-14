@@ -79,7 +79,7 @@ class HomePage extends StatelessWidget {
                       if (state is HomeManagementState) {
                         Navigator.of(context).push(
                           NavigatorHelper.slide(
-                            const AddBuffPage(),
+                            AddBuffPage(),
                           ),
                         );
                         // await Navigator.push(
