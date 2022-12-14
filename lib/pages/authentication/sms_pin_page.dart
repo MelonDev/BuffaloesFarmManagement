@@ -41,12 +41,14 @@ class SMSPinPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthenticationCubit, AuthenticationState>(
         builder: (context, state) {
+          print(state.toString());
       String? message;
       if (state is ErrorSMSState) {
         if(timestamp != state.timestamp){
           focusNode.requestFocus();
-
           textEditingController.clear();
+          errorController =
+              StreamController<ErrorAnimationType>();
           errorController!.add(ErrorAnimationType.shake);
           hasError = true;
           message = state.message;
@@ -148,8 +150,8 @@ class SMSPinPage extends StatelessWidget {
                                 bottom: Radius.circular(kIsWeb ? 22 : 0)
 
                             )),
-                        constraints: const BoxConstraints(
-                            maxHeight: 400,
+                        constraints: BoxConstraints(
+                            maxHeight: kIsWeb ? 400 : MediaQuery.of(context).size.height,
                             maxWidth: 400
                         ),
                         height: MediaQuery.of(context).size.height,
@@ -185,6 +187,7 @@ class SMSPinPage extends StatelessWidget {
                                   padding: const EdgeInsets.symmetric(
                                       vertical: 8.0, horizontal: 30),
                                   child: PinCodeTextField(
+                                    autoDisposeControllers: false,
                                     appContext: context,
                                     pastedTextStyle: TextStyle(
                                       color: Colors.green.shade600,

@@ -135,6 +135,7 @@ class NewManagementPage extends StatelessWidget {
                 NavigatorHelper.slide(
                   BuffMenuDetail(
                     title: tile.name,
+                    code: tile.code
                     // tintColor: ColorHelper.lighten(
                     //     primaryColor, isLandscapeMode(context) ? .84 : .45),
                   ),

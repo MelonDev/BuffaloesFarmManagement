@@ -1,3 +1,4 @@
+import 'package:buffaloes_farm_management/components/CustomTextFormField.dart';
 import 'package:buffaloes_farm_management/constants/ColorConstants.dart';
 import 'package:buffaloes_farm_management/cubit/authentication/authentication_cubit.dart';
 import 'package:buffaloes_farm_management/cubit/home/home_cubit.dart';
@@ -7,6 +8,7 @@ import 'package:buffaloes_farm_management/models/ProvinceModel.dart';
 import 'package:buffaloes_farm_management/models/SubDistrictModel.dart';
 import 'package:buffaloes_farm_management/pages/loading/authenticate_loading_page.dart';
 import 'package:buffaloes_farm_management/service/AuthenticationService.dart';
+import 'package:buffaloes_farm_management/service/FarmService.dart';
 import 'package:buffaloes_farm_management/tools/ThailandProvider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -33,12 +35,14 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
   FirebaseAuth auth = FirebaseAuth.instance;
   FlutterSecureStorage storage = const FlutterSecureStorage();
 
-
   bool loaded = false;
 
   TextEditingController farmNameController = TextEditingController();
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
+  TextEditingController groupController = TextEditingController();
+  TextEditingController groupOtherController = TextEditingController();
+
   TextEditingController addressController = TextEditingController();
 
   ProvinceModel? province;
@@ -48,19 +52,16 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
   bool initial = false;
 
   load() async {
-
     print("LOAD");
 
-    String? farm_name =
-    await storage.read(key: "farm_name".toUpperCase());
+    String? farm_name = await storage.read(key: "farm_name".toUpperCase());
 
-    if(farm_name == null){
+    if (farm_name == null) {
       String? uid = await AuthenticationCubit().currentUserUid();
 
       print("UID: $uid");
 
-      AuthenticateModel? model =
-      await AuthenticationService.login(token: uid);
+      AuthenticateModel? model = await AuthenticationService.login(token: uid);
 
       if (model != null) {
         if (model.access_token != null && model.refresh_token != null) {
@@ -71,15 +72,12 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
         loaded = true;
         initial = true;
       });
-    }else {
+    } else {
       toHomePage();
     }
-
-
   }
 
   onSubmit() async {
-
     setState(() {
       loaded = false;
     });
@@ -95,6 +93,10 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
         lastName: lastNameController.text,
         phoneNumber: phoneNumber ?? "",
         token: uid ?? "",
+        group: groupController.text == "เพิ่มกลุ่มใหม่" ||
+                groupController.text == "อื่น ๆ"
+            ? groupOtherController.text
+            : groupController.text,
         province: province?.PROVINCE_NAME ?? "",
         district: district?.DISTRICT_NAME ?? "",
         subDistrict: subDistrict?.SUB_DISTRICT_NAME ?? "");
@@ -102,7 +104,7 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
     print("authentication != null: ${authentication != null}");
     if (authentication != null) {
       toHomePage();
-    }else {
+    } else {
       setState(() {
         loaded = true;
       });
@@ -117,173 +119,211 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
 
   @override
   Widget build(BuildContext context) {
-    print("build");
     if (loaded) {
       return AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.light.copyWith(
-            systemNavigationBarColor: kBGColor,
-            systemNavigationBarDividerColor: kBGColor,
-            systemNavigationBarIconBrightness: Brightness.light,
-            statusBarIconBrightness: Brightness.light,
-            statusBarBrightness: Brightness.dark,
-            statusBarColor: bgButtonColor
-            //systemNavigationBarContrastEnforced: true,
-            ),
-        child: Material(child: GestureDetector(
-            onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-            child: Scaffold(
-          backgroundColor: bgButtonColor,
-          appBar: PreferredSize(
-              preferredSize: const Size.fromHeight(50.0),
-              // here the desired height
-              child: AppBar(
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                systemOverlayStyle: const SystemUiOverlayStyle(
-                  statusBarColor: bgButtonColor,
-                  statusBarIconBrightness: Brightness.light,
-                ),
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(
-                    bottom: Radius.circular(22),
-                  ),
-                ),
-                centerTitle: true,
-                title: Text(
-                  "รายละเอียดฟาร์ม",
-                  style: GoogleFonts.itim(
-                    color: Colors.white,
-                    fontSize: 22,
-                  ),
-                ),
-                titleSpacing: 0,
-                leading: IconButton(
-                  icon: const Icon(
-                    Icons.close,
-                    color: Colors.white,
-                  ),
-                  onPressed: () {
-                    context.read<AuthenticationCubit>().signOut(context);
-                  },
-                ),
-              )),
-          // floatingActionButtonLocation:
-          // FloatingActionButtonLocation.centerFloat,
-          // floatingActionButton: FloatingActionButton.extended(
-          //   onPressed: () {},
-          //   heroTag: null,
-          //   backgroundColor: bgButtonColor,
-          //   extendedPadding: const EdgeInsets.only(left: 94, right: 94),
-          //   extendedIconLabelSpacing: 12,
-          //   elevation: 0,
-          //   splashColor: bgButtonColor.withOpacity(0.4),
-          //   shape: const RoundedRectangleBorder(
-          //       borderRadius: BorderRadius.all(Radius.circular(14))),
-          //   label: Text("ยืนยัน",
-          //       style: GoogleFonts.itim(
-          //           color: Colors.white,
-          //           fontWeight: FontWeight.bold,
-          //           fontSize: 18)),
-          //   icon: Icon(Ionicons.checkmark_outline, color: Colors.white),
-          // ),
-          body: Center(
-            child:Container(
-                decoration: const BoxDecoration(
-                    color: kBGColor,
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(22),
-                    )),
-                constraints: const BoxConstraints(
-                    maxWidth: 500
-                ),
-                padding:
-                const EdgeInsets.symmetric(vertical: 8.0, horizontal: 30),
-                height: MediaQuery.of(context).size.height,
-                child: ListView(
-                  padding: const EdgeInsets.only(bottom: 30),
-                  children: <Widget>[
-                    const SizedBox(height: 20),
-                    textField(hint: "ชื่อฟาร์ม",controller: farmNameController),
-                    const SizedBox(height: 12),
-                    const Padding(
-                      padding: EdgeInsets.only(left: 30, right: 30),
-                      child: Divider(
-                        color: Colors.grey,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    textHeader(title: "รายละเอียด"),
-                    textField(hint: "ชื่อ",controller: firstNameController),
-                    const SizedBox(height: 8),
-                    textField(hint: "นามสกุล",controller: lastNameController),
-                    const SizedBox(height: 12),
-                    const Padding(
-                      padding: EdgeInsets.only(left: 30, right: 30),
-                      child: Divider(
-                        color: Colors.grey,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    textHeader(title: "ที่อยู่"),
-                    textField(hint: "",controller: addressController),
-                    const SizedBox(height: 8),
-                    textField(
-                        hint: "จังหวัด",
-                        value: province?.PROVINCE_NAME,
-                        readOnly: true,
-                        enabled: true,
-                        onTap: () {
-                          provinceDialog();
-                        }),
-                    const SizedBox(height: 8),
-                    textField(
-                        hint: "อำเภอ",
-                        value: district?.DISTRICT_NAME,
-                        readOnly: true,
-                        enabled: province != null,
-                        onTap: () {
-                          districtDialog();
-                        }),
-                    const SizedBox(height: 8),
-                    textField(
-                        hint: "ตำบล",
-                        value: subDistrict?.SUB_DISTRICT_NAME,
-                        readOnly: true,
-                        enabled: district != null,
-                        onTap: () {
-                          subDistrictDialog();
-                        }),
-                    const SizedBox(height: 12),
-                    const Padding(
-                      padding: EdgeInsets.only(left: 30, right: 30),
-                      child: Divider(
-                        color: Colors.grey,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    button(
-                        enabled: isEnabledConfirmButton(),
-                        title: "ยืนยัน",
-                        function: () {
-                          onSubmit();
-                        }),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                  ],
-                ))
-          ),
-        )),)
-      );
-    } else if(initial == false) {
+          value: SystemUiOverlayStyle.light.copyWith(
+              systemNavigationBarColor: kBGColor,
+              systemNavigationBarDividerColor: kBGColor,
+              systemNavigationBarIconBrightness: Brightness.light,
+              statusBarIconBrightness: Brightness.light,
+              statusBarBrightness: Brightness.dark,
+              statusBarColor: bgButtonColor
+              //systemNavigationBarContrastEnforced: true,
+              ),
+          child: Material(
+            child: GestureDetector(
+                onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+                child: Scaffold(
+                  backgroundColor: bgButtonColor,
+                  appBar: PreferredSize(
+                      preferredSize: const Size.fromHeight(50.0),
+                      // here the desired height
+                      child: AppBar(
+                        backgroundColor: Colors.transparent,
+                        elevation: 0,
+                        systemOverlayStyle: const SystemUiOverlayStyle(
+                          statusBarColor: bgButtonColor,
+                          statusBarIconBrightness: Brightness.light,
+                        ),
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(
+                            bottom: Radius.circular(22),
+                          ),
+                        ),
+                        centerTitle: true,
+                        title: Text(
+                          "รายละเอียดฟาร์ม",
+                          style: GoogleFonts.itim(
+                            color: Colors.white,
+                            fontSize: 22,
+                          ),
+                        ),
+                        titleSpacing: 0,
+                        leading: IconButton(
+                          icon: const Icon(
+                            Icons.close,
+                            color: Colors.white,
+                          ),
+                          onPressed: () {
+                            context
+                                .read<AuthenticationCubit>()
+                                .signOut(context);
+                          },
+                        ),
+                      )),
+                  // floatingActionButtonLocation:
+                  // FloatingActionButtonLocation.centerFloat,
+                  // floatingActionButton: FloatingActionButton.extended(
+                  //   onPressed: () {},
+                  //   heroTag: null,
+                  //   backgroundColor: bgButtonColor,
+                  //   extendedPadding: const EdgeInsets.only(left: 94, right: 94),
+                  //   extendedIconLabelSpacing: 12,
+                  //   elevation: 0,
+                  //   splashColor: bgButtonColor.withOpacity(0.4),
+                  //   shape: const RoundedRectangleBorder(
+                  //       borderRadius: BorderRadius.all(Radius.circular(14))),
+                  //   label: Text("ยืนยัน",
+                  //       style: GoogleFonts.itim(
+                  //           color: Colors.white,
+                  //           fontWeight: FontWeight.bold,
+                  //           fontSize: 18)),
+                  //   icon: Icon(Ionicons.checkmark_outline, color: Colors.white),
+                  // ),
+                  body: Center(
+                      child: Container(
+                          decoration: const BoxDecoration(
+                              color: kBGColor,
+                              borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(22),
+                              )),
+                          constraints: const BoxConstraints(maxWidth: 500),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 8.0, horizontal: 30),
+                          height: MediaQuery.of(context).size.height,
+                          child: ListView(
+                            padding: const EdgeInsets.only(bottom: 30),
+                            children: <Widget>[
+                              const SizedBox(height: 20),
+                              textField(
+                                  hint: "ชื่อฟาร์ม",
+                                  controller: farmNameController,
+                                  required: true),
+                              const SizedBox(height: 12),
+                              const Padding(
+                                padding: EdgeInsets.only(left: 30, right: 30),
+                                child: Divider(
+                                  color: Colors.grey,
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              textHeader(title: "รายละเอียด"),
+                              textField(
+                                  hint: "ชื่อ",
+                                  controller: firstNameController,
+                                  required: true),
+                              const SizedBox(height: 8),
+                              textField(
+                                  hint: "นามสกุล",
+                                  controller: lastNameController,
+                                  required: true),
+                              const SizedBox(height: 8),
+                              textField(
+                                  hint: "กลุ่ม",
+                                  controller: groupController,
+                                  readOnly: true,
+                                  enabled: true,
+                                  required: true,
+                                  onTap: () {
+                                    groupDialog();
+                                  }),
+                              groupController.text == "เพิ่มกลุ่มใหม่" ||
+                                      groupController.text == "อื่น ๆ"
+                                  ? const SizedBox(height: 8)
+                                  : Container(),
+                              groupController.text == "เพิ่มกลุ่มใหม่" ||
+                                      groupController.text == "อื่น ๆ"
+                                  ? textField(
+                                      hint: "ระบุ",
+                                required: true,
+                                controller: groupOtherController,
+                                      enabled: true,
+                                    )
+                                  : Container(),
+                              const SizedBox(height: 12),
+                              const Padding(
+                                padding: EdgeInsets.only(left: 30, right: 30),
+                                child: Divider(
+                                  color: Colors.grey,
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              textHeader(title: "ที่อยู่"),
+                              textField(
+                                  hint: "", controller: addressController),
+                              const SizedBox(height: 8),
+                              textField(
+                                  hint: "จังหวัด",
+                                  value: province?.PROVINCE_NAME,
+                                  readOnly: true,
+                                  enabled: true,
+                                  required: true,
+                                  onTap: () {
+                                    provinceDialog();
+                                  }),
+                              const SizedBox(height: 8),
+                              textField(
+                                  hint: "อำเภอ",
+                                  value: district?.DISTRICT_NAME,
+                                  readOnly: true,
+                                  required: true,
+                                  enabled: province != null,
+                                  onTap: () {
+                                    districtDialog();
+                                  }),
+                              const SizedBox(height: 8),
+                              textField(
+                                  hint: "ตำบล",
+                                  value: subDistrict?.SUB_DISTRICT_NAME,
+                                  readOnly: true,
+                                  required: true,
+                                  enabled: district != null,
+                                  onTap: () {
+                                    subDistrictDialog();
+                                  }),
+                              const SizedBox(height: 12),
+                              const Padding(
+                                padding: EdgeInsets.only(left: 30, right: 30),
+                                child: Divider(
+                                  color: Colors.grey,
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              button(
+                                  enabled: isEnabledConfirmButton(),
+                                  title: "ยืนยัน",
+                                  function: () {
+                                    onSubmit();
+                                  }),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                            ],
+                          ))),
+                )),
+          ));
+    } else if (initial == false) {
       return const MainInitialLoadingPage();
     } else {
       return const AuthenticateLoadingPage();
     }
   }
 
-  isEnabledConfirmButton(){
-    if(farmNameController.text.isNotEmpty && firstNameController.text.isNotEmpty && lastNameController.text.isNotEmpty && subDistrict != null){
+  isEnabledConfirmButton() {
+    if (farmNameController.text.isNotEmpty &&
+        firstNameController.text.isNotEmpty &&
+        lastNameController.text.isNotEmpty &&
+        subDistrict != null) {
       return true;
     }
     return false;
@@ -306,6 +346,17 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
         provinceId: district?.PROVINCE_ID,
         districtId: district?.DISTRICT_ID);
     openDialog(subDistricts);
+  }
+
+  groupDialog() async {
+    List<String>? groups = await FarmService.groupsList();
+    print(groups);
+    if (groups != null) {
+      groups.add("อื่น ๆ");
+      openDialog(groups);
+    } else {
+      openDialog(["เพิ่มกลุ่มใหม่"]);
+    }
   }
 
   openDialog(List data) async {
@@ -339,6 +390,9 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
                 }
                 if (slot is SubDistrictModel) {
                   return subDistrictTile(slot);
+                }
+                if (slot is String) {
+                  return groupTile(slot);
                 }
 
                 return Container();
@@ -397,6 +451,21 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
     );
   }
 
+  Widget groupTile(String data) {
+    return ListTile(
+      onTap: () {
+        setState(() {
+          groupController.text = data;
+        });
+        Navigator.pop(context);
+      },
+      title: Text(
+        data ?? "",
+        style: GoogleFonts.itim(color: Colors.black, fontSize: 20),
+      ),
+    );
+  }
+
   Widget textHeader({required String title}) {
     return Container(
         height: 20,
@@ -414,8 +483,29 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
       {TextEditingController? controller,
       String? value,
       bool readOnly = false,
+      VoidCallback? onTap,
+      bool enabled = true,
+      bool required = false,
+      TextAlign textAlign = TextAlign.start,
+      required String hint}) {
+    return CustomTextFormField.create(
+        hint: hint,
+        readOnly: readOnly,
+        controller: controller,
+        enabled: enabled,
+        onTap: onTap,
+        required: required,
+        value: value,
+        textAlign: textAlign);
+  }
+
+  Widget textFields(
+      {TextEditingController? controller,
+      String? value,
+      bool readOnly = false,
       Function? onTap,
       bool enabled = true,
+      bool required = false,
       required String hint}) {
     return Container(
         height: 44,
@@ -431,7 +521,6 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
           //   MaskedInputFormatter('###-###-####')
           // ],
           //initialValue: value,
-
           onTap: () {
             onTap?.call();
           },
@@ -472,10 +561,10 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
     );
   }
 
-  toHomePage(){
+  toHomePage() {
     context.read<HomeCubit>().farm(context);
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => const MainHomePage()),
-            (Route<dynamic> route) => false);
+        (Route<dynamic> route) => false);
   }
 }

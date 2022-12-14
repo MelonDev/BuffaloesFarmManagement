@@ -30,11 +30,7 @@ class FarmService {
 
   static Future<Map<String, dynamic>?> summary() async {
     try {
-      Map<String, String> body = {
-        //"email": "",
-        //"password": "",
-      };
-      var response = await HttpService.getForm(path: '/summary', body: body);
+      var response = await HttpService.getForm(path: '/summary', body: {});
       if (response != null) {
         if (response.statusCode == 200) {
           var data = response.data['data'];
@@ -44,6 +40,28 @@ class FarmService {
           }
         }
         return {};
+      }
+
+      return null;
+    } on Exception catch (_) {
+      return null;
+    }
+  }
+
+  static Future<List<String>?> groupsList() async {
+    try {
+      var response = await HttpService.getForm(path: '/groups/list', body: {});
+      if (response != null) {
+        if (response.statusCode == 200) {
+          var data = response.data['data'];
+          print(data);
+          if (data != null) {
+            List<String>? list =
+                (data as List).map((item) => item as String).toList();
+            return list;
+          }
+        }
+        return [];
       }
 
       return null;
@@ -85,6 +103,10 @@ class FarmService {
       String? father,
       String? mother,
       String? source,
+      String? type,
+      String? species,
+      String? price,
+      String? blood,
       String? image}) async {
     try {
       Map<String, String> body = {
@@ -95,6 +117,10 @@ class FarmService {
         "father_name": father ?? "",
         "mother_name": mother ?? "",
         "source": source ?? "",
+        "type": type ?? "",
+        "species": species ?? "",
+        "price": price ?? "",
+        "blood_percent": blood ?? "",
         "image_url": image ?? "",
       };
 
@@ -313,7 +339,8 @@ class FarmService {
       };
 
       print(body);
-      var response = await HttpService.postForm(path: '/disease-treatment', body: body);
+      var response =
+          await HttpService.postForm(path: '/disease-treatment', body: body);
       print("response: $response");
       if (response != null) {
         print(response.statusCode);
@@ -351,7 +378,7 @@ class FarmService {
             list.sort((a, b) {
               var adate = a.notify_datetime;
               var bdate = b.notify_datetime;
-              if(adate != null && bdate != null){
+              if (adate != null && bdate != null) {
                 return adate.compareTo(bdate);
               }
               return 0;

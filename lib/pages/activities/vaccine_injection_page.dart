@@ -233,7 +233,8 @@ class _VaccineInjectionPageState extends State<VaccineInjectionPage> {
                   controller: tfName,
                   onTap: () {
                     vaccineBottomDialog();
-                  }),
+                  }
+                  ),
               enabledSpecify ? const SizedBox(height: 8) : Container(),
               enabledSpecify
                   ? textField(

@@ -102,6 +102,9 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
           FlutterSecureStorage storage = const FlutterSecureStorage();
           await storage.write(
               key: "phone_number".toUpperCase(), value: phoneNumber);
+          String? uid = auth.currentUser?.uid;
+          await storage.write(
+              key: "user_uid".toUpperCase(), value: uid);
           checking(context);
         });
       }

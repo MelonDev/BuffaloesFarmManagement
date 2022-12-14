@@ -8,6 +8,8 @@ class ReturnEstrusActivityModel extends BaseActivityModel {
   String? estrus_message;
   bool? estrus_result;
   String? date;
+  String? end_date;
+
   String? notify;
   bool? status;
   bool? delete;
@@ -20,6 +22,7 @@ class ReturnEstrusActivityModel extends BaseActivityModel {
         estrus_message = json['estrus_message']?.toString(),
         estrus_result = json['estrus_result'],
         date = json['date']?.toString(),
+        end_date = json['end_date']?.toString(),
         notify = json['notify']?.toString(),
         status = json['status'],
         delete = json['delete'];

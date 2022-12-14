@@ -48,6 +48,7 @@ class AuthenticationService {
     required String? lastName,
     required String? phoneNumber,
     String? address,
+    String? group,
     required String? token,
     required String? province,
     required String? district,
@@ -61,6 +62,7 @@ class AuthenticationService {
         "phone_number": phoneNumber ?? "",
         "address": address ?? "",
         "token": token ?? "",
+        "group": group ?? "",
         "province": province ?? "",
         "district": district ?? "",
         "sub_district": subDistrict ?? ""

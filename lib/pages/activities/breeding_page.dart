@@ -21,9 +21,10 @@ class BreedingPage extends StatefulWidget {
 
 class _BreedingPageState extends State<BreedingPage> {
   TextEditingController tfName = TextEditingController();
-  TextEditingController tfEarTag = TextEditingController();
 
   TextEditingController tfDateTime = TextEditingController();
+  TextEditingController tfReturnDateTime = TextEditingController();
+
 
   Color primaryColor = Colors.pink;
   Color backgroundColor = const Color(0xFF050505);
@@ -36,11 +37,14 @@ class _BreedingPageState extends State<BreedingPage> {
   int result = 0;
 
   DateTime? pickedDatetime;
+  DateTime? pickedReturnDatetime;
+
 
   @override
   void initState() {
     super.initState();
 
+    tfDateTime.text = getCurrentDate();
     tfDateTime.text = getCurrentDate();
   }
 
@@ -121,7 +125,7 @@ class _BreedingPageState extends State<BreedingPage> {
                         ),
                         centerTitle: true,
                         title: Text(
-                          "เพิ่มการรักษาโรค",
+                          "เพิ่มการเหนี่ยวนำ",
                           style: GoogleFonts.itim(
                             color: Colors.white,
                             fontSize: 23,
@@ -190,7 +194,7 @@ class _BreedingPageState extends State<BreedingPage> {
             bottom: Radius.circular(22),
           ),
         ),
-        height: 412,
+        height: 422,
         padding: const EdgeInsets.only(
           left: 20,
           right: 20,
@@ -207,8 +211,8 @@ class _BreedingPageState extends State<BreedingPage> {
               tabBar(
                 initialValue: type,
                 children: {
-                  0: buildSegment("ผสมเทียม", 0, type),
-                  1: buildSegment("ผสมจริง", 1, type),
+                  0: buildSegment("เหนื่ยวนำ", 0, type),
+                  1: buildSegment("ไม่เหนื่ยวนำ", 1, type),
                 },
                 callback: (value) {
                   setState(() {
@@ -217,15 +221,10 @@ class _BreedingPageState extends State<BreedingPage> {
                 },
               ),
               const SizedBox(height: 20),
-              textHeader(title: "รายละเอียดน้ำเชื้อพ่อพันธุ์"),
               textField(
-                  hint: "ชื่อพ่อพันธุ์", controller: tfName, required: true),
+                  hint: "วิธีที่ใช้เหนี่ยวนำ", controller: tfName, required: true),              const SizedBox(height: 6),
               const SizedBox(height: 8),
-              textField(hint: "เบอร์หูพ่อพันธุ์", controller: tfEarTag),
-              const SizedBox(height: 14),
-              divider(),
-              const SizedBox(height: 6),
-              textHeader(title: "การกลับสัด"),
+              textHeader(title: "วัน/เดือน/ปี ที่เหนี่ยวนำ"),
               textField(
                 enabled: true,
                 hint: "",
@@ -237,12 +236,25 @@ class _BreedingPageState extends State<BreedingPage> {
                       dateTime: pickedDatetime);
                   if (selectdDateTime != null) {
                     setState(() {
+                      pickedReturnDatetime = selectdDateTime;
                       pickedDatetime = selectdDateTime;
                       tfDateTime.text = dateTimeToString(selectdDateTime);
                     });
                     //x = "${DateFormat.Hm().format(selectdDateTime)}:00";
                   }
                 },
+              ),
+              const SizedBox(height: 14),
+              divider(),
+              const SizedBox(height: 6),
+              textHeader(title: "วัน/เดือน/ปี ที่แสดงการกลับสัด"),
+              textField(
+                enabled: true,
+                hint: "",
+                value: getReturnDate(days: 21),
+                //hint: "วัน/เดือน/ปี",
+                readOnly: true,
+                //controller: tfReturnDateTime,
               ),
               const SizedBox(height: 16),
               tabBar(
@@ -395,6 +407,13 @@ class _BreedingPageState extends State<BreedingPage> {
     pickedDatetime = tempDate;
 
     return dateTimeToString(tempDate);
+  }
+
+  String getReturnDate({int days = 21}) {
+    DateTime tempDate = pickedDatetime!.add( Duration(days: days));
+    pickedReturnDatetime = tempDate;
+
+    return "${tempDate.day} ${getMonthName(tempDate.month - 1)} ${tempDate.year + 543}";
   }
 
   String dateTimeToString(DateTime datetime) {

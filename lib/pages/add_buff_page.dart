@@ -8,7 +8,9 @@ import 'package:buffaloes_farm_management/components/SlidingTimePicker.dart';
 import 'package:buffaloes_farm_management/cubit/home/home_cubit.dart';
 import 'package:buffaloes_farm_management/service/FarmService.dart';
 import 'package:buffaloes_farm_management/service/HttpService.dart';
+import 'package:buffaloes_farm_management/tools/ColorHelper.dart';
 import 'package:custom_sliding_segmented_control/custom_sliding_segmented_control.dart';
+import 'package:dart_extensions_methods/dart_extension_methods.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 
@@ -22,7 +24,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 class AddBuffPage extends StatefulWidget {
-  const AddBuffPage({Key? key}) : super(key: key);
+  AddBuffPage({Key? key, this.buffTypeKey}) : super(key: key);
+
+  String? buffTypeKey;
 
   @override
   _AddBuffPage createState() => _AddBuffPage();
@@ -33,13 +37,27 @@ class _AddBuffPage extends State<AddBuffPage> {
     return MaterialRectCenterArcTween(begin: begin, end: end);
   }
 
+  Map<String, String> buffTypeMap = {
+    "M": "พ่อพันธุ์",
+    "F": "แม่พันธุ์",
+    "T": "กระบือรุ่น",
+    "G": "กระบือขุน",
+    "B": "ลูกกระบือแรกเกิด"
+  };
+
   DateTime? pickedDatetime;
 
   TextEditingController tfName = TextEditingController();
   TextEditingController tfTag = TextEditingController();
+  TextEditingController tfSpecies = TextEditingController();
+  TextEditingController tfBlood = TextEditingController();
+
   TextEditingController tfFather = TextEditingController();
   TextEditingController tfMother = TextEditingController();
   TextEditingController tfSource = TextEditingController();
+  TextEditingController tfPrice = TextEditingController();
+
+  String? buffTypeKey;
 
   File? image;
   bool isSaving = false, isSaved = false;
@@ -64,7 +82,9 @@ class _AddBuffPage extends State<AddBuffPage> {
     setState(() {
       isSaving = true;
     });
-    if (tfName.text.isNotEmpty &&
+    if (buffTypeKey != null &&
+        tfSpecies.text.isNotEmpty &&
+        tfName.text.isNotEmpty &&
         tfTag.text.isNotEmpty &&
         pickedDatetime != null) {
       String? url;
@@ -83,6 +103,10 @@ class _AddBuffPage extends State<AddBuffPage> {
       bool? result = await FarmService.addBuff(
           name: tfName.text,
           tag: tfTag.text,
+          type: buffTypeKey,
+          species: tfSpecies.text,
+          blood: tfBlood.text,
+          price: tfPrice.text,
           father: tfFather.text,
           mother: tfMother.text,
           source: tfSource.text,
@@ -112,7 +136,13 @@ class _AddBuffPage extends State<AddBuffPage> {
             title: "แจ้งเตือน", message: "ไม่สามารถเชื่อมต่อได้");
       }
     } else {
-      if (tfName.text.isEmpty) {
+      if (buffTypeKey == null) {
+        messageDialog(context,
+            title: "แจ้งเตือน", message: "กรุณาเลือกประเภทกระบือ");
+      } else if (tfSpecies.text.isEmpty) {
+        messageDialog(context,
+            title: "แจ้งเตือน", message: "กรุณาเลือกสายพันธุ์");
+      } else if (tfName.text.isEmpty) {
         messageDialog(context,
             title: "แจ้งเตือน", message: "กรุณากรอกชื่อให้ครบถ้วน");
       } else if (pickedDatetime != null) {
@@ -131,13 +161,21 @@ class _AddBuffPage extends State<AddBuffPage> {
     if (isSaving == true) {
       return false;
     } else {
-      return tfName.text.isNotEmpty &&
+      return buffTypeKey != null &&
+          tfSpecies.text.isNotEmpty &&
+          tfName.text.isNotEmpty &&
           tfTag.text.isNotEmpty &&
           pickedDatetime != null;
     }
   }
 
   Color primaryColor = Colors.pink;
+
+  @override
+  void initState() {
+    super.initState();
+    buffTypeKey = widget.buffTypeKey;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -277,6 +315,23 @@ class _AddBuffPage extends State<AddBuffPage> {
               padding: const EdgeInsets.only(bottom: 0),
               children: <Widget>[
                 const SizedBox(height: 20),
+                textField(
+                  hint: "ประเภท",
+                  value: buffTypeMap[buffTypeKey],
+                  required: true,
+                  readOnly: true,
+                  onTap: () {
+                    buffTypeBottomDialog();
+                  },
+                ),
+                const SizedBox(height: 8),
+                const Padding(
+                  padding: EdgeInsets.only(left: 30, right: 30),
+                  child: Divider(
+                    color: Colors.grey,
+                  ),
+                ),
+                textHeader(title: "รูปภาพ"),
                 imageArea(),
                 const SizedBox(height: 8),
                 textHeader(title: "รายละเอียด"),
@@ -321,6 +376,15 @@ class _AddBuffPage extends State<AddBuffPage> {
                   ],
                 ),
                 const SizedBox(height: 8),
+                textField(
+                    hint: "สายพันธุ์", controller: tfSpecies, required: true),
+                const SizedBox(height: 8),
+                textField(
+                    hint: "ระดับสายเลือด (0-100)",
+                    controller: tfBlood,
+                    keyboardType: TextInputType.number,
+                    required: false),
+                const SizedBox(height: 8),
                 tabBar(),
                 const SizedBox(height: 20),
                 textHeader(title: "พันธุ์"),
@@ -337,6 +401,8 @@ class _AddBuffPage extends State<AddBuffPage> {
                 ),
                 const SizedBox(height: 8),
                 textField(hint: "แหล่งที่มา", controller: tfSource),
+                const SizedBox(height: 8),
+                textField(hint: "ราคา", controller: tfPrice),
                 const SizedBox(
                   height: 40,
                 ),
@@ -422,6 +488,8 @@ class _AddBuffPage extends State<AddBuffPage> {
       VoidCallback? onTap,
       bool enabled = true,
       bool required = false,
+      String? helper,
+      TextInputType keyboardType = TextInputType.text,
       TextAlign textAlign = TextAlign.start,
       required String hint}) {
     return CustomTextFormField.create(
@@ -431,6 +499,8 @@ class _AddBuffPage extends State<AddBuffPage> {
         enabled: enabled,
         onTap: onTap,
         required: required,
+        helper: helper,
+        keyboardType: keyboardType,
         value: value,
         textAlign: textAlign);
   }
@@ -476,6 +546,99 @@ class _AddBuffPage extends State<AddBuffPage> {
     );
   }
 
+  buffTypeBottomDialog() {
+    List<Widget> buffTypes = [];
+    buffTypeMap.forEach((key, value) {
+      buffTypes.add(const SizedBox(height: 8));
+      buffTypes.add(button(
+        value,
+        icon: FontAwesomeIcons.circle,
+        color: const Color(0xFF010101),
+        onTap: () async {
+          setState(() {
+            buffTypeKey = key;
+          });
+          // await Navigator.of(context).push(
+          //     NavigatorHelper.slide(const DiseaseTreatmentPage()));
+        },
+      ));
+    });
+
+    bottomDialog(
+      context,
+      height: 376,
+      backgroundColor: Colors.white,
+      ListView(
+        padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
+        children: [
+          Container(
+            margin: const EdgeInsets.only(bottom: 8, left: 6),
+            child: Text(
+              "เลือกประเภทกระบือ",
+              style: GoogleFonts.itim(
+                  color: ColorHelper.lighten(const Color(0xFF0C0C0C), .2)
+                      .withOpacity(0.86),
+                  fontSize: 28),
+            ),
+          ),
+        ]
+          ..addAll(buffTypes)
+          ..addAll([
+            const SizedBox(height: 26),
+          ]),
+      ),
+    );
+  }
+
+  Widget button(String title, {Function? onTap, IconData? icon, Color? color}) {
+    return SizedBox(
+        height: 48, // <-- Your height
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+            onTap?.call();
+          },
+          style: ButtonStyle(
+            overlayColor: MaterialStateProperty.all(
+                ColorHelper.lighten(color ?? primaryColor, .4)
+                    .withOpacity(0.1)),
+            elevation: MaterialStateProperty.all(0),
+            backgroundColor: MaterialStateProperty.all(
+                ColorHelper.lighten(color ?? primaryColor, .2)
+                    .withOpacity(0.1)),
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+            ),
+          ),
+          child: Align(
+              alignment: Alignment.centerLeft,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(width: 0),
+                  Icon(
+                    icon ?? FontAwesomeIcons.ellipsis,
+                    color: ColorHelper.lighten(color ?? primaryColor, .4)
+                        .withOpacity(0.8),
+                    size: 18,
+                  ),
+                  Container(width: 16),
+                  Text(
+                    title,
+                    style: TextStyle(
+                        fontSize: 20,
+                        color: ColorHelper.lighten(color ?? primaryColor, .4)
+                            .withOpacity(0.8)),
+                  )
+                ],
+              )),
+        ));
+  }
+
   Widget buildSegment(String text, int number) {
     return Container(
       padding: const EdgeInsets.only(left: 30, right: 30, top: 4, bottom: 4),
@@ -490,4 +653,11 @@ class _AddBuffPage extends State<AddBuffPage> {
       ),
     );
   }
+}
+
+class BuffTypeMockModel {
+  String name;
+  String key;
+
+  BuffTypeMockModel({required this.key, required this.name});
 }

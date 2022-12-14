@@ -15,9 +15,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 class BuffMenuDetail extends StatelessWidget {
-  BuffMenuDetail({Key? key, required this.title}) : super(key: key);
+  BuffMenuDetail({Key? key, required this.title,this.code}) : super(key: key);
 
-  String title;
+  String? title,code;
 
   Color primaryColor = Colors.pink;
 
@@ -75,7 +75,7 @@ class BuffMenuDetail extends StatelessWidget {
                                             ),
                                             centerTitle: true,
                                             title: Text(
-                                              title,
+                                              title ?? "",
                                               style: GoogleFonts.itim(
                                                 color: Colors.white,
                                                 fontSize: 24,
@@ -98,7 +98,7 @@ class BuffMenuDetail extends StatelessWidget {
                             onPressed: () async {
                               Navigator.of(context).push(
                                 NavigatorHelper.slide(
-                                  const AddBuffPage(),
+                                  AddBuffPage(buffTypeKey: code,),
                                 ),
                               );
                             },
@@ -129,7 +129,7 @@ class BuffMenuDetail extends StatelessWidget {
         color: primaryColor,
         child: child(context, state),
         onRefresh: () async {
-          context.read<HomeCubit>().management();
+          context.read<HomeCubit>().management(code: code);
         },
       ),
     );
@@ -167,7 +167,7 @@ class BuffMenuDetail extends StatelessWidget {
           Container(height: 6),
           ElevatedButton(
             onPressed: () {
-              context.read<HomeCubit>().management();
+              context.read<HomeCubit>().management(code: code);
             },
             style: ButtonStyle(
               overlayColor: MaterialStateProperty.all(

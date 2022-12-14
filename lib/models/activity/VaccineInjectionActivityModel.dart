@@ -23,7 +23,8 @@ class VaccineInjectionActivityModel extends BaseActivityModel {
         vaccine_key = json['vaccine_key']?.toString(),
         vaccine_duration = json['vaccine_duration']?.toString(),
         date = json['date']?.toString(),
-        notify = json['notify']?.toString(),
+
+      notify = json['notify']?.toString(),
         status = json['status'],
         delete = json['delete'];
 }

@@ -1,8 +1,7 @@
+
 import 'package:buffaloes_farm_management/components/CustomTextFormField.dart';
 import 'package:buffaloes_farm_management/components/MessagesDialog.dart';
 import 'package:buffaloes_farm_management/components/SlidingTimePicker.dart';
-import 'package:buffaloes_farm_management/constants/ColorConstants.dart';
-import 'package:buffaloes_farm_management/constants/StyleConstants.dart';
 import 'package:buffaloes_farm_management/service/FarmService.dart';
 import 'package:buffaloes_farm_management/tools/ColorHelper.dart';
 import 'package:custom_sliding_segmented_control/custom_sliding_segmented_control.dart';
@@ -11,60 +10,81 @@ import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 
-class ReturnEstrusPage extends StatefulWidget {
-  ReturnEstrusPage({Key? key, required this.buffId}) : super(key: key);
+class InductionPage extends StatefulWidget {
+  InductionPage({Key? key, required this.buffId}) : super(key: key);
 
   String buffId;
 
   @override
-  _ReturnEstrusPageState createState() => _ReturnEstrusPageState();
+  _InductionPageState createState() => _InductionPageState();
 }
 
-class _ReturnEstrusPageState extends State<ReturnEstrusPage> {
-  Color primaryColor = Colors.indigo;
+class _InductionPageState extends State<InductionPage> {
+  TextEditingController tfName = TextEditingController();
+
+  TextEditingController tfDateTime = TextEditingController();
+  TextEditingController tfReturnDateTime = TextEditingController();
+
+
+  Color primaryColor = Colors.pink;
   Color backgroundColor = const Color(0xFF050505);
-  Color tabColor = ColorHelper.darken(Colors.indigo, .1);
+  Color tabColor = ColorHelper.darken(Colors.pink, .1);
 
   bool isSaving = false, isSaved = false;
 
   int notify = 0;
+  int type = 0;
   int result = 0;
 
-  DateTime? pickedBirthDatetime;
-  DateTime? pickedEndBirthDatetime;
+  DateTime? pickedDatetime;
+  DateTime? pickedReturnDatetime;
 
+
+  @override
+  void initState() {
+    super.initState();
+
+    tfDateTime.text = getCurrentDate();
+    tfDateTime.text = getCurrentDate();
+  }
 
   onSubmit() async {
     setState(() {
       isSaving = true;
     });
-    String? message = await FarmService.addReturnEstrus(
-        buffId: widget.buffId,
-        estrusResult: result == 0 ? true : false,
-        messageResult: "");
+    if (tfName.text.isNotEmpty) {
+      String? result = await FarmService.addBreeding(
+          buffId: widget.buffId,
+          artificialInsemination: type == 0 ? true : false,
+          breederName: tfName.text,
+          date: pickedDatetime ?? DateTime.now());
 
-    if (message != null) {
-      if (message == "SUCCESS") {
-        isSaved = true;
+      if (result != null) {
+        if (result == "SUCCESS") {
+          isSaved = true;
 
-        if (!mounted) return;
-        messageDialog(context, title: "แจ้งเตือน", message: "บันทึกเรียบร้อย",
-            function: () {
-          //context.read<HomeCubit>().management();
-          Navigator.of(context).pop(true);
-        });
+          if (!mounted) return;
+          messageDialog(context, title: "แจ้งเตือน", message: "บันทึกเรียบร้อย",
+              function: () {
+                //context.read<HomeCubit>().management();
+                Navigator.of(context).pop(true);
+              });
+        } else {
+          if (!mounted) return;
+          messageDialog(context, title: "แจ้งเตือน", message: result);
+        }
       } else {
         if (!mounted) return;
-        messageDialog(context, title: "แจ้งเตือน", message: message);
+        messageDialog(context,
+            title: "แจ้งเตือน", message: "ไม่สามารถเชื่อมต่อได้");
       }
     } else {
-      if (!mounted) return;
-      messageDialog(context,
-          title: "แจ้งเตือน", message: "ไม่สามารถเชื่อมต่อได้");
+      if (tfName.text.isEmpty) {
+        messageDialog(context,
+            title: "แจ้งเตือน", message: "กรุณากรอกวิธีเหนี่ยวนำ");
+      }
     }
-
     setState(() {
       isSaving = false;
     });
@@ -84,84 +104,85 @@ class _ReturnEstrusPageState extends State<ReturnEstrusPage> {
       child: GestureDetector(
           onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
           child: Container(
-              color: backgroundColor,
-              child: Center(
-                  child: Container(
-                      constraints: const BoxConstraints(maxWidth: 500),
-                      child: Scaffold(
-                        backgroundColor: backgroundColor,
-                        appBar: AppBar(
-                          backgroundColor: Colors.transparent,
-                          shadowColor: Colors.transparent,
-                          elevation: 0.0,
-                          surfaceTintColor: backgroundColor,
-                          systemOverlayStyle: SystemUiOverlayStyle(
-                            statusBarIconBrightness: Brightness.light,
-                            statusBarColor: backgroundColor,
-                          ),
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.vertical(
-                              bottom: Radius.circular(22),
-                            ),
-                          ),
-                          centerTitle: true,
-                          title: Text(
-                            "เพิ่มการกลัับสัด",
-                            style: GoogleFonts.itim(
-                              color: Colors.white,
-                              fontSize: 23,
-                            ),
-                          ),
-                          titleSpacing: 0,
-                          leading: IconButton(
-                            icon: const Icon(FontAwesomeIcons.xmark,
-                                color: Colors.white, size: 24),
-                            onPressed: () {
-                              if (isSaving == false) {
-                                Navigator.of(context).pop(false);
-                              }
-                            },
-                          ),
-                          actions: [],
+            color: backgroundColor,
+            child: Center(
+                child: Container(
+                    constraints: const BoxConstraints(maxWidth: 500),
+                    child: Scaffold(
+                      backgroundColor: backgroundColor,
+                      appBar: AppBar(
+                        backgroundColor: Colors.transparent,
+                        shadowColor: Colors.transparent,
+                        elevation: 0.0,
+                        surfaceTintColor: backgroundColor,
+                        systemOverlayStyle: SystemUiOverlayStyle(
+                          statusBarIconBrightness: Brightness.light,
+                          statusBarColor: backgroundColor,
                         ),
-                        floatingActionButtonLocation:
-                            FloatingActionButtonLocation.centerFloat,
-                        floatingActionButton: submitButtonEnabled()
-                            ? FloatingActionButton.extended(
-                                onPressed: () {
-                                  onSubmit();
-                                },
-                                heroTag: null,
-                                backgroundColor:
-                                    ColorHelper.lighten(primaryColor, .1)
-                                        .withOpacity(0.6),
-                                extendedPadding:
-                                    const EdgeInsets.only(left: 74, right: 74),
-                                extendedIconLabelSpacing: 12,
-                                elevation: 0,
-                                //splashColor: Colors.greenAccent.withOpacity(0.4),
-                                splashColor: Colors.white,
-                                shape: const RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(14))),
-                                label: Text("บันทึก",
-                                    style: GoogleFonts.itim(
-                                        //color: primaryColor,
-                                        color: Colors.white.withOpacity(0.9),
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18)),
-                                icon: Icon(FontAwesomeIcons.solidFloppyDisk,
-                                    color: Colors.white.withOpacity(0.9)),
-                              )
-                            : null,
-                        body: isSaving == true || isSaved == true
-                            ? const Center(
-                                child: SpinKitThreeBounce(
-                                color: Colors.white,
-                                size: 50.0,
-                              ))
-                            : body(context),
-                      ))))),
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(
+                            bottom: Radius.circular(22),
+                          ),
+                        ),
+                        centerTitle: true,
+                        title: Text(
+                          "เพิ่มการเหนี่ยวนำ",
+                          style: GoogleFonts.itim(
+                            color: Colors.white,
+                            fontSize: 23,
+                          ),
+                        ),
+                        titleSpacing: 0,
+                        leading: IconButton(
+                          icon: const Icon(FontAwesomeIcons.xmark,
+                              color: Colors.white, size: 24),
+                          onPressed: () {
+                            if (isSaving == false) {
+                              Navigator.of(context).pop(false);
+                            }
+                          },
+                        ),
+                        actions: [],
+                      ),
+                      floatingActionButtonLocation:
+                      FloatingActionButtonLocation.centerFloat,
+                      floatingActionButton: submitButtonEnabled()
+                          ? FloatingActionButton.extended(
+                        onPressed: () {
+                          onSubmit();
+                        },
+                        heroTag: null,
+                        backgroundColor:
+                        ColorHelper.lighten(primaryColor, .1)
+                            .withOpacity(0.6),
+                        extendedPadding:
+                        const EdgeInsets.only(left: 74, right: 74),
+                        extendedIconLabelSpacing: 12,
+                        elevation: 0,
+                        //splashColor: Colors.greenAccent.withOpacity(0.4),
+                        splashColor: Colors.white,
+                        shape: const RoundedRectangleBorder(
+                            borderRadius:
+                            BorderRadius.all(Radius.circular(14))),
+                        label: Text("บันทึก",
+                            style: GoogleFonts.itim(
+                              //color: primaryColor,
+                                color: Colors.white.withOpacity(0.9),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18)),
+                        icon: Icon(FontAwesomeIcons.solidFloppyDisk,
+                            color: Colors.white.withOpacity(0.9)),
+                      )
+                          : null,
+                      body: isSaving == true || isSaved == true
+                          ? const Center(
+                          child: SpinKitThreeBounce(
+                            color: Colors.white,
+                            size: 50.0,
+                          ))
+                          : body(context),
+                    ))),
+          )),
     );
   }
 
@@ -174,7 +195,7 @@ class _ReturnEstrusPageState extends State<ReturnEstrusPage> {
             bottom: Radius.circular(22),
           ),
         ),
-        height: 320,
+        height: 422,
         padding: const EdgeInsets.only(
           left: 20,
           right: 20,
@@ -189,51 +210,52 @@ class _ReturnEstrusPageState extends State<ReturnEstrusPage> {
             children: <Widget>[
               const SizedBox(height: 20),
               tabBar(
-                initialValue: result,
+                initialValue: type,
                 children: {
-                  0: buildSegment("กลับสัด", 0, result),
-                  1: buildSegment("ไม่กลับสัด", 1, result),
+                  0: buildSegment("เหนื่ยวนำ", 0, type),
+                  1: buildSegment("ไม่เหนื่ยวนำ", 1, type),
                 },
                 callback: (value) {
                   setState(() {
-                    result = value;
+                    type = value;
                   });
                 },
               ),
               const SizedBox(height: 20),
-              textHeader(title: "วันที่คาดว่าจะคลอด"),
               textField(
-                enabled: false,
+                  hint: "วิธีที่ใช้เหนี่ยวนำ", controller: tfName, required: true),              const SizedBox(height: 6),
+              const SizedBox(height: 8),
+              textHeader(title: "วัน/เดือน/ปี ที่เหนี่ยวนำ"),
+              textField(
+                enabled: true,
                 hint: "",
+                //hint: "วัน/เดือน/ปี",
                 readOnly: true,
-                value: getBirthDate(days: 290),
+                controller: tfDateTime,
                 onTap: () async {
                   DateTime? selectdDateTime = await SlidingTimePicker(context,
-                      dateTime: pickedBirthDatetime);
+                      dateTime: pickedDatetime);
                   if (selectdDateTime != null) {
                     setState(() {
-                      pickedBirthDatetime = selectdDateTime;
+                      pickedReturnDatetime = selectdDateTime;
+                      pickedDatetime = selectdDateTime;
+                      tfDateTime.text = dateTimeToString(selectdDateTime);
                     });
                     //x = "${DateFormat.Hm().format(selectdDateTime)}:00";
                   }
                 },
               ),
-              textHeader(title: "ถึง"),
+              const SizedBox(height: 14),
+              divider(),
+              const SizedBox(height: 6),
+              textHeader(title: "วัน/เดือน/ปี ที่แสดงการกลับสัด"),
               textField(
-                enabled: false,
+                enabled: true,
                 hint: "",
+                value: getReturnDate(days: 21),
+                //hint: "วัน/เดือน/ปี",
                 readOnly: true,
-                value: getEndBirthDate(days: 310),
-                onTap: () async {
-                  DateTime? selectdDateTime = await SlidingTimePicker(context,
-                      dateTime: pickedEndBirthDatetime);
-                  if (selectdDateTime != null) {
-                    setState(() {
-                      pickedEndBirthDatetime = selectdDateTime;
-                    });
-                    //x = "${DateFormat.Hm().format(selectdDateTime)}:00";
-                  }
-                },
+                //controller: tfReturnDateTime,
               ),
               const SizedBox(height: 16),
               tabBar(
@@ -293,13 +315,13 @@ class _ReturnEstrusPageState extends State<ReturnEstrusPage> {
 
   Widget textField(
       {TextEditingController? controller,
-      String? value,
-      bool readOnly = false,
-      VoidCallback? onTap,
-      bool enabled = true,
-      bool required = false,
-      TextAlign textAlign = TextAlign.start,
-      required String hint}) {
+        String? value,
+        bool readOnly = false,
+        VoidCallback? onTap,
+        bool enabled = true,
+        bool required = false,
+        TextAlign textAlign = TextAlign.start,
+        required String hint}) {
     return CustomTextFormField.create(
         hint: hint,
         readOnly: readOnly,
@@ -322,8 +344,8 @@ class _ReturnEstrusPageState extends State<ReturnEstrusPage> {
 
   Widget tabBar(
       {required Map<int, Widget> children,
-      required int initialValue,
-      required Function(int) callback}) {
+        required int initialValue,
+        required Function(int) callback}) {
     return Container(
       alignment: Alignment.topLeft,
       margin: const EdgeInsets.only(left: 0, right: 0),
@@ -335,7 +357,7 @@ class _ReturnEstrusPageState extends State<ReturnEstrusPage> {
         ),
         //thumbColor: Colors.white,
         thumbDecoration: BoxDecoration(
-          color: ColorHelper.lighten(primaryColor, .06).withOpacity(0.7),
+          color: ColorHelper.lighten(primaryColor, .0).withOpacity(0.7),
           borderRadius: BorderRadius.circular(10),
           boxShadow: [
             BoxShadow(
@@ -380,20 +402,23 @@ class _ReturnEstrusPageState extends State<ReturnEstrusPage> {
     }
   }
 
-  String getBirthDate({int days = 290}) {
-    DateTime tempDate = DateTime.now();
-    tempDate = tempDate.add( Duration(days: days));
-    pickedBirthDatetime = tempDate;
+  String getCurrentDate({DateTime? tempDate}) {
+    tempDate ??= DateTime.now();
+    tempDate = tempDate.add(const Duration(days: 21));
+    pickedDatetime = tempDate;
+
+    return dateTimeToString(tempDate);
+  }
+
+  String getReturnDate({int days = 21}) {
+    DateTime tempDate = pickedDatetime!.add( Duration(days: days));
+    pickedReturnDatetime = tempDate;
 
     return "${tempDate.day} ${getMonthName(tempDate.month - 1)} ${tempDate.year + 543}";
   }
 
-  String getEndBirthDate({int days = 310}) {
-    DateTime tempDate = DateTime.now();
-    tempDate = tempDate.add( Duration(days: days));
-    pickedEndBirthDatetime = tempDate;
-
-    return "${tempDate.day} ${getMonthName(tempDate.month - 1)} ${tempDate.year + 543}";
+  String dateTimeToString(DateTime datetime) {
+    return "${datetime.day} ${getMonthName(datetime.month - 1)} ${datetime.year + 543}";
   }
 
   String getMonthName(int month) {
