@@ -45,11 +45,11 @@ class _AddBuffPage extends State<AddBuffPage> {
     "B": "ลูกกระบือแรกเกิด"
   };
 
+
   DateTime? pickedDatetime;
 
   TextEditingController tfName = TextEditingController();
   TextEditingController tfTag = TextEditingController();
-  TextEditingController tfSpecies = TextEditingController();
   TextEditingController tfBlood = TextEditingController();
 
   TextEditingController tfFather = TextEditingController();
@@ -57,7 +57,7 @@ class _AddBuffPage extends State<AddBuffPage> {
   TextEditingController tfSource = TextEditingController();
   TextEditingController tfPrice = TextEditingController();
 
-  String? buffTypeKey;
+  String? buffTypeKey,buffSpeciesValue;
 
   File? image;
   bool isSaving = false, isSaved = false;
@@ -83,7 +83,7 @@ class _AddBuffPage extends State<AddBuffPage> {
       isSaving = true;
     });
     if (buffTypeKey != null &&
-        tfSpecies.text.isNotEmpty &&
+        buffSpeciesValue != null &&
         tfName.text.isNotEmpty &&
         tfTag.text.isNotEmpty &&
         pickedDatetime != null) {
@@ -104,7 +104,7 @@ class _AddBuffPage extends State<AddBuffPage> {
           name: tfName.text,
           tag: tfTag.text,
           type: buffTypeKey,
-          species: tfSpecies.text,
+          species: buffSpeciesValue,
           blood: tfBlood.text,
           price: tfPrice.text,
           father: tfFather.text,
@@ -139,7 +139,7 @@ class _AddBuffPage extends State<AddBuffPage> {
       if (buffTypeKey == null) {
         messageDialog(context,
             title: "แจ้งเตือน", message: "กรุณาเลือกประเภทกระบือ");
-      } else if (tfSpecies.text.isEmpty) {
+      } else if (buffSpeciesValue == null) {
         messageDialog(context,
             title: "แจ้งเตือน", message: "กรุณาเลือกสายพันธุ์");
       } else if (tfName.text.isEmpty) {
@@ -162,7 +162,7 @@ class _AddBuffPage extends State<AddBuffPage> {
       return false;
     } else {
       return buffTypeKey != null &&
-          tfSpecies.text.isNotEmpty &&
+          buffSpeciesValue != null &&
           tfName.text.isNotEmpty &&
           tfTag.text.isNotEmpty &&
           pickedDatetime != null;
@@ -377,7 +377,14 @@ class _AddBuffPage extends State<AddBuffPage> {
                 ),
                 const SizedBox(height: 8),
                 textField(
-                    hint: "สายพันธุ์", controller: tfSpecies, required: true),
+                  hint: "สายพันธุ์",
+                  value: buffSpeciesValue,
+                  required: true,
+                  readOnly: true,
+                  onTap: () {
+                    buffSpeciesBottomDialog();
+                  },
+                ),
                 const SizedBox(height: 8),
                 textField(
                     hint: "ระดับสายเลือด (0-100)",
@@ -505,51 +512,51 @@ class _AddBuffPage extends State<AddBuffPage> {
         textAlign: textAlign);
   }
 
-  bool isGenderIgnore(){
+  bool isGenderIgnore() {
     return buffTypeKey == "M" || buffTypeKey == "F";
   }
 
   Widget tabBar() {
     return IgnorePointer(
-      ignoring: isGenderIgnore(),
+        ignoring: isGenderIgnore(),
         child: Container(
-      alignment: Alignment.topLeft,
-      margin: const EdgeInsets.only(left: 0, right: 0),
-      padding: const EdgeInsets.all(4),
-      child: CustomSlidingSegmentedControl<int>(
-        decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.04),
-          borderRadius: BorderRadius.circular(40),
-        ),
-        //thumbColor: Colors.white,
-        thumbDecoration: BoxDecoration(
-          color: isGenderIgnore() ? const Color(0xFFA6A6A6) : primaryColor,
-          borderRadius: BorderRadius.circular(40),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(.0),
-              blurRadius: 1.0,
-              spreadRadius: 1.0,
-              offset: const Offset(
-                0.0,
-                2.0,
-              ),
+          alignment: Alignment.topLeft,
+          margin: const EdgeInsets.only(left: 0, right: 0),
+          padding: const EdgeInsets.all(4),
+          child: CustomSlidingSegmentedControl<int>(
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.04),
+              borderRadius: BorderRadius.circular(40),
             ),
-          ],
-        ),
-        innerPadding: const EdgeInsets.all(0),
-        initialValue: gender,
-        children: {
-          0: buildSegment("เพศผู้", 0),
-          1: buildSegment("เพศเมีย", 1),
-        },
-        onValueChanged: (value) {
-          setState(() {
-            gender = value;
-          });
-        },
-      ),
-    ));
+            //thumbColor: Colors.white,
+            thumbDecoration: BoxDecoration(
+              color: isGenderIgnore() ? const Color(0xFFA6A6A6) : primaryColor,
+              borderRadius: BorderRadius.circular(40),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(.0),
+                  blurRadius: 1.0,
+                  spreadRadius: 1.0,
+                  offset: const Offset(
+                    0.0,
+                    2.0,
+                  ),
+                ),
+              ],
+            ),
+            innerPadding: const EdgeInsets.all(0),
+            initialValue: gender,
+            children: {
+              0: buildSegment("เพศผู้", 0),
+              1: buildSegment("เพศเมีย", 1),
+            },
+            onValueChanged: (value) {
+              setState(() {
+                gender = value;
+              });
+            },
+          ),
+        ));
   }
 
   buffTypeBottomDialog() {
@@ -590,6 +597,56 @@ class _AddBuffPage extends State<AddBuffPage> {
           ),
         ]
           ..addAll(buffTypes)
+          ..addAll([
+            const SizedBox(height: 26),
+          ]),
+      ),
+    );
+  }
+
+  buffSpeciesBottomDialog() {
+    List<String> buffSpeciesList = [
+      "กระบือไทย (ควายปลัก)",
+      "กระบือมูร่าห์ (ควายแม่น้ํา)",
+      "กระบือไทยผสมมูร่าห์"
+    ];
+
+    List<Widget> buffSpecies = [];
+    buffSpeciesList.forEach((value) {
+      buffSpecies.add(const SizedBox(height: 8));
+      buffSpecies.add(button(
+        value,
+        icon: FontAwesomeIcons.circle,
+        color: const Color(0xFF010101),
+        onTap: () async {
+          setState(() {
+            buffSpeciesValue = value;
+          });
+          // await Navigator.of(context).push(
+          //     NavigatorHelper.slide(const DiseaseTreatmentPage()));
+        },
+      ));
+    });
+
+    bottomDialog(
+      context,
+      height: 276,
+      backgroundColor: Colors.white,
+      ListView(
+        padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
+        children: [
+          Container(
+            margin: const EdgeInsets.only(bottom: 8, left: 6),
+            child: Text(
+              "เลือกสายพันธุ์",
+              style: GoogleFonts.itim(
+                  color: ColorHelper.lighten(const Color(0xFF0C0C0C), .2)
+                      .withOpacity(0.86),
+                  fontSize: 28),
+            ),
+          ),
+        ]
+          ..addAll(buffSpecies)
           ..addAll([
             const SizedBox(height: 26),
           ]),
