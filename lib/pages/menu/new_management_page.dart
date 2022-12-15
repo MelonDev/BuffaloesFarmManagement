@@ -10,6 +10,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import '../buff_menu_detail.dart';
+import '../report_page.dart';
 
 class NewManagementPage extends StatelessWidget {
   NewManagementPage({Key? key}) : super(key: key);
@@ -35,7 +36,7 @@ class NewManagementPage extends StatelessWidget {
       "children": [
         TileManagementMenu("การจำหน่าย",
             icon: "assets/image_icon/money-bag.png"),
-        TileManagementMenu("รายงาน", icon: "assets/image_icon/analysis.png"),
+        TileManagementMenu("รายงาน", icon: "assets/image_icon/analysis.png",code: "R"),
       ]
     }
   ];
@@ -130,17 +131,25 @@ class NewManagementPage extends StatelessWidget {
         child: ElevatedButton(
           onPressed: () {
             if(tile.code != null){
-              context.read<HomeCubit>().management(code: tile.code);
-              Navigator.of(context).push(
-                NavigatorHelper.slide(
-                  BuffMenuDetail(
-                    title: tile.name,
-                    code: tile.code
-                    // tintColor: ColorHelper.lighten(
-                    //     primaryColor, isLandscapeMode(context) ? .84 : .45),
+              if(tile.code == "R"){
+                Navigator.of(context).push(
+                  NavigatorHelper.slide(
+                    const ReportPage(),
                   ),
-                ),
-              );
+                );
+              }else {
+                context.read<HomeCubit>().management(code: tile.code);
+                Navigator.of(context).push(
+                  NavigatorHelper.slide(
+                    BuffMenuDetail(
+                        title: tile.name,
+                        code: tile.code
+                      // tintColor: ColorHelper.lighten(
+                      //     primaryColor, isLandscapeMode(context) ? .84 : .45),
+                    ),
+                  ),
+                );
+              }
             }
           },
           style: ButtonStyle(

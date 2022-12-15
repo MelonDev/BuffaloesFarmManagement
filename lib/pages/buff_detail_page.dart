@@ -7,6 +7,7 @@ import 'package:buffaloes_farm_management/models/activity/BreedingActivityModel.
 import 'package:buffaloes_farm_management/models/BuffModel.dart';
 import 'package:buffaloes_farm_management/models/activity/DewormingActivityModel.dart';
 import 'package:buffaloes_farm_management/models/activity/DiseaseTreatmentActivityModel.dart';
+import 'package:buffaloes_farm_management/models/activity/InductingActivityModel.dart';
 import 'package:buffaloes_farm_management/models/activity/ReturnEstrusActivityModel.dart';
 import 'package:buffaloes_farm_management/models/activity/VaccineInjectionActivityModel.dart';
 import 'package:buffaloes_farm_management/pages/activities/induction_page.dart';
@@ -808,7 +809,27 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
 
   Widget? getActivityLogWidget(BuildContext context, BaseActivityModel item,
       {bool active = false}) {
-    if (item is BreedingActivityModel) {
+    if (item is InductingActivityModel) {
+      return item.status == active
+          ? card(context,
+          message: "วิธีที่ใช้เหนี่ยวนำ: ${item.induction_message}",
+          subMessage:
+          "วันที่กลับสัด: ${getBirthDate(item.date)}",
+          active: active,
+          log: BuffActivityLog.inducting,
+          function: ActivityFunctionModel(
+              name: "เริ่มต้นการผสมพันธุ์",
+              icon: FontAwesomeIcons.stethoscope,
+              function: () async {
+                await Navigator.of(context)
+                    .push(NavigatorHelper.slide(BreedingPage(
+                  buffId: widget.id,
+                )));
+                onLoad();
+              }))
+          : null;
+    }
+    else if (item is BreedingActivityModel) {
       return item.status == active
           ? card(context,
               message: "กลับสัด: ${getBirthDate(item.date)}",
@@ -907,6 +928,10 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
 
   IconData getActivityLogIcon(BuffActivityLog log) {
     switch (log) {
+      case BuffActivityLog.inducting:
+        {
+          return FontAwesomeIcons.tableList;
+        }
       case BuffActivityLog.breeding:
         {
           return FontAwesomeIcons.venusMars;
@@ -936,9 +961,13 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
 
   Color getActivityLogColor(BuffActivityLog log) {
     switch (log) {
-      case BuffActivityLog.breeding:
+      case BuffActivityLog.inducting:
         {
           return Colors.pink;
+        }
+      case BuffActivityLog.breeding:
+        {
+          return Colors.indigo;
         }
       case BuffActivityLog.returnEstrus:
         {
@@ -965,6 +994,10 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
 
   String getActivityLogTitle(BuffActivityLog log) {
     switch (log) {
+      case BuffActivityLog.inducting:
+        {
+          return "เหนื่ยวนำ";
+        }
       case BuffActivityLog.breeding:
         {
           return "ผสมพันธุ์";
@@ -1027,6 +1060,7 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
 }
 
 enum BuffActivityLog {
+  inducting,
   breeding,
   returnEstrus,
   vaccineInjection,

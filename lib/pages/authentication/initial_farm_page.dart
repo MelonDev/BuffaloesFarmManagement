@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:buffaloes_farm_management/constants/StyleConstants.dart';
@@ -40,10 +41,11 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
   TextEditingController farmNameController = TextEditingController();
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
-  TextEditingController groupController = TextEditingController();
   TextEditingController groupOtherController = TextEditingController();
 
   TextEditingController addressController = TextEditingController();
+
+  String? groupName;
 
   ProvinceModel? province;
   DistrictModel? district;
@@ -93,10 +95,9 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
         lastName: lastNameController.text,
         phoneNumber: phoneNumber ?? "",
         token: uid ?? "",
-        group: groupController.text == "เพิ่มกลุ่มใหม่" ||
-                groupController.text == "อื่น ๆ"
+        group: groupName == "เพิ่มกลุ่มใหม่" || groupName == "อื่น ๆ"
             ? groupOtherController.text
-            : groupController.text,
+            : groupName,
         province: province?.PROVINCE_NAME ?? "",
         district: district?.DISTRICT_NAME ?? "",
         subDistrict: subDistrict?.SUB_DISTRICT_NAME ?? "");
@@ -229,24 +230,24 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
                                   required: true),
                               const SizedBox(height: 8),
                               textField(
-                                  hint: "กลุ่ม",
-                                  controller: groupController,
+                                  hint: "กลุ่มวิสาหกิจชุมชน",
+                                  value: groupName,
                                   readOnly: true,
                                   enabled: true,
                                   required: true,
                                   onTap: () {
                                     groupDialog();
                                   }),
-                              groupController.text == "เพิ่มกลุ่มใหม่" ||
-                                      groupController.text == "อื่น ๆ"
+                              groupName == "เพิ่มกลุ่มใหม่" ||
+                                      groupName == "อื่น ๆ"
                                   ? const SizedBox(height: 8)
                                   : Container(),
-                              groupController.text == "เพิ่มกลุ่มใหม่" ||
-                                      groupController.text == "อื่น ๆ"
+                              groupName == "เพิ่มกลุ่มใหม่" ||
+                                      groupName == "อื่น ๆ"
                                   ? textField(
                                       hint: "ระบุ",
-                                required: true,
-                                controller: groupOtherController,
+                                      required: true,
+                                      controller: groupOtherController,
                                       enabled: true,
                                     )
                                   : Container(),
@@ -323,6 +324,9 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
     if (farmNameController.text.isNotEmpty &&
         firstNameController.text.isNotEmpty &&
         lastNameController.text.isNotEmpty &&
+        (groupName == "เพิ่มกลุ่มใหม่" || groupName == "อื่น ๆ"
+            ? groupOtherController.text.isNotEmpty
+            : groupName != null) &&
         subDistrict != null) {
       return true;
     }
@@ -331,13 +335,13 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
 
   provinceDialog() async {
     List<ProvinceModel> provinces = await ThailandProvider.provinces(context);
-    openDialog(provinces);
+    openDialog(provinces, title: "เลือกจังหวัด");
   }
 
   districtDialog() async {
     List<DistrictModel> districts = await ThailandProvider.districts(context,
         provinceId: province?.PROVINCE_ID);
-    openDialog(districts);
+    openDialog(districts, title: "เลือกอำเภอ");
   }
 
   subDistrictDialog() async {
@@ -345,21 +349,24 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
         context,
         provinceId: district?.PROVINCE_ID,
         districtId: district?.DISTRICT_ID);
-    openDialog(subDistricts);
+    openDialog(subDistricts, title: "เลือกตำบล");
   }
 
   groupDialog() async {
     List<String>? groups = await FarmService.groupsList();
+
     print(groups);
     if (groups != null) {
       groups.add("อื่น ๆ");
-      openDialog(groups);
+      openDialog(groups, title: "เลือกกลุ่มวิสาหกิจชุมชน");
     } else {
-      openDialog(["เพิ่มกลุ่มใหม่"]);
+      openDialog([
+        "เพิ่มกลุ่มใหม่",
+      ], title: "เลือกกลุ่มวิสาหกิจชุมชน");
     }
   }
 
-  openDialog(List data) async {
+  openDialog(List data, {String? title}) async {
     showBarModalBottomSheet(
       context: context,
       enableDrag: true,
@@ -367,17 +374,39 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
       isDismissible: false,
       builder: (context) => Padding(
         padding:
-            const EdgeInsets.only(left: 10, right: 10, top: 20, bottom: 20),
+            const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 20),
         child: Scaffold(
             backgroundColor: kBGColor,
-            // appBar: PreferredSize(
-            //     preferredSize: const Size.fromHeight(50.0),
-            //     child: Container(
-            //       color: kBGColor,
-            //       padding: const EdgeInsets.only(
-            //           left: 10, right: 10, top: 0, bottom: 10),
-            //       child: textField(hint: "จังหวัด"),
-            //     )),
+            appBar: PreferredSize(
+              preferredSize: const Size.fromHeight(50.0),
+              child: Container(
+                  color: kBGColor,
+                  height: 50.0,
+                  child: Stack(
+                    children: [
+                      Align(
+                          alignment: Alignment.centerLeft,
+                          child: IconButton(
+                            icon: const Icon(
+                              Icons.close,
+                              color: Colors.black,
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          )),
+                      Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            title ?? "",
+                            style: GoogleFonts.itim(
+                              color: Colors.black,
+                              fontSize: 20,
+                            ),
+                          ))
+                    ],
+                  )),
+            ),
             body: ListView.builder(
               padding: const EdgeInsets.only(top: 10, bottom: 20),
               itemBuilder: (BuildContext context, int index) {
@@ -455,10 +484,11 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
     return ListTile(
       onTap: () {
         setState(() {
-          groupController.text = data;
+          groupName = data;
         });
         Navigator.pop(context);
       },
+      minLeadingWidth: 20,
       title: Text(
         data ?? "",
         style: GoogleFonts.itim(color: Colors.black, fontSize: 20),
@@ -487,6 +517,7 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
       bool enabled = true,
       bool required = false,
       TextAlign textAlign = TextAlign.start,
+      ValueChanged<String>? onChanged,
       required String hint}) {
     return CustomTextFormField.create(
         hint: hint,
@@ -494,6 +525,7 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
         controller: controller,
         enabled: enabled,
         onTap: onTap,
+        onChanged: onChanged,
         required: required,
         value: value,
         textAlign: textAlign);

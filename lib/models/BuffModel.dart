@@ -3,6 +3,7 @@ import 'package:buffaloes_farm_management/models/activity/BaseActivityModel.dart
 import 'package:buffaloes_farm_management/models/activity/BreedingActivityModel.dart';
 import 'package:buffaloes_farm_management/models/activity/DewormingActivityModel.dart';
 import 'package:buffaloes_farm_management/models/activity/DiseaseTreatmentActivityModel.dart';
+import 'package:buffaloes_farm_management/models/activity/InductingActivityModel.dart';
 import 'package:buffaloes_farm_management/models/activity/ReturnEstrusActivityModel.dart';
 import 'package:buffaloes_farm_management/models/activity/VaccineInjectionActivityModel.dart';
 
@@ -36,7 +37,7 @@ class BuffModel {
         mother_id = json['mother_id']?.toString(),
         mother_name = json['mother_name']?.toString(),
         source = json['source']?.toString(),
-        status = json['source']?.toString(),
+        status = _getStatusName(json['status']?.toString()),
         history = json['history']
                 ?.map<BaseActivityModel>((item) => _getActivityModel(item))
                 .toList() ??
@@ -47,8 +48,9 @@ class BuffModel {
     String? name = item['name'] ?? "";
 
     print(item);
-
-    if (name == "BREEDING") {
+    if (name == "INDUCTING") {
+      return InductingActivityModel.fromJson(item);
+    } else if (name == "BREEDING") {
       return BreedingActivityModel.fromJson(item);
     } else if (name == "RETURN_ESTRUS") {
       return ReturnEstrusActivityModel.fromJson(item);
@@ -60,6 +62,25 @@ class BuffModel {
       return DiseaseTreatmentActivityModel.fromJson(item);
     } else {
       return ActivityModel.fromJson(item);
+    }
+  }
+
+  static String _getStatusName(name){
+
+    if (name == "INDUCTING") {
+      return "รอตรวจการผสม";
+    } else if (name == "BREEDING") {
+      return "รอตรวจการกลับสัด";
+    } else if (name == "RETURN_ESTRUS") {
+      return "ตั้งท้อง";
+    } else if (name == "VACCINE_INJECTION") {
+      return "ปกติ";
+    } else if (name == "DEWORMING") {
+      return "ปกติ";
+    } else if (name == "DISEASE_TREATMENT") {
+      return "กำลังรักษาโรค";
+    } else {
+      return "ปกติ";
     }
   }
 }
