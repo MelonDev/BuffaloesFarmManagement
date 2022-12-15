@@ -144,6 +144,55 @@ class FarmService {
     }
   }
 
+  static Future<String?> addInducting(
+      {required String buffId,
+        required bool induction,
+        required String method,
+        required DateTime date}) async {
+    try {
+      final DateFormat formatter = DateFormat('yyyy-MM-dd');
+      final String formatted = formatter.format(date);
+
+      Map<String, dynamic> body = {
+        "buff_id": buffId,
+        "induction": induction,
+        "method": method ?? "",
+        "date": formatted,
+        "notify": true
+      };
+
+      print(body);
+      var response = await HttpService.postForm(path: '/inducting', body: body);
+      print("response: $response");
+      if (response != null) {
+        print(response.statusCode);
+        if (response.statusCode == 200) {
+          print(response.data);
+          return "SUCCESS";
+        } else if (response.statusCode == 406) {
+          return "อยู่ในสถานะรอการกลับสัด ไม่สามารถผสมพันธุ์เพิ่มได้";
+        } else {
+          String message = response.data['detail'];
+          if (message == "MALE CAN'T NOT BREEDING") {
+            return "เพศผู้ไม่สามารถเป็นแม่พันธุ์";
+          }
+          if (message == "FEMALE CAN'T NOT BREEDER") {
+            return "เพศเมียไม่สามารถเป็นพ่อพันธุ์";
+          }
+          if (message == "NOT FOUND") {
+            return "ไม่พบข้อมูลแม่พันธุ์";
+          }
+          return "เกิดข้อผิดพลาด";
+        }
+      }
+
+      return null;
+    } on Exception catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
   static Future<String?> addBreeding(
       {required String buffId,
       required bool artificialInsemination,

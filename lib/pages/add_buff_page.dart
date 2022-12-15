@@ -505,8 +505,14 @@ class _AddBuffPage extends State<AddBuffPage> {
         textAlign: textAlign);
   }
 
+  bool isGenderIgnore(){
+    return buffTypeKey == "M" || buffTypeKey == "F";
+  }
+
   Widget tabBar() {
-    return Container(
+    return IgnorePointer(
+      ignoring: isGenderIgnore(),
+        child: Container(
       alignment: Alignment.topLeft,
       margin: const EdgeInsets.only(left: 0, right: 0),
       padding: const EdgeInsets.all(4),
@@ -517,7 +523,7 @@ class _AddBuffPage extends State<AddBuffPage> {
         ),
         //thumbColor: Colors.white,
         thumbDecoration: BoxDecoration(
-          color: primaryColor,
+          color: isGenderIgnore() ? const Color(0xFFA6A6A6) : primaryColor,
           borderRadius: BorderRadius.circular(40),
           boxShadow: [
             BoxShadow(
@@ -534,8 +540,8 @@ class _AddBuffPage extends State<AddBuffPage> {
         innerPadding: const EdgeInsets.all(0),
         initialValue: gender,
         children: {
-          0: buildSegment("ผู้", 0),
-          1: buildSegment("เมีย", 1),
+          0: buildSegment("เพศผู้", 0),
+          1: buildSegment("เพศเมีย", 1),
         },
         onValueChanged: (value) {
           setState(() {
@@ -543,7 +549,7 @@ class _AddBuffPage extends State<AddBuffPage> {
           });
         },
       ),
-    );
+    ));
   }
 
   buffTypeBottomDialog() {
@@ -556,6 +562,7 @@ class _AddBuffPage extends State<AddBuffPage> {
         color: const Color(0xFF010101),
         onTap: () async {
           setState(() {
+            gender = key == "F" ? 1 : 0;
             buffTypeKey = key;
           });
           // await Navigator.of(context).push(
@@ -641,7 +648,7 @@ class _AddBuffPage extends State<AddBuffPage> {
 
   Widget buildSegment(String text, int number) {
     return Container(
-      padding: const EdgeInsets.only(left: 30, right: 30, top: 4, bottom: 4),
+      padding: const EdgeInsets.only(left: 16, right: 16, top: 4, bottom: 4),
       child: Text(
         text,
         textAlign: TextAlign.center,

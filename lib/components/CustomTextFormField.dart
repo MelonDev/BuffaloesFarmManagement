@@ -25,17 +25,18 @@ class CustomTextFormField {
       TextInputAction textInputAction = TextInputAction.next,
       bool isTransparentBorder = false,
       bool darkMode = false,
+      ValueChanged<String>? onChanged,
       String? hint}) {
-
-    TextEditingController contr = controller ?? TextEditingController(text: value);
+    TextEditingController contr =
+        controller ?? TextEditingController(text: value);
 
     return Container(
         height: height,
         margin: const EdgeInsets.only(top: 0),
-
         child: TextFormField(
           readOnly: readOnly,
           enabled: enabled,
+          onChanged: onChanged,
           focusNode: FocusNode(),
           textInputAction: textInputAction,
           textAlign: textAlign,

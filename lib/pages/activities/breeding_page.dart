@@ -26,9 +26,9 @@ class _BreedingPageState extends State<BreedingPage> {
   TextEditingController tfReturnDateTime = TextEditingController();
 
 
-  Color primaryColor = Colors.pink;
+  Color primaryColor = Colors.indigo;
   Color backgroundColor = const Color(0xFF050505);
-  Color tabColor = ColorHelper.darken(Colors.pink, .1);
+  Color tabColor = ColorHelper.darken(Colors.indigo, .1);
 
   bool isSaving = false, isSaved = false;
 
@@ -125,7 +125,7 @@ class _BreedingPageState extends State<BreedingPage> {
                         ),
                         centerTitle: true,
                         title: Text(
-                          "เพิ่มการเหนี่ยวนำ",
+                          "เพิ่มการผสมพันธุ์",
                           style: GoogleFonts.itim(
                             color: Colors.white,
                             fontSize: 23,
@@ -211,8 +211,8 @@ class _BreedingPageState extends State<BreedingPage> {
               tabBar(
                 initialValue: type,
                 children: {
-                  0: buildSegment("เหนื่ยวนำ", 0, type),
-                  1: buildSegment("ไม่เหนื่ยวนำ", 1, type),
+                  0: buildSegment("ผสมเทียม", 0, type),
+                  1: buildSegment("ผสมจริง", 1, type),
                 },
                 callback: (value) {
                   setState(() {

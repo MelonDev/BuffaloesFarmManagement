@@ -47,7 +47,8 @@ dependencies:
 
   auto_size_text: ^3.0.0
 
-  syncfusion_flutter_charts: ^20.3.60
+  syncfusion_flutter_charts: ^20.3.61
+  syncfusion_flutter_maps: ^20.3.61
   fl_chart: ^0.55.2
 
 dev_dependencies:
@@ -76,3 +77,4 @@ flutter:
     - assets/zipcodes.json
     - assets/logo.png
     - assets/image_icon/
+    - assets/geojson/
