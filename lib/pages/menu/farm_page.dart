@@ -43,6 +43,7 @@ class FarmPage extends StatelessWidget {
       if (state.data!.isNotEmpty) {
         Map<String, dynamic>? farm = state.data!['FARM'];
         Map<String, dynamic>? buffs = state.data!['BUFFS'];
+        Map<String, dynamic>? types = state.data!['TYPE'];
         Map<String, dynamic>? activities = state.data!['ACTIVITIES'];
 
         return ListView(
@@ -51,6 +52,7 @@ class FarmPage extends StatelessWidget {
           children: [
             farm != null ? farmCard(farm) : Container(),
             buffs != null ? buffsCard(buffs) : Container(),
+            types != null ? buffTypeCard(types) : Container(),
             activities != null ? activitiesCard(activities) : Container(),
           ],
         );
@@ -132,19 +134,19 @@ class FarmPage extends StatelessWidget {
 
   farmCard(Map<String, dynamic> data) {
     return Container(
-        padding: const EdgeInsets.only(left: 16, right: 16, top: 20, bottom: 2),
+        padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 2),
         margin: const EdgeInsets.only(bottom: 16),
         decoration: BoxDecoration(
-            gradient: LinearGradient(
-                colors: [
-                  ColorHelper.lighten(primaryColor, .6).withOpacity(0.12),
-                  ColorHelper.lighten(primaryColor, .10).withOpacity(0.0),
-                ],
-                begin: const Alignment(-0.0, -1.0),
-                end: const Alignment(0.0, 1.0),
-                stops: const [0.0, 0.4],
-                tileMode: TileMode.clamp),
-            //color: primaryColor.withOpacity(0.65),
+            // gradient: LinearGradient(
+            //     colors: [
+            //       ColorHelper.lighten(primaryColor, .6).withOpacity(0.12),
+            //       ColorHelper.lighten(primaryColor, .10).withOpacity(0.0),
+            //     ],
+            //     begin: const Alignment(-0.0, -1.0),
+            //     end: const Alignment(0.0, 1.0),
+            //     stops: const [0.0, 0.4],
+            //     tileMode: TileMode.clamp),
+            color: ColorHelper.lighten(primaryColor, .6).withOpacity(0.12),
             borderRadius: BorderRadius.circular(20)),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -162,17 +164,17 @@ class FarmPage extends StatelessWidget {
             ),
             RichText(
                 text: TextSpan(children: [
-                  TextSpan(
-                    text: "ชื่อ:",
-                    style: GoogleFonts.itim(
-                        color: ColorHelper.darken(Colors.white, .2), fontSize: 17),
-                  ),
-                  TextSpan(
-                    text: "    ${data['first_name']} ${data['last_name']}",
-                    style: GoogleFonts.itim(
-                        color: ColorHelper.darken(Colors.white, .1), fontSize: 19),
-                  )
-                ])),
+              TextSpan(
+                text: "ชื่อ:",
+                style: GoogleFonts.itim(
+                    color: ColorHelper.darken(Colors.white, .2), fontSize: 17),
+              ),
+              TextSpan(
+                text: "    ${data['first_name']} ${data['last_name']}",
+                style: GoogleFonts.itim(
+                    color: ColorHelper.darken(Colors.white, .1), fontSize: 19),
+              )
+            ])),
             // Text(
             //   "เบอร์โทรศัพท์:  ${data['phone_number']?.toString().replaceAll("+66", "0")}",
             //   style: GoogleFonts.itim(
@@ -180,17 +182,18 @@ class FarmPage extends StatelessWidget {
             // ),
             RichText(
                 text: TextSpan(children: [
-                  TextSpan(
-                    text: "ที่อยู่:",
-                    style: GoogleFonts.itim(
-                        color: ColorHelper.darken(Colors.white, .2), fontSize: 17),
-                  ),
-                  TextSpan(
-                    text: "  ${data['sub_district']}, ${data['district']}, ${data['province']}",
-                    style: GoogleFonts.itim(
-                        color: ColorHelper.darken(Colors.white, .1), fontSize: 19),
-                  )
-                ])),
+              TextSpan(
+                text: "ที่อยู่:",
+                style: GoogleFonts.itim(
+                    color: ColorHelper.darken(Colors.white, .2), fontSize: 17),
+              ),
+              TextSpan(
+                text:
+                    "  ${data['sub_district']}, ${data['district']}, ${data['province']}",
+                style: GoogleFonts.itim(
+                    color: ColorHelper.darken(Colors.white, .1), fontSize: 19),
+              )
+            ])),
             const SizedBox(
               height: 16,
             ),
@@ -207,6 +210,135 @@ class FarmPage extends StatelessWidget {
         ));
   }
 
+  buffTypeCard(Map<String, dynamic> data) {
+    return Container(
+        padding: const EdgeInsets.only(left: 0, right: 0, top: 0, bottom: 0),
+        margin: const EdgeInsets.only(bottom: 16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Container(
+                margin: const EdgeInsets.only(left: 8, right: 0, bottom: 0),
+                child: Text(
+                  "ประเภทของกระบือ",
+                  style: GoogleFonts.itim(
+                      color: ColorHelper.lighten(primaryColor, .7),
+                      fontSize: 28),
+                )),
+            Container(
+              decoration: BoxDecoration(
+                // gradient: LinearGradient(
+                //     colors: [
+                //       ColorHelper.lighten(primaryColor, .6).withOpacity(0.12),
+                //       ColorHelper.lighten(primaryColor, .10).withOpacity(0.0),
+                //     ],
+                //     begin: const Alignment(-0.0, -1.0),
+                //     end: const Alignment(0.0, 1.0),
+                //     stops: const [0.0, 0.4],
+                //     tileMode: TileMode.clamp),
+                  color:
+                  ColorHelper.lighten(primaryColor, .6).withOpacity(0.12),
+
+                  //color: ColorHelper.lighten(primaryColor, .6).withOpacity(0.07),
+                  borderRadius: BorderRadius.circular(20)),
+              padding: const EdgeInsets.only(
+                  left: 16, right: 16, top: 16, bottom: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  Expanded(
+                    child: AspectRatio(
+                      aspectRatio: 1.3,
+                      child: PieChart(
+                        PieChartData(
+                          pieTouchData: PieTouchData(
+                            touchCallback:
+                                (FlTouchEvent event, pieTouchResponse) {
+                              // setState(() {
+                              //   if (!event.isInterestedForInteractions ||
+                              //       pieTouchResponse == null ||
+                              //       pieTouchResponse.touchedSection == null) {
+                              //     touchedIndex = -1;
+                              //     return;
+                              //   }
+                              //   touchedIndex = pieTouchResponse
+                              //       .touchedSection!.touchedSectionIndex;
+                              // });
+                            },
+                          ),
+                          borderData: FlBorderData(
+                            show: false,
+                          ),
+                          sectionsSpace: 8,
+                          centerSpaceRadius: 32,
+                          sections: showingBuffTypeSections(data),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 26,
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      buffIndicator(
+                          color: ColorHelper.lighten(primaryColor, .6)
+                              .withOpacity(0.9),
+                          text: 'ทั้งหมด',
+                          ),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      buffIndicator(
+                          color: Colors.blue,
+                          text: 'พ่อพันธุ์',
+                      ),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      buffIndicator(
+                          color: Colors.pink,
+                          text: 'แม่พันธุ์',
+                      ),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      buffIndicator(
+                          color: Colors.yellow,
+                          text: 'กระบือรุ่น',
+                          ),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      buffIndicator(
+                          color: Colors.lightGreen,
+                          text: 'กระบือขุน',
+                          ),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      buffIndicator(
+                          color: Colors.orange,
+                          text: 'แรกเกิด',
+                          ),
+                    ],
+                  ),
+                  const SizedBox(
+                    width: 16,
+                  ),
+                ],
+              ),
+            )
+          ],
+        ));
+  }
+
   buffsCard(Map<String, dynamic> data) {
     return Container(
         padding: const EdgeInsets.only(left: 0, right: 0, top: 0, bottom: 0),
@@ -219,26 +351,29 @@ class FarmPage extends StatelessWidget {
             Container(
                 margin: const EdgeInsets.only(left: 8, right: 0, bottom: 0),
                 child: Text(
-                  "จำนวน",
+                  "เพศของกระบือ",
                   style: GoogleFonts.itim(
                       color: ColorHelper.lighten(primaryColor, .7),
                       fontSize: 28),
                 )),
             Container(
               decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      colors: [
-                        ColorHelper.lighten(primaryColor, .6).withOpacity(0.12),
-                        ColorHelper.lighten(primaryColor, .10).withOpacity(0.0),
-                      ],
-                      begin: const Alignment(-0.0, -1.0),
-                      end: const Alignment(0.0, 1.0),
-                      stops: const [0.0, 0.4],
-                      tileMode: TileMode.clamp),
+                  // gradient: LinearGradient(
+                  //     colors: [
+                  //       ColorHelper.lighten(primaryColor, .6).withOpacity(0.12),
+                  //       ColorHelper.lighten(primaryColor, .10).withOpacity(0.0),
+                  //     ],
+                  //     begin: const Alignment(-0.0, -1.0),
+                  //     end: const Alignment(0.0, 1.0),
+                  //     stops: const [0.0, 0.4],
+                  //     tileMode: TileMode.clamp),
+                  color:
+                      ColorHelper.lighten(primaryColor, .6).withOpacity(0.12),
+
                   //color: ColorHelper.lighten(primaryColor, .6).withOpacity(0.07),
                   borderRadius: BorderRadius.circular(20)),
               padding: const EdgeInsets.only(
-                  left: 16, right: 16, top: 22, bottom: 16),
+                  left: 16, right: 16, top: 16, bottom: 16),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -246,7 +381,7 @@ class FarmPage extends StatelessWidget {
                 children: <Widget>[
                   Expanded(
                     child: AspectRatio(
-                      aspectRatio: 1.0,
+                      aspectRatio: 1.3,
                       child: PieChart(
                         PieChartData(
                           pieTouchData: PieTouchData(
@@ -302,6 +437,9 @@ class FarmPage extends StatelessWidget {
                           value: data['FEMALE'] ?? 0),
                     ],
                   ),
+                  const SizedBox(
+                    width: 16,
+                  ),
                 ],
               ),
             )
@@ -322,26 +460,29 @@ class FarmPage extends StatelessWidget {
             Container(
                 margin: const EdgeInsets.only(left: 8, right: 0, bottom: 0),
                 child: Text(
-                  "สถานะ",
+                  "สถานะของกระบือ",
                   style: GoogleFonts.itim(
                       color: ColorHelper.lighten(primaryColor, .7),
                       fontSize: 28),
                 )),
             Container(
               decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      colors: [
-                        ColorHelper.lighten(primaryColor, .6).withOpacity(0.12),
-                        ColorHelper.lighten(primaryColor, .10).withOpacity(0.0),
-                      ],
-                      begin: const Alignment(-0.0, -1.0),
-                      end: const Alignment(0.0, 1.0),
-                      stops: const [0.0, 0.4],
-                      tileMode: TileMode.clamp),
+                  // gradient: LinearGradient(
+                  //     colors: [
+                  //       ColorHelper.lighten(primaryColor, .6).withOpacity(0.12),
+                  //       ColorHelper.lighten(primaryColor, .10).withOpacity(0.0),
+                  //     ],
+                  //     begin: const Alignment(-0.0, -1.0),
+                  //     end: const Alignment(0.0, 1.0),
+                  //     stops: const [0.0, 0.4],
+                  //     tileMode: TileMode.clamp),
+                  color:
+                      ColorHelper.lighten(primaryColor, .6).withOpacity(0.12),
+
                   //color: ColorHelper.lighten(primaryColor, .6).withOpacity(0.07),
                   borderRadius: BorderRadius.circular(20)),
               padding: const EdgeInsets.only(
-                  left: 0, right: 16, top: 32, bottom: 16),
+                  left: 0, right: 16, top: 16, bottom: 16),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -388,7 +529,6 @@ class FarmPage extends StatelessWidget {
                           color: Colors.green,
                           text: 'กำลังรักษาโรค',
                           alignment: Alignment.bottomCenter,
-
                           value: data['DISEASE_TREATMENT'] ?? 0),
                     ],
                   ),
@@ -442,7 +582,7 @@ class FarmPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
-            width: 65,
+              width: 65,
               padding:
                   const EdgeInsets.only(left: 12, right: 12, top: 4, bottom: 4),
               margin: const EdgeInsets.only(top: 0),
@@ -479,40 +619,37 @@ class FarmPage extends StatelessWidget {
                 )
               ]))),
           const SizedBox(width: 14),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                text,
-                style: TextStyle(
-                    fontSize: 18,
-                    color: ColorHelper.lighten(color, .5).withOpacity(0.99)),
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(
+              text,
+              style: TextStyle(
+                  fontSize: 18,
+                  color: ColorHelper.lighten(color, .5).withOpacity(0.99)),
+            ),
+            Container(
+              margin: const EdgeInsets.only(top: 4),
+              decoration: BoxDecoration(
+                borderRadius:
+                    BorderRadius.only(bottomLeft: Radius.circular(20)),
+                gradient: LinearGradient(
+                    colors: [
+                      ColorHelper.lighten(color, .1).withOpacity(0.8),
+                      Colors.transparent,
+                    ],
+                    begin: const Alignment(0.0, 0.0),
+                    end: const Alignment(1.0, 1.0),
+                    stops: const [0.0, 1.0],
+                    tileMode: TileMode.clamp),
               ),
-              Container(
-                margin: const EdgeInsets.only(top: 4),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(bottomLeft: Radius.circular(20)),
-                  gradient: LinearGradient(
-                      colors: [
-                        ColorHelper.lighten(color, .1).withOpacity(0.8),
-                        Colors.transparent,
-                      ],
-                      begin: const Alignment(0.0, 0.0),
-                      end: const Alignment(1.0, 1.0),
-                      stops: const [0.0, 1.0],
-                      tileMode: TileMode.clamp),
-
-                ),
-                height: 1,width: 180,
-              ),
-            ]
-          )
-
+              height: 1,
+              width: 180,
+            ),
+          ])
         ]);
   }
 
   Widget buffIndicator(
-      {required Color color, required String text, required int value}) {
+      {required Color color, required String text, int? value}) {
     return Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -537,49 +674,60 @@ class FarmPage extends StatelessWidget {
                       color: ColorHelper.lighten(primaryColor, .6)
                           .withOpacity(0.9)),
                 ),
-                Text(
+                value != null ? Text(
                   "$value ตัว",
                   style: TextStyle(
                       fontSize: 16,
                       color: ColorHelper.lighten(primaryColor, .6)
                           .withOpacity(0.7)),
-                )
+                ) : Container()
               ])
         ]);
   }
 
   List<PieChartSectionData> showingBuffsSections(Map<String, dynamic> data) {
     return List.generate(2, (i) {
-      const fontSize = 18.0;
-      const radius = 50.0;
       switch (i) {
         case 0:
-          return PieChartSectionData(
-            color: Colors.blue,
-            value: data['MALE'].toDouble(),
-            title: '',
-            radius: radius,
-            titleStyle: const TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: Color(0xffffffff),
-            ),
-          );
+          return section(value: data['MALE'].toDouble(),color: Colors.blue);
         case 1:
-          return PieChartSectionData(
-            color: Colors.pink,
-            value: data['FEMALE'].toDouble(),
-            title: '',
-            radius: radius,
-            titleStyle: const TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: Color(0xffffffff),
-            ),
-          );
+          return section(value: data['FEMALE'].toDouble(),color: Colors.pink);
         default:
           throw Error();
       }
     });
+  }
+
+  List<PieChartSectionData> showingBuffTypeSections(Map<String, dynamic> data) {
+    return List.generate(5, (i) {
+      switch (i) {
+        case 0:
+          return section(value: data['M'].toDouble(),title: data['M'].toString(),color: Colors.blue);
+        case 1:
+          return section(value: data['F'].toDouble(),title: data['F'].toString(),color: Colors.pink);
+        case 2:
+          return section(value: data['T'].toDouble(),title: data['T'].toString(),color: Colors.yellow);
+        case 3:
+          return section(value: data['G'].toDouble(),title: data['G'].toString(),color: Colors.lightGreen);
+        case 4:
+          return section(value: data['B'].toDouble(),title: data['B'].toString(),color: Colors.orange);
+        default:
+          throw Error();
+      }
+    });
+  }
+
+  PieChartSectionData section({double value = 0,String? title,Color color = Colors.white,double radius = 50.0,double fontSize = 26.0}){
+    return PieChartSectionData(
+      color: color,
+      value: value,
+      title: title ?? "",
+      radius: radius,
+      titleStyle: TextStyle(
+        fontSize: fontSize,
+        fontWeight: FontWeight.bold,
+        color: Colors.white.withOpacity(0.9),
+      ),
+    );
   }
 }

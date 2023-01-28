@@ -38,6 +38,8 @@ class _MainHomePageState extends State<MainHomePage> {
     }
 
     double statusBarHeight = MediaQuery.of(context).viewPadding.top;
+    double navigationBarHeight = MediaQuery.of(context).viewPadding.bottom;
+
 
     return BlocBuilder<HomeCubit, HomeState>(builder: (context, state) {
       if (state is HomeInitialState) {
@@ -113,13 +115,13 @@ class _MainHomePageState extends State<MainHomePage> {
                             elevation: 20,
                             //heroTag: "${tabTag(state)}_TAG",
                             backgroundColor: tabColor(state),
-                            child: const Icon(FontAwesomeIcons.plus),
+                            child: const Icon(FontAwesomeIcons.plus,color: Colors.white,),
                           )
                         : null)
                     : null,
                 bottomNavigationBar: !isLandscapeMode()
                     ? SizedBox(
-                        height: 60,
+                        height: 60 + navigationBarHeight,
                         child: Center(
                             child: Container(
                           padding: const EdgeInsets.only(left: 16, right: 16),

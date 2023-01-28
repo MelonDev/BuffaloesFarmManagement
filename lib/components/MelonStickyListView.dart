@@ -7,13 +7,13 @@ import 'package:buffaloes_farm_management/extensions/KotlinScopeFunction.dart';
 
 class MelonStickyListView extends StatelessWidget {
   MelonStickyListView({Key? key,
-    @required this.data,
+    required this.data,
     this.bodyHeaderPinned = false,
     this.bodyHeaderFloating = false,
     this.bodyHeaderMinHeight = 40.0,
     this.bodyHeaderMaxHeight = 50.0,
-    @required this.bodyHeaderBuilder,
-    @required this.bodyEntryBuilder,
+    required this.bodyHeaderBuilder,
+    required this.bodyEntryBuilder,
     this.appBar,
     this.header,
     this.footer,
@@ -118,7 +118,7 @@ class MelonStickyListView extends StatelessWidget {
 
 class _MelonGroupedEntry extends StatelessWidget {
   const _MelonGroupedEntry(
-      {Key? key, @required this.data, @required this.builder})
+      {Key? key, required this.data, required this.builder})
       : super(key: key);
 
   final List<dynamic>? data;
@@ -137,9 +137,9 @@ class _MelonGroupedEntry extends StatelessWidget {
 
 class _MelonGroupedHeader extends StatelessWidget {
   const _MelonGroupedHeader({Key? key,
-    @required this.minHeight,
-    @required this.maxHeight,
-    @required this.child,
+    required this.minHeight,
+    required this.maxHeight,
+    required this.child,
     this.pinned,
     this.floating})
       : super(key: key);
@@ -169,9 +169,9 @@ class _MelonStickyHeaderDelegate extends SliverPersistentHeaderDelegate {
   final Widget? child;
 
   _MelonStickyHeaderDelegate({
-    @required this.minHeight,
-    @required this.maxHeight,
-    @required this.child,
+    required this.minHeight,
+    required this.maxHeight,
+    required this.child,
   });
 
   @override

@@ -175,6 +175,8 @@ class _AddBuffPage extends State<AddBuffPage> {
   void initState() {
     super.initState();
     buffTypeKey = widget.buffTypeKey;
+    gender = buffTypeKey == "F" ? 1 : 0;
+
   }
 
   @override

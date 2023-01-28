@@ -39,7 +39,7 @@ class LoginPage extends StatelessWidget {
       return Container();
     }
     if (state is AuthenticatingState) {
-      return const AuthenticateLoadingPage();
+      return AuthenticateLoadingPage();
     } else if (state is UnauthenticationState) {
       return Material(child: GestureDetector(
           onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -109,7 +109,7 @@ class LoginPage extends StatelessWidget {
                                           ),
                                           Container(height: 0),
                                           Text(
-                                            "Buffaloes Farm Management",
+                                            "Smart Buffaloes Manager",
                                             style: GoogleFonts.itim(
                                               color: Colors.black.withOpacity(0.4),
                                               fontSize: 16,
@@ -196,7 +196,7 @@ class LoginPage extends StatelessWidget {
         ),
       ));
     } else {
-      return const AuthenticateLoadingPage();
+      return AuthenticateLoadingPage();
     }
   }
 }

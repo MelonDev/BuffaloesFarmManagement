@@ -2,7 +2,8 @@ import 'package:buffaloes_farm_management/constants/ColorConstants.dart';
 import 'package:buffaloes_farm_management/constants/StyleConstants.dart';
 import 'package:buffaloes_farm_management/tools/ColorHelper.dart';
 import 'package:flutter/material.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart'
+as modal_bottom_sheet;
 
 void messageDialog(BuildContext context,
     {required String title,
@@ -94,7 +95,7 @@ void messageDialog(BuildContext context,
 }
 
 void bottomDialog(BuildContext context, Widget child,{double? height,Color? backgroundColor}) {
-  showMaterialModalBottomSheet(
+  modal_bottom_sheet.showMaterialModalBottomSheet(
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.only(topLeft: Radius.circular(24),topRight: Radius.circular(24)),
     ),

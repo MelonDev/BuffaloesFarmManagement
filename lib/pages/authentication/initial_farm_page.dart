@@ -17,9 +17,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:ionicons/ionicons.dart';
 import 'package:buffaloes_farm_management/constants/StyleConstants.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart'
+as modal_bottom_sheet;
 
 import '../home_page.dart';
 import '../loading/main_initial_loading_page.dart';
@@ -189,7 +189,6 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
                   //           color: Colors.white,
                   //           fontWeight: FontWeight.bold,
                   //           fontSize: 18)),
-                  //   icon: Icon(Ionicons.checkmark_outline, color: Colors.white),
                   // ),
                   body: Center(
                       child: Container(
@@ -316,7 +315,7 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
     } else if (initial == false) {
       return const MainInitialLoadingPage();
     } else {
-      return const AuthenticateLoadingPage();
+      return AuthenticateLoadingPage();
     }
   }
 
@@ -367,7 +366,7 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
   }
 
   openDialog(List data, {String? title}) async {
-    showBarModalBottomSheet(
+    modal_bottom_sheet.showBarModalBottomSheet(
       context: context,
       enableDrag: true,
       backgroundColor: kBGColor,

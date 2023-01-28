@@ -8,10 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:ionicons/ionicons.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
-
-import 'package:ionicons/ionicons.dart';
 
 class SMSPinPage extends StatelessWidget {
   SMSPinPage({Key? key, required this.phoneNumber}) : super(key: key);
@@ -139,7 +136,6 @@ class SMSPinPage extends StatelessWidget {
                   //           color: Colors.white,
                   //           fontWeight: FontWeight.bold,
                   //           fontSize: 18)),
-                  //   icon: Icon(Ionicons.checkmark_outline, color: Colors.white),
                   // ),
                   body: Center(
                     child: Container(
@@ -313,7 +309,7 @@ class SMSPinPage extends StatelessWidget {
           );
         }
       }
-      return const AuthenticateLoadingPage();
+      return AuthenticateLoadingPage();
 
     });
   }
