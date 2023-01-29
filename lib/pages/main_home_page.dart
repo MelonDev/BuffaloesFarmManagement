@@ -420,7 +420,7 @@ class _MainHomePageState extends State<MainHomePage> {
               maxLines: 1,
               style: TextStyle(
                   fontWeight: FontWeight.normal,
-                  fontSize: active ? 19 : 17,
+                  fontSize: active ? 18 : 17,
                   color: active ? item.color : Colors.black.withOpacity(0.4)),
             ),
             Container(width: 2),

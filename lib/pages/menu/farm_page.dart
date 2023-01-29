@@ -725,7 +725,7 @@ class FarmPage extends StatelessWidget {
       radius: radius,
       titleStyle: TextStyle(
         fontSize: fontSize,
-        fontWeight: FontWeight.bold,
+        fontWeight: FontWeight.normal,
         color: Colors.white.withOpacity(0.9),
       ),
     );

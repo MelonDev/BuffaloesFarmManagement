@@ -104,7 +104,7 @@ class BuffMenuDetail extends StatelessWidget {
                             },
                             elevation: 20,
                             backgroundColor: primaryColor,
-                            child: const Icon(FontAwesomeIcons.plus),
+                            child: const Icon(FontAwesomeIcons.plus,color:Colors.white),
                           ),
                           body: BlocBuilder<HomeCubit, HomeState>(
                               builder: (context, state) {
