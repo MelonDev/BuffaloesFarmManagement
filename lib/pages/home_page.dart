@@ -93,7 +93,7 @@ class HomePage extends StatelessWidget {
                     elevation: 20,
                     //heroTag: "${tabTag(state)}_TAG",
                     backgroundColor: tabColor(state),
-                    child: const Icon(FontAwesomeIcons.plus),
+                    child: const Icon(FontAwesomeIcons.plus,color: Colors.white,),
                   )
                 : null,
             bottomNavigationBar: Container(

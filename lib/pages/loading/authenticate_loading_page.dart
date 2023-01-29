@@ -4,7 +4,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class AuthenticateLoadingPage extends StatelessWidget {
-  const AuthenticateLoadingPage({Key? key}) : super(key: key);
+  AuthenticateLoadingPage({Key? key,this.bgColor}) : super(key: key);
+
+  Color? bgColor;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +22,7 @@ class AuthenticateLoadingPage extends StatelessWidget {
           ),
       child: Material(
         child: Scaffold(
-          backgroundColor: bgButtonColor,
+          backgroundColor: bgColor ?? bgButtonColor,
           appBar: PreferredSize(
               preferredSize: const Size.fromHeight(0.0),
               // here the desired height

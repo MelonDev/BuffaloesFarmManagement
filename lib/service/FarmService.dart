@@ -34,6 +34,28 @@ class FarmService {
       if (response != null) {
         if (response.statusCode == 200) {
           var data = response.data['data'];
+          print("summary");
+          print(data);
+          if (data != null) {
+            return data;
+          }
+        }
+        return {};
+      }
+
+      return null;
+    } on Exception catch (_) {
+      return null;
+    }
+  }
+
+  static Future<Map<String, dynamic>?> report() async {
+    try {
+      var response = await HttpService.getForm(path: '/report', body: {});
+      if (response != null) {
+        if (response.statusCode == 200) {
+          var data = response.data['data'];
+          print("report");
           print(data);
           if (data != null) {
             return data;

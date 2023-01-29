@@ -54,15 +54,6 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     emit(AuthenticatingState());
     print("signin");
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => SMSPinPage(
-                phoneNumber: number,
-              ),
-          fullscreenDialog: true),
-    );
-
     if (kIsWeb) {
       await _sendWeb(context, number);
     } else {
@@ -127,6 +118,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     await auth.verifyPhoneNumber(
       phoneNumber: number,
       verificationCompleted: (PhoneAuthCredential credential) async {
+        print("verificationCompleted");
         await auth.signInWithCredential(credential);
         FlutterSecureStorage storage = const FlutterSecureStorage();
         String? uid = auth.currentUser?.uid;
@@ -137,6 +129,8 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
         checking(context);
       },
       verificationFailed: (FirebaseAuthException e) {
+        print("verificationFailed");
+        print(e.message);
         emit(UnauthenticationState());
 
         if (e.code == 'invalid-phone-number') {
@@ -144,12 +138,24 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
         }
       },
       codeSent: (String verificationId, int? resendToken) async {
+        print("codeSent: $verificationId");
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => SMSPinPage(
+                phoneNumber: number,
+              ),
+              fullscreenDialog: true),
+        );
+
         emit(WaitSMSState(
             verificationId: verificationId,
             resendToken: resendToken,
             loading: false));
       },
       codeAutoRetrievalTimeout: (String verificationId) {
+        print("codeAutoRetrievalTimeout");
         //checking(context);
       },
     );
@@ -157,6 +163,14 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
 
   _sendWeb(BuildContext context, String number) async {
     confirmationResult = await auth.signInWithPhoneNumber(number).then((value) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => SMSPinPage(
+              phoneNumber: number,
+            ),
+            fullscreenDialog: true),
+      );
       emit(WaitSMSState(
           verificationId: "",
           resendToken: null,
