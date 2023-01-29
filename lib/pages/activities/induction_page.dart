@@ -43,7 +43,7 @@ class _InductionPageState extends State<InductionPage> {
     super.initState();
 
     tfDateTime.text = getCurrentDate();
-    tfDateTime.text = getCurrentDate();
+    //tfDateTime.text = getCurrentDate();
   }
 
   onSubmit() async {
@@ -261,7 +261,7 @@ class _InductionPageState extends State<InductionPage> {
               textField(
                 enabled: true,
                 hint: "",
-                value: getReturnDate(days: 21),
+                value: getReturnDate(days: 21+1),
                 //hint: "วัน/เดือน/ปี",
                 readOnly: true,
                 //controller: tfReturnDateTime,
@@ -413,7 +413,7 @@ class _InductionPageState extends State<InductionPage> {
 
   String getCurrentDate({DateTime? tempDate}) {
     tempDate ??= DateTime.now();
-    tempDate = tempDate.add(const Duration(days: 21));
+    //tempDate = tempDate.add(const Duration(days: 21));
     pickedDatetime = tempDate;
 
     return dateTimeToString(tempDate);
