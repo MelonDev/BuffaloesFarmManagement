@@ -29,7 +29,10 @@ class _ReportPageState extends State<ReportPage> {
 
   @override
   Widget build(BuildContext context) {
-    double statusBarHeight = MediaQuery.of(context).viewPadding.top;
+    double statusBarHeight = MediaQuery
+        .of(context)
+        .viewPadding
+        .top;
 
     return BlocBuilder<ServiceCubit, ServiceState>(builder: (context, state) {
       if (state is ServiceReportState) {
@@ -42,53 +45,65 @@ class _ReportPageState extends State<ReportPage> {
               statusBarBrightness: Brightness.light,
               //systemNavigationBarContrastEnforced: true,
             ),
-            child: GestureDetector(
-              onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-              child: Scaffold(
-                backgroundColor: primaryColor,
-                appBar: PreferredSize(
-                    preferredSize: const Size.fromHeight(50.0),
+            child: Container(
+                color: primaryColor,
+                child: Center(
                     child: Container(
-                        height: 60 + statusBarHeight,
-                        child: Center(
-                            child: Container(
-                                constraints:
-                                    const BoxConstraints(maxWidth: 500),
-                                child: AppBar(
-                                  backgroundColor: Colors.transparent,
-                                  shadowColor: Colors.transparent,
-                                  elevation: 0.0,
-                                  surfaceTintColor: primaryColor,
-                                  systemOverlayStyle:
-                                      const SystemUiOverlayStyle(
-                                          statusBarIconBrightness:
-                                              Brightness.dark,
-                                          statusBarColor: Color(0xFFDCDCDC)),
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.vertical(
-                                      bottom: Radius.circular(22),
-                                    ),
-                                  ),
-                                  centerTitle: true,
-                                  title: Text(
-                                    "รายงาน",
-                                    style: GoogleFonts.itim(
-                                      color: textOuterColor,
-                                      fontSize: 24,
-                                    ),
-                                  ),
-                                  titleSpacing: 0,
-                                  leading: IconButton(
-                                    icon: Icon(FontAwesomeIcons.xmark,
-                                        color: textOuterColor, size: 24),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                ))))),
-                body: body(state),
-              ),
-            ));
+                        constraints: const BoxConstraints(maxWidth: 500),
+                        child: GestureDetector(
+                          onTap: () =>
+                              FocusManager.instance.primaryFocus?.unfocus(),
+                          child: Scaffold(
+                            backgroundColor: primaryColor,
+                            appBar: PreferredSize(
+                                preferredSize: const Size.fromHeight(50.0),
+                                child: Container(
+                                    height: 60 + statusBarHeight,
+                                    child: Center(
+                                        child: Container(
+                                            constraints:
+                                            const BoxConstraints(maxWidth: 500),
+                                            child: AppBar(
+                                              backgroundColor: Colors
+                                                  .transparent,
+                                              shadowColor: Colors.transparent,
+                                              elevation: 0.0,
+                                              surfaceTintColor: primaryColor,
+                                              systemOverlayStyle:
+                                              const SystemUiOverlayStyle(
+                                                  statusBarIconBrightness:
+                                                  Brightness.dark,
+                                                  statusBarColor: Color(
+                                                      0xFFDCDCDC)),
+                                              shape: const RoundedRectangleBorder(
+                                                borderRadius: BorderRadius
+                                                    .vertical(
+                                                  bottom: Radius.circular(22),
+                                                ),
+                                              ),
+                                              centerTitle: true,
+                                              title: Text(
+                                                "รายงาน",
+                                                style: GoogleFonts.itim(
+                                                  color: textOuterColor,
+                                                  fontSize: 24,
+                                                ),
+                                              ),
+                                              titleSpacing: 0,
+                                              leading: IconButton(
+                                                icon: Icon(
+                                                    FontAwesomeIcons.xmark,
+                                                    color: textOuterColor,
+                                                    size: 24),
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                              ),
+                                            ))))),
+                            body: body(state),
+                          ),
+                        ))))
+        );
       } else {
         return Container();
       }
@@ -98,9 +113,9 @@ class _ReportPageState extends State<ReportPage> {
   Widget loading() {
     return const Center(
         child: SpinKitThreeBounce(
-      color: Colors.white,
-      size: 50.0,
-    ));
+          color: Colors.white,
+          size: 50.0,
+        ));
   }
 
   Widget body(ServiceReportState state) {
@@ -110,19 +125,17 @@ class _ReportPageState extends State<ReportPage> {
           itemCount: state.mapModels!.length,
           itemBuilder: (BuildContext context, int index) {
             var model = state.mapModels![index];
-            if(model is ReportMapModel){
+            if (model is ReportMapModel) {
               return widgetMapFarmProvince(model);
-            }else if (model is ReportPieChartModel){
+            } else if (model is ReportPieChartModel) {
               return buffTypeCard(model.data);
-            }else {
+            } else {
               return Container();
             }
-
           });
     } else {
       return Container();
     }
-
   }
 
   Widget widgetMapFarmProvince(ReportMapModel model) {
@@ -148,30 +161,30 @@ class _ReportPageState extends State<ReportPage> {
             ),
             margin: const EdgeInsets.only(left: 20, right: 20),
             padding:
-                const EdgeInsets.only(left: 16, right: 16, top: 20, bottom: 20),
+            const EdgeInsets.only(left: 16, right: 16, top: 20, bottom: 20),
             child: Row(
               children: [
                 Expanded(
                     child: Container(
-                  height: 250,
-                  //height: MediaQuery.of(context).size.height,
-                  child: SfMaps(
-                    layers: [
-                      MapShapeLayer(
-                        source: model.mapSource,
-                        //legend: MapLegend(MapElement.shape),
-                        showDataLabels: true,
-                        strokeColor: const Color(0xFF9D9D9D),
-                        strokeWidth: 1.0,
-                        dataLabelSettings: const MapDataLabelSettings(
-                            textStyle: TextStyle(
-                                color: Color(0xFF4D4D4D),
-                                fontWeight: FontWeight.normal,
-                                fontSize: 16)),
+                      height: 250,
+                      //height: MediaQuery.of(context).size.height,
+                      child: SfMaps(
+                        layers: [
+                          MapShapeLayer(
+                            source: model.mapSource,
+                            //legend: MapLegend(MapElement.shape),
+                            showDataLabels: true,
+                            strokeColor: const Color(0xFF9D9D9D),
+                            strokeWidth: 1.0,
+                            dataLabelSettings: const MapDataLabelSettings(
+                                textStyle: TextStyle(
+                                    color: Color(0xFF4D4D4D),
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: 16)),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                )),
+                    )),
                 Container(
                   margin: const EdgeInsets.only(left: 10),
                   width: 110,
@@ -205,11 +218,10 @@ class _ReportPageState extends State<ReportPage> {
         ]);
   }
 
-  Widget mapIndicator(
-      {required Color color,
-      required String text,
-      int? value,
-      String? surfix}) {
+  Widget mapIndicator({required Color color,
+    required String text,
+    int? value,
+    String? surfix}) {
     return Container(
       margin: EdgeInsets.only(bottom: value == null ? 4 : 0),
       child: Row(
@@ -236,11 +248,11 @@ class _ReportPageState extends State<ReportPage> {
                   ),
                   value != null
                       ? Text(
-                          "$value ${surfix ?? ""}",
-                          style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.black.withOpacity(0.5)),
-                        )
+                    "$value ${surfix ?? ""}",
+                    style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.black.withOpacity(0.5)),
+                  )
                       : Container()
                 ])
           ]),
@@ -374,22 +386,34 @@ class _ReportPageState extends State<ReportPage> {
     return List.generate(5, (i) {
       switch (i) {
         case 0:
-          return section(value: data['M'].toDouble(),title: data['M'].toString(),color: Colors.blue);
+          return section(value: data['M'].toDouble(),
+              title: data['M'].toString(),
+              color: Colors.blue);
         case 1:
-          return section(value: data['F'].toDouble(),title: data['F'].toString(),color: Colors.pink);
+          return section(value: data['F'].toDouble(),
+              title: data['F'].toString(),
+              color: Colors.pink);
         case 2:
-          return section(value: data['T'].toDouble(),title: data['T'].toString(),color: Colors.yellow);
+          return section(value: data['T'].toDouble(),
+              title: data['T'].toString(),
+              color: Colors.yellow);
         case 3:
-          return section(value: data['G'].toDouble(),title: data['G'].toString(),color: Colors.lightGreen);
+          return section(value: data['G'].toDouble(),
+              title: data['G'].toString(),
+              color: Colors.lightGreen);
         case 4:
-          return section(value: data['B'].toDouble(),title: data['B'].toString(),color: Colors.orange);
+          return section(value: data['B'].toDouble(),
+              title: data['B'].toString(),
+              color: Colors.orange);
         default:
           throw Error();
       }
     });
   }
 
-  PieChartSectionData section({double value = 0,String? title,Color color = Colors.white,double radius = 50.0,double fontSize = 22.0}){
+  PieChartSectionData section(
+      {double value = 0, String? title, Color color = Colors
+          .white, double radius = 50.0, double fontSize = 22.0}) {
     return PieChartSectionData(
       color: color,
       value: value,
@@ -414,7 +438,6 @@ class IndicatorModel {
 }
 
 class ReportBaseModel {
-
 }
 
 class ReportPieChartModel extends ReportBaseModel {
@@ -423,7 +446,7 @@ class ReportPieChartModel extends ReportBaseModel {
   ReportPieChartModel(this.data);
 }
 
-class ReportMapModel extends ReportBaseModel{
+class ReportMapModel extends ReportBaseModel {
   MapShapeSource mapSource;
   List<IndicatorModel> items;
   Color color;
@@ -432,11 +455,10 @@ class ReportMapModel extends ReportBaseModel{
 
   String surfix;
 
-  ReportMapModel(
-      {required this.title,
-      required this.value,
-      required this.mapSource,
-      required this.items,
-      required this.color,
-      required this.surfix});
+  ReportMapModel({required this.title,
+    required this.value,
+    required this.mapSource,
+    required this.items,
+    required this.color,
+    required this.surfix});
 }
