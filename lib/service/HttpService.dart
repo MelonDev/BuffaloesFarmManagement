@@ -5,7 +5,9 @@ import 'package:buffaloes_farm_management/tools/DioHelper.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 import 'package:http/http.dart' as http;
 
 class HttpService {
@@ -170,25 +172,93 @@ class HttpService {
     }
   }
 
+  static Future<String?> uploadToFirebaseByBytes(Uint8List bytes) async {
+    FirebaseStorage storage = FirebaseStorage.instance;
+    FirebaseAuth auth = FirebaseAuth.instance;
+    String? uid = await AuthenticationCubit().currentUserUid();
+
+    if (uid != null) {
+      Reference ref = storage
+          .ref()
+          .child("images")
+          .child(uid)
+          .child("${DateTime.now().millisecondsSinceEpoch}.jpg");
+
+      // var metadata = SettableMetadata(
+      //   contentType: 'image/${file.extension}',
+      // );
+
+      TaskSnapshot snapshot = await ref.putData(bytes);
+      print(snapshot.state);
+
+      if (snapshot.state == TaskState.success) {
+        String downloadUrl = await snapshot.ref.getDownloadURL();
+        return downloadUrl;
+      }
+
+      // TaskSnapshot snapshot =
+      //     kIsWeb ? await ref.putData(bytes) : await ref.putFile(file);
+
+      //TaskSnapshot snapshot = await ref.putFile(file, metadata);
+
+      //print(snapshot.state);
+      // if (snapshot.state == TaskState.success) {
+      //   String downloadUrl = await snapshot.ref.getDownloadURL();
+      //   return downloadUrl;
+      // }
+      return null;
+    } else {
+      return null;
+    }
+  }
+
   static Future<String?> uploadToFirebase(File file) async {
     FirebaseStorage storage = FirebaseStorage.instance;
     FirebaseAuth auth = FirebaseAuth.instance;
     String? uid = await AuthenticationCubit().currentUserUid();
 
-    if(uid != null) {
-      TaskSnapshot snapshot =
-      await storage.ref().child("images").child("$uid").child("${DateTime.now().millisecondsSinceEpoch}.jpg").putFile(file);
-      print(snapshot.state);
-      if (snapshot.state == TaskState.success) {
-        String downloadUrl = await snapshot.ref.getDownloadURL();
-        return downloadUrl;
-      } else {
-        return null;
+    if (uid != null) {
+      Reference ref = storage
+          .ref()
+          .child("images")
+          .child(uid)
+          .child("${DateTime.now().millisecondsSinceEpoch}.jpg");
+
+      // var metadata = SettableMetadata(
+      //   contentType: 'image/${file.extension}',
+      // );
+      print(file.path);
+
+      Uint8List? bytes;
+      bytes = await file.readAsBytes().then((value) {
+        bytes = Uint8List.fromList(value);
+        print('reading of bytes is completed');
+      }).catchError((onError) {
+        print('Exception Error while reading audio from path: $onError');
+      });
+
+      if (bytes != null) {
+        TaskSnapshot snapshot = await ref.putData(bytes!);
+        print(snapshot.state);
+
+        if (snapshot.state == TaskState.success) {
+          String downloadUrl = await snapshot.ref.getDownloadURL();
+          return downloadUrl;
+        }
       }
-    }else {
+      // TaskSnapshot snapshot =
+      //     kIsWeb ? await ref.putData(bytes) : await ref.putFile(file);
+
+      //TaskSnapshot snapshot = await ref.putFile(file, metadata);
+
+      //print(snapshot.state);
+      // if (snapshot.state == TaskState.success) {
+      //   String downloadUrl = await snapshot.ref.getDownloadURL();
+      //   return downloadUrl;
+      // }
+      return null;
+    } else {
       return null;
     }
-
-
   }
 }

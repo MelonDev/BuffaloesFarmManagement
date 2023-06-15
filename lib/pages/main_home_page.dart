@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:buffaloes_farm_management/components/MessagesDialog.dart';
 import 'package:buffaloes_farm_management/cubit/home/home_cubit.dart';
@@ -40,6 +42,11 @@ class _MainHomePageState extends State<MainHomePage> {
     double statusBarHeight = MediaQuery.of(context).viewPadding.top;
     double navigationBarHeight = MediaQuery.of(context).viewPadding.bottom;
 
+    if (kIsWeb == false) {
+      if (Platform.isIOS) {
+        navigationBarHeight -= 10;
+      }
+    }
 
     return BlocBuilder<HomeCubit, HomeState>(builder: (context, state) {
       if (state is HomeInitialState) {
@@ -105,9 +112,12 @@ class _MainHomePageState extends State<MainHomePage> {
                                 // );
                               }
                               if (state is HomeManagementState) {
-                                Navigator.of(context).push(
+                                await Navigator.of(context).push(
                                   NavigatorHelper.slide(
-                                    AddBuffPage(),
+                                    AddBuffPage(onComplete: (value){
+                                      TabModel item = tabs[currentTab];
+                                      item.onTap?.call();
+                                    },),
                                   ),
                                 );
                               }
@@ -115,7 +125,10 @@ class _MainHomePageState extends State<MainHomePage> {
                             elevation: 20,
                             //heroTag: "${tabTag(state)}_TAG",
                             backgroundColor: tabColor(state),
-                            child: const Icon(FontAwesomeIcons.plus,color: Colors.white,),
+                            child: const Icon(
+                              FontAwesomeIcons.plus,
+                              color: Colors.white,
+                            ),
                           )
                         : null)
                     : null,
@@ -151,7 +164,8 @@ class _MainHomePageState extends State<MainHomePage> {
                                             : null,
                                         unselectedColor: Colors.black54,
                                         title: Container(
-                                          constraints: const BoxConstraints(maxWidth:120),
+                                          constraints: const BoxConstraints(
+                                              maxWidth: 120),
                                           child: AutoSizeText(
                                             tab.name,
                                             maxLines: 1,
@@ -207,7 +221,7 @@ class _MainHomePageState extends State<MainHomePage> {
       padding: const EdgeInsets.only(left: 20, top: 24),
       child: Column(children: [
         Container(
-          width: 180,
+          width: 170,
           height: 200,
           decoration: const BoxDecoration(
               color: Colors.white,
@@ -338,7 +352,8 @@ class _MainHomePageState extends State<MainHomePage> {
           }
         },
         style: ButtonStyle(
-          overlayColor: MaterialStateProperty.all(ColorHelper.darken(tabColor(state))),
+          overlayColor:
+              MaterialStateProperty.all(ColorHelper.darken(tabColor(state))),
           elevation: MaterialStateProperty.all(0),
           backgroundColor: MaterialStateProperty.all(tabColor(state)),
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -374,59 +389,108 @@ class _MainHomePageState extends State<MainHomePage> {
     return Container(
       height: active ? 50 : 46,
       padding: const EdgeInsets.only(right: 10, left: 0, top: 0, bottom: 8),
-      child: ElevatedButton(
-        onPressed: () {
+      child: GestureDetector(
+        onTap: () {
           setState(() {
             currentTab = position;
           });
           item.onTap?.call();
         },
-        style: ButtonStyle(
-          overlayColor: MaterialStateProperty.all(active
-              ? ColorHelper.darken(Colors.white, .4).withOpacity(.1)
-              : item.color.withOpacity(0.05)),
-          elevation: MaterialStateProperty.all(0),
-          backgroundColor: MaterialStateProperty.all(active
-              ? item.color.withOpacity(0.20)
-              : ColorHelper.darken(Colors.white, .48).withOpacity(.12)),
-          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
+        child: Container(
+            decoration: BoxDecoration(
+                // color: active
+                //     ? ColorHelper.darken(Colors.white, .4).withOpacity(.1)
+                //     : item.color.withOpacity(0.05)
+              color: active
+                      ? item.color.withOpacity(0.20)
+                      : ColorHelper.darken(Colors.white, .48).withOpacity(.12),
+              borderRadius: BorderRadius.circular(10)
             ),
-          ),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              width: 4,
-              margin: const EdgeInsets.only(right:8),
-              height: 20,
-              decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.all(Radius.circular(12)),
-                color : active ? item.color : Colors.transparent
-              ),
-            ),
-            Icon(
-              item.icon,
-              color: active ? item.color : Colors.black.withOpacity(0.4),
-              size: 16,
-            ),
-            Container(width: 8),
-            AutoSizeText(
-              item.name,
-              maxLines: 1,
-              style: TextStyle(
-                  fontWeight: FontWeight.normal,
-                  fontSize: active ? 18 : 17,
-                  color: active ? item.color : Colors.black.withOpacity(0.4)),
-            ),
-            Container(width: 2),
-          ],
-        ),
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  width: 4,
+                  margin: const EdgeInsets.only(left:12,right: 8),
+                  height: 20,
+                  decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.all(Radius.circular(12)),
+                      color: active ? item.color : Colors.transparent),
+                ),
+                Icon(
+                  item.icon,
+                  color: active ? item.color : Colors.black.withOpacity(0.4),
+                  size: 16,
+                ),
+                Container(width: 8),
+                AutoSizeText(
+                  item.name,
+                  maxLines: 1,
+                  style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      fontSize: active ? 18 : 17,
+                      color:
+                          active ? item.color : Colors.black.withOpacity(0.4)),
+                ),
+                Container(width: 2),
+              ],
+            )),
       ),
+      // child: ElevatedButton(
+      //   onPressed: () {
+      //     setState(() {
+      //       currentTab = position;
+      //     });
+      //     item.onTap?.call();
+      //   },
+      //   style: ButtonStyle(
+      //     overlayColor: MaterialStateProperty.all(active
+      //         ? ColorHelper.darken(Colors.white, .4).withOpacity(.1)
+      //         : item.color.withOpacity(0.05)),
+      //     elevation: MaterialStateProperty.all(0),
+      //     backgroundColor: MaterialStateProperty.all(active
+      //         ? item.color.withOpacity(0.20)
+      //         : ColorHelper.darken(Colors.white, .48).withOpacity(.12)),
+      //     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+      //       RoundedRectangleBorder(
+      //         borderRadius: BorderRadius.circular(10.0),
+      //       ),
+      //     ),
+      //   ),
+      //   child: Row(
+      //     mainAxisSize: MainAxisSize.max,
+      //     mainAxisAlignment: MainAxisAlignment.start,
+      //     crossAxisAlignment: CrossAxisAlignment.center,
+      //     children: [
+      //       Container(
+      //         width: 4,
+      //         margin: const EdgeInsets.only(right:8),
+      //         height: 20,
+      //         decoration: BoxDecoration(
+      //             borderRadius: const BorderRadius.all(Radius.circular(12)),
+      //           color : active ? item.color : Colors.transparent
+      //         ),
+      //       ),
+      //       Icon(
+      //         item.icon,
+      //         color: active ? item.color : Colors.black.withOpacity(0.4),
+      //         size: 16,
+      //       ),
+      //       Container(width: 8),
+      //       AutoSizeText(
+      //         item.name,
+      //         maxLines: 1,
+      //         style: TextStyle(
+      //             fontWeight: FontWeight.normal,
+      //             fontSize: active ? 18 : 17,
+      //             color: active ? item.color : Colors.black.withOpacity(0.4)),
+      //       ),
+      //       Container(width: 2),
+      //     ],
+      //   ),
+      // ),
     );
   }
 

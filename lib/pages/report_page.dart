@@ -1,4 +1,5 @@
 import 'package:buffaloes_farm_management/cubit/service/service_cubit.dart';
+import 'package:buffaloes_farm_management/service/FarmService.dart';
 import 'package:buffaloes_farm_management/tools/ColorHelper.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -21,10 +22,40 @@ class _ReportPageState extends State<ReportPage> {
   Color primaryColor = const Color(0xFFDCDCDC);
   Color textOuterColor = const Color(0xFF2A2A2A);
 
+  Map<String, dynamic>? data;
+  List<ReportBaseModel>? mapModels;
+
   @override
   void initState() {
     super.initState();
-    context.read<ServiceCubit>().report(context);
+
+    initialData();
+  }
+
+  initialData() async{
+    Map<String, dynamic>? data = await FarmService.report();
+    List<ReportBaseModel>? mapModels;
+    if (data != null) {
+      mapModels = [];
+      mapModels.add(mapProvince(
+          data: data,
+          key: "farms",
+          title: "จำนวนฟาร์ม 4 จังหวัดภาคเหนือ",
+          surfix: "ฟาร์ม"));
+      mapModels.add(mapProvince(
+          data: data,
+          key: "buffs",
+          title: "จำนวนกระบือ 4 จังหวัดภาคเหนือ",
+          surfix: "ตัว",
+          color: Colors.blueAccent));
+      mapModels.add(ReportPieChartModel(data['TYPE']));
+    }
+
+    setState(() {
+      this.data = data;
+      this.mapModels = mapModels;
+
+    });
   }
 
   @override
@@ -34,80 +65,75 @@ class _ReportPageState extends State<ReportPage> {
         .viewPadding
         .top;
 
-    return BlocBuilder<ServiceCubit, ServiceState>(builder: (context, state) {
-      if (state is ServiceReportState) {
-        return AnnotatedRegion<SystemUiOverlayStyle>(
-            value: SystemUiOverlayStyle.light.copyWith(
-              systemNavigationBarColor: primaryColor,
-              systemNavigationBarDividerColor: primaryColor,
-              systemNavigationBarIconBrightness: Brightness.dark,
-              statusBarIconBrightness: Brightness.dark,
-              statusBarBrightness: Brightness.light,
-              //systemNavigationBarContrastEnforced: true,
-            ),
-            child: Container(
-                color: primaryColor,
-                child: Center(
-                    child: Container(
-                        constraints: const BoxConstraints(maxWidth: 500),
-                        child: GestureDetector(
-                          onTap: () =>
-                              FocusManager.instance.primaryFocus?.unfocus(),
-                          child: Scaffold(
-                            backgroundColor: primaryColor,
-                            appBar: PreferredSize(
-                                preferredSize: const Size.fromHeight(50.0),
-                                child: Container(
-                                    height: 60 + statusBarHeight,
-                                    child: Center(
-                                        child: Container(
-                                            constraints:
-                                            const BoxConstraints(maxWidth: 500),
-                                            child: AppBar(
-                                              backgroundColor: Colors
-                                                  .transparent,
-                                              shadowColor: Colors.transparent,
-                                              elevation: 0.0,
-                                              surfaceTintColor: primaryColor,
-                                              systemOverlayStyle:
-                                              const SystemUiOverlayStyle(
-                                                  statusBarIconBrightness:
-                                                  Brightness.dark,
-                                                  statusBarColor: Color(
-                                                      0xFFDCDCDC)),
-                                              shape: const RoundedRectangleBorder(
-                                                borderRadius: BorderRadius
-                                                    .vertical(
-                                                  bottom: Radius.circular(22),
-                                                ),
-                                              ),
-                                              centerTitle: true,
-                                              title: Text(
-                                                "รายงาน",
-                                                style: GoogleFonts.itim(
-                                                  color: textOuterColor,
-                                                  fontSize: 24,
-                                                ),
-                                              ),
-                                              titleSpacing: 0,
-                                              leading: IconButton(
-                                                icon: Icon(
-                                                    FontAwesomeIcons.xmark,
-                                                    color: textOuterColor,
-                                                    size: 24),
-                                                onPressed: () {
-                                                  Navigator.of(context).pop();
-                                                },
-                                              ),
-                                            ))))),
-                            body: body(state),
-                          ),
-                        ))))
-        );
-      } else {
-        return Container();
-      }
-    });
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.dark.copyWith(
+          systemNavigationBarColor: primaryColor,
+          systemNavigationBarDividerColor: primaryColor,
+          systemNavigationBarIconBrightness: Brightness.dark,
+          //statusBarIconBrightness: Brightness.dark,
+          //statusBarBrightness: Brightness.light,
+          //statusBarColor: Colors.white
+          //systemNavigationBarContrastEnforced: true,
+        ),
+        child: Container(
+            color: primaryColor,
+            child: Center(
+                child: Container(
+                    constraints: const BoxConstraints(maxWidth: 500),
+                    child: GestureDetector(
+                      onTap: () =>
+                          FocusManager.instance.primaryFocus?.unfocus(),
+                      child: Scaffold(
+                        backgroundColor: primaryColor,
+                        appBar: PreferredSize(
+                            preferredSize: const Size.fromHeight(50.0),
+                            child: Container(
+                                height: 60 + statusBarHeight,
+                                child: Center(
+                                    child: Container(
+                                        constraints:
+                                        const BoxConstraints(maxWidth: 500),
+                                        child: AppBar(
+                                          backgroundColor: Colors
+                                              .white.withOpacity(0.0),
+                                          shadowColor: Colors.transparent,
+                                          elevation: 0.0,
+                                          surfaceTintColor: primaryColor,
+                                          systemOverlayStyle:
+                                          const SystemUiOverlayStyle(
+                                              statusBarIconBrightness:
+                                              Brightness.dark,
+                                              statusBarBrightness: Brightness.light,
+                                              statusBarColor: Colors.white),
+                                          shape: const RoundedRectangleBorder(
+                                            borderRadius: BorderRadius
+                                                .vertical(
+                                              bottom: Radius.circular(22),
+                                            ),
+                                          ),
+                                          centerTitle: true,
+                                          title: Text(
+                                            "รายงาน",
+                                            style: GoogleFonts.itim(
+                                              color: textOuterColor,
+                                              fontSize: 24,
+                                            ),
+                                          ),
+                                          titleSpacing: 0,
+                                          leading: IconButton(
+                                            icon: Icon(
+                                                FontAwesomeIcons.xmark,
+                                                color: textOuterColor,
+                                                size: 24),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                        ))))),
+                        body: body(),
+                      ),
+                    ))))
+    );
   }
 
   Widget loading() {
@@ -118,13 +144,13 @@ class _ReportPageState extends State<ReportPage> {
         ));
   }
 
-  Widget body(ServiceReportState state) {
-    if (state.mapModels != null) {
+  Widget body() {
+    if (mapModels != null) {
       return ListView.builder(
           padding: const EdgeInsets.only(top: 0),
-          itemCount: state.mapModels!.length,
+          itemCount: mapModels!.length,
           itemBuilder: (BuildContext context, int index) {
-            var model = state.mapModels![index];
+            var model = mapModels![index];
             if (model is ReportMapModel) {
               return widgetMapFarmProvince(model);
             } else if (model is ReportPieChartModel) {
@@ -425,6 +451,54 @@ class _ReportPageState extends State<ReportPage> {
         color: Colors.white.withOpacity(0.95),
       ),
     );
+  }
+
+  ReportMapModel mapProvince(
+      {required data,
+        required String key,
+        required String title,
+        required String surfix,
+        Color color = Colors.lightGreen}) {
+    List northProvice = data['north'][key]['provinces'];
+    int northTotalCount = data['north'][key]['count'];
+
+    northProvice.sort((a, b) {
+      return a['count'].compareTo(b['count']);
+    });
+
+    List<IndicatorModel> indicators = [];
+    int count = 0;
+    for (var provice in northProvice) {
+      double opacity = (0.8 / (northProvice.length)) * (count + 1);
+      indicators.add(IndicatorModel(
+          name: provice['province'],
+          amount: provice['count'],
+          color: color.withOpacity(opacity)));
+      count += 1;
+    }
+
+    MapShapeSource _mapProvince = MapShapeSource.asset(
+      'assets/geojson/thailand_northern_four_province.json',
+      shapeDataField: 'name',
+      dataCount: indicators.length,
+      primaryValueMapper: (int index) {
+        return indicators[index].name;
+      },
+      shapeColorValueMapper: (int index) {
+        double opacity = (1.0 / (indicators.length)) * (index + 1);
+        return northTotalCount == 0
+            ? Colors.transparent
+            : color.withOpacity(opacity);
+      },
+    );
+
+    return ReportMapModel(
+        title: title,
+        mapSource: _mapProvince,
+        items: indicators.reversed.toList(),
+        color: color,
+        value: northTotalCount,
+        surfix: surfix);
   }
 }
 
