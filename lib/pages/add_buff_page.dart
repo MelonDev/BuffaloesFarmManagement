@@ -24,9 +24,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 class AddBuffPage extends StatefulWidget {
-  AddBuffPage({Key? key, this.buffTypeKey}) : super(key: key);
+  AddBuffPage({Key? key, this.buffTypeKey, this.onComplete}) : super(key: key);
 
   String? buffTypeKey;
+  Function(bool)? onComplete;
 
   @override
   _AddBuffPage createState() => _AddBuffPage();
@@ -45,7 +46,6 @@ class _AddBuffPage extends State<AddBuffPage> {
     "B": "ลูกกระบือแรกเกิด"
   };
 
-
   DateTime? pickedDatetime;
 
   TextEditingController tfName = TextEditingController();
@@ -57,9 +57,10 @@ class _AddBuffPage extends State<AddBuffPage> {
   TextEditingController tfSource = TextEditingController();
   TextEditingController tfPrice = TextEditingController();
 
-  String? buffTypeKey,buffSpeciesValue;
+  String? buffTypeKey, buffSpeciesValue;
 
   File? image;
+  Uint8List? bytesImage;
   bool isSaving = false, isSaved = false;
 
   int gender = 0;
@@ -67,8 +68,11 @@ class _AddBuffPage extends State<AddBuffPage> {
   Future pickImage() async {
     try {
       XFile? image = await ImagePicker().pickImage(source: ImageSource.gallery);
+      Uint8List? bytesImage = await image?.readAsBytes();
+
       if (image == null) return;
       setState(() {
+        this.bytesImage = bytesImage;
         this.image = File(image.path);
       });
     } on PlatformException catch (e) {
@@ -89,8 +93,10 @@ class _AddBuffPage extends State<AddBuffPage> {
         pickedDatetime != null) {
       String? url;
 
-      if (image != null) {
-        url = await HttpService.uploadToFirebase(image!);
+      if (bytesImage != null) {
+        url = await HttpService.uploadToFirebaseByBytes(bytesImage!);
+
+        print(url);
 
         if (url == null) {
           if (!mounted) return;
@@ -99,6 +105,19 @@ class _AddBuffPage extends State<AddBuffPage> {
           return false;
         }
       }
+
+      // if (image != null) {
+      //   url = await HttpService.uploadToFirebase(image!);
+      //
+      //   print(url);
+      //
+      //   if (url == null) {
+      //     if (!mounted) return;
+      //     messageDialog(context,
+      //         title: "แจ้งเตือน", message: "เกิดข้อผิดพลาดในการอัปโหลต");
+      //     return false;
+      //   }
+      // }
 
       bool? result = await FarmService.addBuff(
           name: tfName.text,
@@ -122,6 +141,7 @@ class _AddBuffPage extends State<AddBuffPage> {
           messageDialog(context, title: "แจ้งเตือน", message: "บันทึกเรียบร้อย",
               function: () {
             context.read<HomeCubit>().management();
+            widget.onComplete?.call(true);
             Navigator.of(context).pop(true);
           });
         } else {
@@ -176,7 +196,6 @@ class _AddBuffPage extends State<AddBuffPage> {
     super.initState();
     buffTypeKey = widget.buffTypeKey;
     gender = buffTypeKey == "F" ? 1 : 0;
-
   }
 
   @override
@@ -235,6 +254,7 @@ class _AddBuffPage extends State<AddBuffPage> {
                                         color: Colors.white, size: 24),
                                     onPressed: () {
                                       if (isSaving == false) {
+                                        widget.onComplete?.call(false);
                                         Navigator.of(context).pop(false);
                                       }
                                     },
@@ -448,19 +468,28 @@ class _AddBuffPage extends State<AddBuffPage> {
         margin: const EdgeInsets.only(top: 0),
         child: Stack(
           children: [
-            image != null
+            bytesImage != null
                 ? Container(
                     width: double.infinity,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8.0),
-                      child: Image.file(
-                        image!,
+                      child: Image.memory(
+                        bytesImage!,
                         fit: BoxFit.cover,
                       ),
+                      // child: kIsWeb
+                      //     ? Image.network(
+                      //         image?.path ?? "",
+                      //         fit: BoxFit.cover,
+                      //       )
+                      //     : Image.file(
+                      //         image!,
+                      //         fit: BoxFit.cover,
+                      //       ),
                     ),
                   )
                 : Container(),
-            image == null
+            bytesImage == null
                 ? Center(
                     child: Container(
                       child: Column(
