@@ -2,8 +2,7 @@ import 'package:buffaloes_farm_management/constants/ColorConstants.dart';
 import 'package:flutter/material.dart';
 
 final navyButtonStyle = OutlinedButton.styleFrom(
-  primary: Colors.white,
-  backgroundColor: bgButtonColor,
+  foregroundColor: Colors.white, backgroundColor: bgButtonColor,
   textStyle: const TextStyle(fontSize: 20),
   shape: RoundedRectangleBorder(
     borderRadius: BorderRadius.circular(8.0),
@@ -11,8 +10,7 @@ final navyButtonStyle = OutlinedButton.styleFrom(
 );
 
 final navyButtonDisabledStyle = OutlinedButton.styleFrom(
-  primary: Colors.white,
-  backgroundColor: bgButtonColor.withOpacity(0.5),
+  foregroundColor: Colors.white, backgroundColor: bgButtonColor.withOpacity(0.5),
   textStyle: const TextStyle(fontSize: 20),
   shape: RoundedRectangleBorder(
     borderRadius: BorderRadius.circular(8.0),
