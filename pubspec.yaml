@@ -40,7 +40,7 @@ dependencies:
   flutter_cupertino_date_picker_fork: ^1.0.7
   font_awesome_flutter: ^10.4.0
   age_calculator: ^1.0.0
-  cached_network_image: ^3.2.3
+  cached_network_image: ^3.3.1
   custom_sliding_segmented_control: ^1.7.4
   image_picker_for_web: ^2.2.0
   auto_size_text: ^3.0.0

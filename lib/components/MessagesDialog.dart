@@ -67,8 +67,7 @@ void messageDialog(BuildContext context,
                         top: 30, left: 10, right: 10, bottom: 4),
                     child: OutlinedButton(
                       style: OutlinedButton.styleFrom(
-                        primary: Colors.white,
-                        backgroundColor: buttonColor ?? bgButtonColor,
+                        foregroundColor: Colors.white, backgroundColor: buttonColor ?? bgButtonColor,
                         textStyle: const TextStyle(fontSize: 20),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0),
