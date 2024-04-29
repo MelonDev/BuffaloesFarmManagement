@@ -15,16 +15,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/checkout@v2
-      - uses: subosito/flutter-action@v2.8.0
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2.12.0
         with:
           channel: 'stable' # or: 'beta' or 'master'
       - run: flutter --version
       - name: 'Run flutter pub get'
         run: flutter pub get
-      - name: Enable flutter web
+      - name: 'Enable flutter web'
         run: flutter config --enable-web
+      - name: 'Run flutter_launcher_icons'
+        run: flutter pub run flutter_launcher_icons
       - name: 'Build Web App'
         run: flutter build web --release
       - name: 'Deploy to Firebase Hosting'
@@ -32,5 +33,4 @@ jobs:
         with:
           args: deploy --only hosting
         env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-
+          GCP_SA_KEY: ${{ secrets.FIREBASE_TOKEN }}
