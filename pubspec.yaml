@@ -48,7 +48,7 @@ dependencies:
 
   syncfusion_flutter_charts: ^21.2.10
   syncfusion_flutter_maps: ^21.2.10
-  fl_chart: ^0.63.0
+  fl_chart: ^0.62.0
 
   modal_bottom_sheet: #^2.1.2
     git:
