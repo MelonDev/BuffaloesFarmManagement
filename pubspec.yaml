@@ -32,8 +32,8 @@ dependencies:
   bottom_bar_with_sheet: ^2.4.0
   salomon_bottom_bar: ^3.3.2
   flutter_multi_formatter: ^2.11.1
-  firebase_auth: ^4.6.3
-  firebase_core: ^2.14.0
+  firebase_auth: ^4.19.4
+  firebase_core: ^2.30.1
   firebase_storage: ^11.2.3
   uuid: ^3.0.7
   pin_code_fields: ^7.4.0
