@@ -34,7 +34,7 @@ dependencies:
   flutter_multi_formatter: ^2.11.1
   firebase_auth: ^4.19.4
   firebase_core: ^2.30.1
-  firebase_storage: ^11.2.3
+  firebase_storage: ^11.7.4
   uuid: ^3.0.7
   pin_code_fields: ^7.4.0
   flutter_cupertino_date_picker_fork: ^1.0.7
