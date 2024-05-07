@@ -1,9 +1,11 @@
 import 'package:bloc/bloc.dart';
 import 'package:buffaloes_farm_management/pages/add_buff_page.dart';
+import 'package:buffaloes_farm_management/pages/farm/farm_info_page.dart';
 import 'package:buffaloes_farm_management/pages/home_page.dart';
 import 'package:buffaloes_farm_management/pages/authentication/initial_farm_page.dart';
 import 'package:buffaloes_farm_management/pages/authentication/login_page.dart';
 import 'package:buffaloes_farm_management/pages/authentication/sms_pin_page.dart';
+import 'package:buffaloes_farm_management/pages/menu/farm_page.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -41,9 +43,13 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
       //emit(UnauthenticationState());
       emit(AuthenticatedState());
       if (useNavigator) {
+        // Navigator.of(context).pushAndRemoveUntil(
+        //     MaterialPageRoute(builder: (context) => const InitialFarmPage()),
+        //     (Route<dynamic> route) => false);
+
         Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => const InitialFarmPage()),
-            (Route<dynamic> route) => false);
+            MaterialPageRoute(builder: (context) => FarmInfoPage()),
+                (Route<dynamic> route) => false);
       }
     } else {
       //signOut(context);

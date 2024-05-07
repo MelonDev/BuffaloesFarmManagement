@@ -3,11 +3,13 @@ import 'dart:io';
 import 'package:buffaloes_farm_management/constants/ColorConstants.dart';
 import 'package:buffaloes_farm_management/constants/StyleConstants.dart';
 import 'package:buffaloes_farm_management/cubit/home/home_cubit.dart';
+import 'package:buffaloes_farm_management/pages/farm/farm_info_page.dart';
 import 'package:buffaloes_farm_management/pages/loading/authenticate_loading_page.dart';
 import 'package:buffaloes_farm_management/pages/home_page.dart';
 import 'package:buffaloes_farm_management/pages/authentication/initial_farm_page.dart';
 import 'package:buffaloes_farm_management/pages/authentication/login_page.dart';
 import 'package:buffaloes_farm_management/pages/loading/main_initial_loading_page.dart';
+import 'package:buffaloes_farm_management/pages/menu/farm_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -120,7 +122,7 @@ class _MyAppState extends State<MyApp> {
         locale: const Locale.fromSubtags(languageCode: 'th'),
         debugShowCheckedModeBanner: false,
         home: uid != null
-            ? const InitialFarmPage()
+            ? FarmInfoPage()
             : LoginPage(),
         theme: ThemeData(
           useMaterial3: true,

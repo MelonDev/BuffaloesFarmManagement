@@ -104,4 +104,17 @@ class DioHelper {
       rethrow;
     }
   }
+
+  Future<dynamic> patch(String url,
+      {Map<String, dynamic>? headers, required data, encoding}) async {
+    try {
+      final response =
+      await dio.patch(url, data: data, options: Options(headers: headers));
+
+      return response;
+    } on DioError catch (e) {
+      print('[Dio Helper - GET] Connection Exception => ${e.message}');
+      rethrow;
+    }
+  }
 }

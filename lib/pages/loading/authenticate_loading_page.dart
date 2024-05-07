@@ -12,9 +12,9 @@ class AuthenticateLoadingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.light.copyWith(
-          systemNavigationBarColor: bgButtonColor,
-          systemNavigationBarDividerColor: bgButtonColor,
-          systemNavigationBarIconBrightness: Brightness.light,
+          // systemNavigationBarColor: bgButtonColor,
+          // systemNavigationBarDividerColor: bgButtonColor,
+          // systemNavigationBarIconBrightness: Brightness.light,
           statusBarIconBrightness: Brightness.light,
           statusBarBrightness: Brightness.dark,
           statusBarColor: bgButtonColor

@@ -21,6 +21,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
+import 'farm/farm_info_page.dart';
+
 class MainHomePage extends StatefulWidget {
   const MainHomePage({Key? key}) : super(key: key);
 
@@ -58,6 +60,7 @@ class _MainHomePageState extends State<MainHomePage> {
             statusBarBrightness: Brightness.dark,
             systemNavigationBarColor: Colors.white,
             systemNavigationBarDividerColor: Colors.white,
+            systemNavigationBarIconBrightness: Brightness.dark
           ),
           child: Container(
               color: Colors.black,
@@ -308,7 +311,10 @@ class _MainHomePageState extends State<MainHomePage> {
     List<Widget> list = [];
 
     if (state is HomeFarmState) {
-      list.add(button(message: "แก้ไข", icon: FontAwesomeIcons.penToSquare));
+      list.add(button(message: "แก้ไข", icon: FontAwesomeIcons.penToSquare,callback: (){
+        Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => FarmInfoPage(isEditMode: true,)));
+      }));
     }
 
     return list;
@@ -494,11 +500,11 @@ class _MainHomePageState extends State<MainHomePage> {
     );
   }
 
-  Widget button({required String message, required IconData icon}) {
+  Widget button({required String message, required IconData icon,VoidCallback? callback}) {
     return Container(
       padding: const EdgeInsets.only(right: 20, top: 10, bottom: 10),
       child: ElevatedButton(
-        onPressed: () {},
+        onPressed: callback ?? (){},
         style: ButtonStyle(
           overlayColor: MaterialStateProperty.all(
               ColorHelper.darken(Colors.white, .4).withOpacity(.1)),

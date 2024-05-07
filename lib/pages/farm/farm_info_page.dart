@@ -7,6 +7,8 @@ import 'package:buffaloes_farm_management/models/DistrictModel.dart';
 import 'package:buffaloes_farm_management/models/ProvinceModel.dart';
 import 'package:buffaloes_farm_management/models/SubDistrictModel.dart';
 import 'package:buffaloes_farm_management/pages/loading/authenticate_loading_page.dart';
+import 'package:buffaloes_farm_management/pages/loading/main_initial_loading_page.dart';
+import 'package:buffaloes_farm_management/pages/main_home_page.dart';
 import 'package:buffaloes_farm_management/service/AuthenticationService.dart';
 import 'package:buffaloes_farm_management/service/FarmService.dart';
 import 'package:buffaloes_farm_management/tools/ThailandProvider.dart';
@@ -15,32 +17,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:buffaloes_farm_management/constants/StyleConstants.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart'
-as modal_bottom_sheet;
+    as modal_bottom_sheet;
 
-import '../home_page.dart';
-import '../loading/main_initial_loading_page.dart';
-import '../main_home_page.dart';
+import '../../tools/ColorHelper.dart';
 
-class InitialFarmPage extends StatefulWidget {
-  const InitialFarmPage({Key? key}) : super(key: key);
+class FarmInfoPage extends StatefulWidget {
+  FarmInfoPage({super.key, this.isEditMode = false});
 
-  static openPage(){
-
-  }
+  bool isEditMode;
 
   @override
-  _InitialFarmPageState createState() => _InitialFarmPageState();
+  State<FarmInfoPage> createState() => _FarmInfoPageState();
 }
 
-class _InitialFarmPageState extends State<InitialFarmPage> {
+class _FarmInfoPageState extends State<FarmInfoPage> {
   FirebaseAuth auth = FirebaseAuth.instance;
   FlutterSecureStorage storage = const FlutterSecureStorage();
-
-  bool loaded = false;
 
   TextEditingController farmNameController = TextEditingController();
   TextEditingController firstNameController = TextEditingController();
@@ -50,23 +45,51 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
   TextEditingController addressController = TextEditingController();
 
   String? groupName;
-
   ProvinceModel? province;
   DistrictModel? district;
   SubDistrictModel? subDistrict;
 
-  bool initial = false;
+  String? uid;
+  Map<String, dynamic>? data;
+  bool isLoading = false;
 
-  load() async {
-    print("LOAD");
+  Future<String?> _initLoad() async {
+    uid = await AuthenticationCubit().currentUserUid();
+    String? farmName = await storage.read(key: "farm_name".toUpperCase());
 
-    String? farm_name = await storage.read(key: "farm_name".toUpperCase());
+    return farmName;
+  }
 
-    if (farm_name == null) {
-      String? uid = await AuthenticationCubit().currentUserUid();
+  _loadEdit() async {
+    String? farmName = await _initLoad();
 
-      print("UID: $uid");
+    data = await FarmService.info();
+    if (data != null) {
+      farmNameController.text = data!["farm_name"] ?? "";
+      firstNameController.text = data!["info"]["first_name"] ?? "";
+      lastNameController.text = data!["info"]["last_name"] ?? "";
+      groupOtherController.text = data!["group_other"] ?? "";
+      groupName = data!["group"] ?? "";
+      addressController.text = data!["address"]["data"] ?? "";
+      province = await ThailandProvider.province(
+          context, data!["address"]["province"]);
+      district = await ThailandProvider.district(
+          context, province?.PROVINCE_ID, data!["address"]["district"]);
+      subDistrict = await ThailandProvider.subDistrict(
+          context,
+          district?.PROVINCE_ID,
+          district?.DISTRICT_ID,
+          data!["address"]["sub_district"]);
+    }
+    setState(() {
+      isLoading = false;
+    });
+  }
 
+  _loadInfo() async {
+    String? farmName = await _initLoad();
+
+    if (farmName == null) {
       AuthenticateModel? model = await AuthenticationService.login(token: uid);
 
       if (model != null) {
@@ -75,61 +98,34 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
         }
       }
       setState(() {
-        loaded = true;
-        initial = true;
+        isLoading = false;
       });
     } else {
       toHomePage();
-    }
-  }
-
-  onSubmit() async {
-    setState(() {
-      loaded = false;
-    });
-
-    FlutterSecureStorage storage = FlutterSecureStorage();
-    String? phoneNumber = await storage.read(key: "phone_number".toUpperCase());
-
-    String? uid = await AuthenticationCubit().currentUserUid();
-
-    AuthenticateModel? authentication = await AuthenticationService.register(
-        farmName: farmNameController.text,
-        firstName: firstNameController.text,
-        lastName: lastNameController.text,
-        phoneNumber: phoneNumber ?? "",
-        token: uid ?? "",
-        group: groupName == "เพิ่มกลุ่มใหม่" || groupName == "อื่น ๆ"
-            ? groupOtherController.text
-            : groupName,
-        province: province?.PROVINCE_NAME ?? "",
-        district: district?.DISTRICT_NAME ?? "",
-        subDistrict: subDistrict?.SUB_DISTRICT_NAME ?? "");
-
-    print("authentication != null: ${authentication != null}");
-    if (authentication != null) {
-      toHomePage();
-    } else {
-      setState(() {
-        loaded = true;
-      });
     }
   }
 
   @override
   void initState() {
+    isLoading = true;
+
     super.initState();
-    load();
+
+    if (widget.isEditMode) {
+      _loadEdit();
+    } else {
+      _loadInfo();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (loaded) {
+    if (uid != null && isLoading == false) {
       return AnnotatedRegion<SystemUiOverlayStyle>(
           value: SystemUiOverlayStyle.light.copyWith(
               systemNavigationBarColor: kBGColor,
               systemNavigationBarDividerColor: kBGColor,
-              systemNavigationBarIconBrightness: Brightness.light,
+              systemNavigationBarIconBrightness: Brightness.dark,
               statusBarIconBrightness: Brightness.light,
               statusBarBrightness: Brightness.dark,
               statusBarColor: bgButtonColor
@@ -170,30 +166,16 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
                             color: Colors.white,
                           ),
                           onPressed: () {
-                            context
-                                .read<AuthenticationCubit>()
-                                .signOut(context);
+                            if (widget.isEditMode) {
+                              Navigator.of(context).pop();
+                            } else {
+                              context
+                                  .read<AuthenticationCubit>()
+                                  .signOut(context);
+                            }
                           },
                         ),
                       )),
-                  // floatingActionButtonLocation:
-                  // FloatingActionButtonLocation.centerFloat,
-                  // floatingActionButton: FloatingActionButton.extended(
-                  //   onPressed: () {},
-                  //   heroTag: null,
-                  //   backgroundColor: bgButtonColor,
-                  //   extendedPadding: const EdgeInsets.only(left: 94, right: 94),
-                  //   extendedIconLabelSpacing: 12,
-                  //   elevation: 0,
-                  //   splashColor: bgButtonColor.withOpacity(0.4),
-                  //   shape: const RoundedRectangleBorder(
-                  //       borderRadius: BorderRadius.all(Radius.circular(14))),
-                  //   label: Text("ยืนยัน",
-                  //       style: GoogleFonts.itim(
-                  //           color: Colors.white,
-                  //           fontWeight: FontWeight.bold,
-                  //           fontSize: 18)),
-                  // ),
                   body: Center(
                       child: Container(
                           decoration: const BoxDecoration(
@@ -316,11 +298,68 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
                           ))),
                 )),
           ));
-    } else if (initial == false) {
+    } else if (isLoading == true) {
       return const MainInitialLoadingPage();
     } else {
       return AuthenticateLoadingPage();
     }
+  }
+
+  onSubmit() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    String? phoneNumber = await storage.read(key: "phone_number".toUpperCase());
+
+    AuthenticateModel? authentication;
+
+    if(widget.isEditMode == true){
+      bool response = await FarmService.changeInfo(
+          farmName: farmNameController.text,
+          firstName: firstNameController.text,
+          lastName: lastNameController.text,
+          phoneNumber: phoneNumber ?? "",
+          token: uid ?? "",
+          group: groupName == "เพิ่มกลุ่มใหม่" || groupName == "อื่น ๆ"
+              ? groupOtherController.text
+              : groupName,
+          province: province?.PROVINCE_NAME ?? "",
+          district: district?.DISTRICT_NAME ?? "",
+          subDistrict: subDistrict?.SUB_DISTRICT_NAME ?? ""
+      );
+      if (response) {
+        toHomePage();
+      } else {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }else {
+      authentication = await AuthenticationService.register(
+          farmName: farmNameController.text,
+          firstName: firstNameController.text,
+          lastName: lastNameController.text,
+          phoneNumber: phoneNumber ?? "",
+          token: uid ?? "",
+          group: groupName == "เพิ่มกลุ่มใหม่" || groupName == "อื่น ๆ"
+              ? groupOtherController.text
+              : groupName,
+          province: province?.PROVINCE_NAME ?? "",
+          district: district?.DISTRICT_NAME ?? "",
+          subDistrict: subDistrict?.SUB_DISTRICT_NAME ?? "");
+      print("authentication != null: ${authentication != null}");
+      if (authentication != null) {
+        toHomePage();
+      } else {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
+
+
+
   }
 
   isEnabledConfirmButton() {

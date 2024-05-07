@@ -10,9 +10,9 @@ class MainInitialLoadingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.light.copyWith(
-          systemNavigationBarColor:  Colors.black,
-          systemNavigationBarDividerColor: Colors.black,
-          systemNavigationBarIconBrightness: Brightness.light,
+          // systemNavigationBarColor:  Colors.black,
+          // systemNavigationBarDividerColor: Colors.black,
+          // systemNavigationBarIconBrightness: Brightness.light,
           statusBarIconBrightness: Brightness.light,
           statusBarBrightness: Brightness.dark,
           statusBarColor: Colors.black

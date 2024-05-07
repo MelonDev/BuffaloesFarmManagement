@@ -6,6 +6,15 @@ import 'package:buffaloes_farm_management/models/SubDistrictModel.dart';
 import 'package:flutter/widgets.dart';
 
 class ThailandProvider {
+  static Future<ProvinceModel?> province(
+      BuildContext context, String? name) async {
+    if (name == null) return null;
+    List<ProvinceModel> provinces = await ThailandProvider.provinces(context);
+    List<ProvinceModel> filter =
+        provinces.where((element) => element.PROVINCE_NAME == name).toList();
+    return filter.isNotEmpty ? filter.first : null;
+  }
+
   static Future<List<ProvinceModel>> provinces(BuildContext context) async {
     print("provinces");
     String data = await DefaultAssetBundle.of(context)
@@ -17,6 +26,16 @@ class ThailandProvider {
     }).toList();
 
     return provinces;
+  }
+
+  static Future<DistrictModel?> district(
+      BuildContext context, int? provinceId, String? name) async {
+    if (name == null || provinceId == null) return null;
+    List<DistrictModel> districts =
+        await ThailandProvider.districts(context, provinceId: provinceId);
+    List<DistrictModel> filter =
+        districts.where((element) => element.DISTRICT_NAME == name).toList();
+    return filter.isNotEmpty ? filter.first : null;
   }
 
   static Future<List<DistrictModel>> districts(BuildContext context,
@@ -32,6 +51,16 @@ class ThailandProvider {
     return provinceId != null
         ? districts.where((i) => i.PROVINCE_ID == provinceId).toList()
         : districts;
+  }
+
+  static Future<SubDistrictModel?> subDistrict(
+      BuildContext context, int? provinceId,int? districtId, String? name) async {
+    if (name == null || provinceId == null) return null;
+    List<SubDistrictModel> subDistricts =
+    await ThailandProvider.subDistricts(context, provinceId: provinceId,districtId: districtId);
+    List<SubDistrictModel> filter =
+    subDistricts.where((element) => element.SUB_DISTRICT_NAME == name).toList();
+    return filter.isNotEmpty ? filter.first : null;
   }
 
   static Future<List<SubDistrictModel>> subDistricts(BuildContext context,

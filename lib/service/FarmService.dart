@@ -28,6 +28,57 @@ class FarmService {
     }
   }
 
+  static Future<Map<String, dynamic>?> info() async {
+    try {
+      var response = await HttpService.getForm(path: '/info', body: {});
+      if (response != null) {
+        if (response.statusCode == 200) {
+          var data = response.data['data'];
+          print("info");
+          print(data);
+          if (data != null) {
+            return data;
+          }
+        }
+        return {};
+      }
+
+      return null;
+    } on Exception catch (_) {
+      return null;
+    }
+  }
+
+  static Future<bool> changeInfo({
+    String? farmName,
+    String? firstName,
+    String? lastName,
+    String? phoneNumber,
+    String? address,
+    String? group,
+    String? token,
+    String? province,
+    String? district,
+    String? subDistrict,
+  }) async {
+    try {
+      Map<String, String> body = {
+        "farm_name": farmName ?? "",
+        "first_name": firstName ?? "",
+        "last_name": lastName ?? "",
+        "address": address ?? "",
+        "group": group ?? "",
+        "province": province ?? "",
+        "district": district ?? "",
+        "sub_district": subDistrict ?? ""
+      };
+      var response = await HttpService.patchForm(path: '/change-info', body: body);
+      return response?.statusCode == 200;
+    } on Exception catch (_) {
+      return false;
+    }
+  }
+
   static Future<Map<String, dynamic>?> summary() async {
     try {
       var response = await HttpService.getForm(path: '/summary', body: {});
@@ -168,9 +219,9 @@ class FarmService {
 
   static Future<String?> addInducting(
       {required String buffId,
-        required bool induction,
-        required String method,
-        required DateTime date}) async {
+      required bool induction,
+      required String method,
+      required DateTime date}) async {
     try {
       final DateFormat formatter = DateFormat('yyyy-MM-dd');
       final String formatted = formatter.format(date);

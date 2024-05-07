@@ -127,6 +127,28 @@ class HttpService {
     }
   }
 
+  static Future<Response?> patchForm(
+      {required String path, Map<String, dynamic>? body}) async {
+    try {
+      var formData = FormData.fromMap(body ?? {});
+      DioHelper dio = await DioHelper.init();
+
+      var response = await dio.patch(path, data: formData);
+
+      return response;
+    } on Exception catch (e) {
+      if (e is DioError) {
+        print(e.message);
+        print(e.response?.statusCode);
+        print(e.response?.data);
+        return e.response;
+      } else {
+        print(e);
+      }
+      return null;
+    }
+  }
+
   static Future<String?> strFromResponse(http.StreamedResponse response) async {
     try {
       String value = await response.stream.bytesToString();
