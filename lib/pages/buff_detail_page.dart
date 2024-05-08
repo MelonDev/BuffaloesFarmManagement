@@ -11,6 +11,7 @@ import 'package:buffaloes_farm_management/models/activity/InductingActivityModel
 import 'package:buffaloes_farm_management/models/activity/ReturnEstrusActivityModel.dart';
 import 'package:buffaloes_farm_management/models/activity/VaccineInjectionActivityModel.dart';
 import 'package:buffaloes_farm_management/pages/activities/induction_page.dart';
+import 'package:buffaloes_farm_management/pages/add_buff_page.dart';
 import 'package:buffaloes_farm_management/service/FarmService.dart';
 import 'package:buffaloes_farm_management/tools/ColorHelper.dart';
 import 'package:buffaloes_farm_management/tools/NavigatorHelper.dart';
@@ -119,7 +120,14 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
                       icon: const Icon(FontAwesomeIcons.penToSquare,
                           color: Colors.white, size: 22),
                       onPressed: () {
-                        Navigator.of(context).pop(false);
+                        Navigator.of(context).push(
+                          NavigatorHelper.slide(
+                            AddBuffPage(buffId: buff?.id,onComplete: (value){
+                              onLoad();
+                            },),
+                          ),
+                        );
+                        //Navigator.of(context).pop(false);
                       },
                     ),
                   )

@@ -72,7 +72,8 @@ class FarmService {
         "district": district ?? "",
         "sub_district": subDistrict ?? ""
       };
-      var response = await HttpService.patchForm(path: '/change-info', body: body);
+      var response =
+          await HttpService.patchForm(path: '/change-info', body: body);
       return response?.statusCode == 200;
     } on Exception catch (_) {
       return false;
@@ -199,6 +200,57 @@ class FarmService {
 
       print(body);
       var response = await HttpService.postForm(path: '/buffs', body: body);
+      print("response: $response");
+      if (response != null) {
+        print(response.statusCode);
+        if (response.statusCode == 200) {
+          print(response.data);
+          return true;
+        } else {
+          return false;
+        }
+      }
+
+      return null;
+    } on Exception catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
+  static Future<bool?> updateBuff(
+      {required String? id,
+      required String? name,
+      String? tag,
+      required String? datetime,
+      required String? gender,
+      String? father,
+      String? mother,
+      String? source,
+      String? type,
+      String? species,
+      String? price,
+      String? blood,
+      String? image}) async {
+    try {
+      Map<String, String> body = {
+        "name": name ?? "",
+        "tag": tag ?? "",
+        "gender": gender ?? "",
+        "birth_date": datetime ?? "",
+        "father_name": father ?? "",
+        "mother_name": mother ?? "",
+        "source": source ?? "",
+        "type": type ?? "",
+        "species": species ?? "",
+        "price": price ?? "",
+        "blood_percent": blood ?? "",
+        "image_url": image ?? "",
+      };
+
+      print(body);
+      var response =
+          await HttpService.patchForm(path: '/buffs/$id', body: body);
       print("response: $response");
       if (response != null) {
         print(response.statusCode);

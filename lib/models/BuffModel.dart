@@ -21,6 +21,10 @@ class BuffModel {
   String? source;
   String? image_url;
   String? status;
+  String? type;
+  String? species;
+  String? blood;
+  String? price;
 
   List<BaseActivityModel> history = [];
 
@@ -38,7 +42,12 @@ class BuffModel {
         mother_name = json['mother_name']?.toString(),
         source = json['source']?.toString(),
         status = _getStatusName(json['status']?.toString()),
-        history = json['history']
+  type = json['type']?.toString(),
+  species = json['species']?.toString(),
+        blood = json['blood']?.toString(),
+        price = json['prices']?.toString(),
+
+      history = json['history']
                 ?.map<BaseActivityModel>((item) => _getActivityModel(item))
                 .toList() ??
             [],

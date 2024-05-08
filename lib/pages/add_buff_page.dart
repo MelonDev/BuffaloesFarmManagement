@@ -6,6 +6,7 @@ import 'package:buffaloes_farm_management/constants/ColorConstants.dart';
 import 'package:buffaloes_farm_management/constants/StyleConstants.dart';
 import 'package:buffaloes_farm_management/components/SlidingTimePicker.dart';
 import 'package:buffaloes_farm_management/cubit/home/home_cubit.dart';
+import 'package:buffaloes_farm_management/models/BuffModel.dart';
 import 'package:buffaloes_farm_management/service/FarmService.dart';
 import 'package:buffaloes_farm_management/service/HttpService.dart';
 import 'package:buffaloes_farm_management/tools/ColorHelper.dart';
@@ -24,9 +25,13 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 class AddBuffPage extends StatefulWidget {
-  AddBuffPage({Key? key, this.buffTypeKey, this.onComplete}) : super(key: key);
+  AddBuffPage({Key? key, this.buffTypeKey, this.onComplete, this.buffId})
+      : super(key: key);
 
   String? buffTypeKey;
+
+  String? buffId;
+
   Function(bool)? onComplete;
 
   @override
@@ -64,6 +69,26 @@ class _AddBuffPage extends State<AddBuffPage> {
   bool isSaving = false, isSaved = false;
 
   int gender = 0;
+
+  onLoad() async {
+    if (widget.buffId != null) {
+      BuffModel? buff = await FarmService.buff(widget.buffId!);
+      setState(() {
+        initialLoading = false;
+        this.buff = buff;
+        buffTypeKey = buff?.type;
+        tfName.text = buff?.name ?? "";
+        tfTag.text = buff?.tag ?? "";
+        tfBlood.text = buff?.blood ?? "";
+        buffSpeciesValue = buff?.species ?? "";
+        pickedDatetime = getDate(buff?.birth_date);
+        tfFather.text = buff?.father_name ?? "";
+        tfMother.text = buff?.mother_name ?? "";
+        tfSource.text = buff?.source ?? "";
+        tfPrice.text = buff?.price ?? "";
+      });
+    }
+  }
 
   Future pickImage() async {
     try {
@@ -119,19 +144,38 @@ class _AddBuffPage extends State<AddBuffPage> {
       //   }
       // }
 
-      bool? result = await FarmService.addBuff(
-          name: tfName.text,
-          tag: tfTag.text,
-          type: buffTypeKey,
-          species: buffSpeciesValue,
-          blood: tfBlood.text,
-          price: tfPrice.text,
-          father: tfFather.text,
-          mother: tfMother.text,
-          source: tfSource.text,
-          gender: gender == 0 ? "Male" : "Female",
-          image: url,
-          datetime: DateFormat('yyyy-MM-dd').format(pickedDatetime!));
+      bool? result;
+
+      if (buff?.id == null) {
+        result = await FarmService.addBuff(
+            name: tfName.text,
+            tag: tfTag.text,
+            type: buffTypeKey,
+            species: buffSpeciesValue,
+            blood: tfBlood.text,
+            price: tfPrice.text,
+            father: tfFather.text,
+            mother: tfMother.text,
+            source: tfSource.text,
+            gender: buffTypeKey == "F" ? "Female" : "Male",
+            image: url,
+            datetime: DateFormat('yyyy-MM-dd').format(pickedDatetime!));
+      } else {
+        result = await FarmService.updateBuff(
+            id: buff!.id,
+            name: tfName.text,
+            tag: tfTag.text,
+            type: buffTypeKey,
+            species: buffSpeciesValue,
+            blood: tfBlood.text,
+            price: tfPrice.text,
+            father: tfFather.text,
+            mother: tfMother.text,
+            source: tfSource.text,
+            gender: buffTypeKey == "F" ? "Female" : "Male",
+            image: url,
+            datetime: DateFormat('yyyy-MM-dd').format(pickedDatetime!));
+      }
 
       if (result != null) {
         if (result == true) {
@@ -189,13 +233,20 @@ class _AddBuffPage extends State<AddBuffPage> {
     }
   }
 
+  bool initialLoading = false;
+  BuffModel? buff;
+
   Color primaryColor = Colors.pink;
 
   @override
   void initState() {
+    if (widget.buffId != null) {
+      initialLoading = true;
+    }
     super.initState();
     buffTypeKey = widget.buffTypeKey;
     gender = buffTypeKey == "F" ? 1 : 0;
+    onLoad();
   }
 
   @override
@@ -211,8 +262,8 @@ class _AddBuffPage extends State<AddBuffPage> {
               systemNavigationBarDividerColor: primaryColor,
               systemNavigationBarIconBrightness: Brightness.light,
               statusBarIconBrightness: Brightness.light,
-              statusBarBrightness: Brightness.dark,
-              //systemNavigationBarContrastEnforced: true,
+              statusBarBrightness:
+                  Brightness.dark, //systemNavigationBarContrastEnforced: true,
             ),
             child: GestureDetector(
               onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -468,15 +519,20 @@ class _AddBuffPage extends State<AddBuffPage> {
         margin: const EdgeInsets.only(top: 0),
         child: Stack(
           children: [
-            bytesImage != null
+            bytesImage != null || (buff?.image_url != null)
                 ? Container(
                     width: double.infinity,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8.0),
-                      child: Image.memory(
-                        bytesImage!,
-                        fit: BoxFit.cover,
-                      ),
+                      child: buff?.image_url != null
+                          ? Image.network(
+                              buff!.image_url!,
+                              fit: BoxFit.cover,
+                            )
+                          : Image.memory(
+                              bytesImage!,
+                              fit: BoxFit.cover,
+                            ),
                       // child: kIsWeb
                       //     ? Image.network(
                       //         image?.path ?? "",
@@ -633,6 +689,30 @@ class _AddBuffPage extends State<AddBuffPage> {
           ]),
       ),
     );
+  }
+
+  DateTime? getDate(String? birthDate) {
+    if (birthDate == null) return null;
+    DateTime tempDate = DateFormat("yyyy-MM-dd").parse(birthDate!);
+    return tempDate;
+  }
+
+  String getMonthName(int month) {
+    List<String> MONTHS = const [
+      'มกราคม',
+      'กุมภาพันธ์',
+      'มีนาคม',
+      'เมษายน',
+      'พฤษภาคม',
+      'มิถุนายน',
+      'กรกฎาคม',
+      'สิงหาคม',
+      'กันยายน',
+      'ตุลาคม',
+      'พฤศจิกายน',
+      'ธันวาคม'
+    ];
+    return MONTHS[month];
   }
 
   buffSpeciesBottomDialog() {
