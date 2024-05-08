@@ -42,7 +42,7 @@ class LoginPage extends StatelessWidget {
     if (state is AuthenticatingState) {
       return AuthenticateLoadingPage();
     } else if (state is UnauthenticationState) {
-      return Material(child: GestureDetector(
+      return Material(child: InkResponse(
           onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
           child: Scaffold(
         appBar: PreferredSize(
@@ -176,25 +176,43 @@ class LoginPage extends StatelessWidget {
                                       ),
                                     ),
                                     Container(height: 12),
-                                    const Divider(
-                                      color: Colors.grey,
+                                    Divider(
+                                      color: Colors.grey.shade400,
                                     ),
-                                    Container(height: 12),
-                                    GestureDetector(
+                                    Container(height: 8),
+                                    InkResponse(
                                       onTap: () {},
                                       child: Container(
+                                        decoration: BoxDecoration(
+                                          color: bgColor.withOpacity(0.1),
+                                          borderRadius: BorderRadius.circular(10)
+                                        ),
+                                        padding: EdgeInsets.only(left: 20,right: 16,top: 10,bottom: 9),
                                         width: double.infinity,
-                                        margin: const EdgeInsets.only(bottom: 20),
+                                        margin: const EdgeInsets.only(bottom: 10),
                                         child: Row(
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
                                               "เพิ่มแอปไปที่หน้าจอหลัก",
-                                              //style: blackTextButton,
+                                              style: TextStyle(
+                                                  color: kTextBlack.withOpacity(0.9),
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 18),
                                             ),
-                                            Text(
-                                              "เพิ่ม",
-                                              //style: blackTextButton,
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius: BorderRadius.circular(20)
+                                              ),
+                                              padding: EdgeInsets.only(top: 5,bottom: 4,left: 22,right: 22),
+                                              child: Text(
+                                                "เพิ่ม",
+                                                style: TextStyle(
+                                                    color: kTextBlack,
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: 18),
+                                              ),
                                             )
                                           ],
                                         ),
