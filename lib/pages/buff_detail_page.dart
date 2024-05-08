@@ -166,7 +166,8 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
                                     color: primaryColor,
                                     onTap: () async {
 
-                                      if(buff?.gender == "Female" ){
+                                      print(buff?.gender);
+                                      if(buff?.gender == "FEMALE" ){
                                         await Navigator.of(context)
                                             .push(NavigatorHelper.slide(InductionPage(
                                           buffId: widget.id,

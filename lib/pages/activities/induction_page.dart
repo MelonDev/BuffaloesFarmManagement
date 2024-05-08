@@ -50,11 +50,11 @@ class _InductionPageState extends State<InductionPage> {
     setState(() {
       isSaving = true;
     });
-    if (tfName.text.isNotEmpty) {
+    if (tfName.text.isNotEmpty || type == 1) {
       String? result = await FarmService.addInducting(
           buffId: widget.buffId,
           induction: type == 0 ? true : false,
-          method: tfName.text,
+          method: type == 0 ? tfName.text : null,
           date: pickedReturnDatetime ?? DateTime.now());
 
       if (result != null) {

@@ -271,9 +271,9 @@ class FarmService {
 
   static Future<String?> addInducting(
       {required String buffId,
-      required bool induction,
-      required String method,
+      required bool induction, String? method,
       required DateTime date}) async {
+    if(induction == true && method == null) return "ไม่สามารถบันทึกได้";
     try {
       final DateFormat formatter = DateFormat('yyyy-MM-dd');
       final String formatted = formatter.format(date);
@@ -281,7 +281,7 @@ class FarmService {
       Map<String, dynamic> body = {
         "buff_id": buffId,
         "induction": induction,
-        "method": method ?? "",
+        "method": method,
         "date": formatted,
         "notify": true
       };
@@ -297,7 +297,7 @@ class FarmService {
         } else if (response.statusCode == 406) {
           return "อยู่ในสถานะรอการกลับสัด ไม่สามารถผสมพันธุ์เพิ่มได้";
         } else {
-          String message = response.data['detail'];
+          String? message = response.data['detail']?.toString();
           if (message == "MALE CAN'T NOT BREEDING") {
             return "เพศผู้ไม่สามารถเป็นแม่พันธุ์";
           }
