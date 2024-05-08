@@ -6,6 +6,7 @@ import 'package:buffaloes_farm_management/models/activity/DiseaseTreatmentActivi
 import 'package:buffaloes_farm_management/models/activity/InductingActivityModel.dart';
 import 'package:buffaloes_farm_management/models/activity/ReturnEstrusActivityModel.dart';
 import 'package:buffaloes_farm_management/models/activity/VaccineInjectionActivityModel.dart';
+import 'package:dart_extensions_methods/dart_extension_methods.dart';
 
 class BuffModel {
   String? id;
@@ -45,7 +46,7 @@ class BuffModel {
   type = json['type']?.toString(),
   species = json['species']?.toString(),
         blood = json['blood']?.toString(),
-        price = json['prices']?.toString(),
+        price = json['price']?.toString().toDouble().toStringAsFixed(0),
 
       history = json['history']
                 ?.map<BaseActivityModel>((item) => _getActivityModel(item))

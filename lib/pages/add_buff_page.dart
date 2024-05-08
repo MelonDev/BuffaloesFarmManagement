@@ -482,7 +482,7 @@ class _AddBuffPage extends State<AddBuffPage> {
                 const SizedBox(height: 8),
                 textField(hint: "แหล่งที่มา", controller: tfSource),
                 const SizedBox(height: 8),
-                textField(hint: "ราคา", controller: tfPrice),
+                textField(hint: "ราคา", controller: tfPrice,keyboardType: TextInputType.number,inputFormats: [FilteringTextInputFormatter.digitsOnly]),
                 const SizedBox(
                   height: 40,
                 ),
@@ -585,7 +585,9 @@ class _AddBuffPage extends State<AddBuffPage> {
       String? helper,
       TextInputType keyboardType = TextInputType.text,
       TextAlign textAlign = TextAlign.start,
+        List<TextInputFormatter>? inputFormats,
       required String hint}) {
+
     return CustomTextFormField.create(
         hint: hint,
         readOnly: readOnly,
@@ -593,6 +595,7 @@ class _AddBuffPage extends State<AddBuffPage> {
         enabled: enabled,
         onTap: onTap,
         required: required,
+        inputFormatters: inputFormats,
         helper: helper,
         keyboardType: keyboardType,
         value: value,

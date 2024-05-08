@@ -19,6 +19,7 @@ final navyButtonDisabledStyle = OutlinedButton.styleFrom(
 
 const maxHeightContain = BoxConstraints(
   maxHeight: double.infinity,
+  maxWidth: 400
 );
 
 const textFieldStyle = TextStyle(

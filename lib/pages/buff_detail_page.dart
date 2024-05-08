@@ -165,11 +165,19 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
                                     icon: FontAwesomeIcons.venusMars,
                                     color: primaryColor,
                                     onTap: () async {
-                                      await Navigator.of(context)
-                                          .push(NavigatorHelper.slide(InductionPage(
-                                        buffId: widget.id,
-                                      )));
-                                      onLoad();
+
+                                      if(buff?.gender == "Female" ){
+                                        await Navigator.of(context)
+                                            .push(NavigatorHelper.slide(InductionPage(
+                                          buffId: widget.id,
+                                        )));
+                                        onLoad();
+                                      }else {
+                                        messageDialog(context, title: "แจ้งเตือน", message: "ไม่สามารถเหนี่ยวนำกับ ${buff?.name} ได้",
+                                            function: () {
+                                              //context.read<HomeCubit>().management();
+                                            });
+                                      }
                                     },
                                   ),
                                 ),
