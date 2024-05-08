@@ -28,6 +28,7 @@ class LoginPage extends StatelessWidget {
           statusBarBrightness: Brightness.dark,
           systemNavigationBarColor: kBGColor,
           systemNavigationBarDividerColor: kBGColor,
+          systemNavigationBarIconBrightness: Brightness.dark
         ),
         child: widgetState(ct, state),
       );
@@ -51,6 +52,7 @@ class LoginPage extends StatelessWidget {
               elevation: 0,
               backgroundColor: bgColor,
               systemOverlayStyle: SystemUiOverlayStyle(
+                systemNavigationBarIconBrightness: Brightness.dark,
                   statusBarIconBrightness: Brightness.light,
                   systemNavigationBarColor: Colors.white,
                   statusBarBrightness: Brightness.dark,
@@ -181,10 +183,20 @@ class LoginPage extends StatelessWidget {
                                     GestureDetector(
                                       onTap: () {},
                                       child: Container(
+                                        width: double.infinity,
                                         margin: const EdgeInsets.only(bottom: 20),
-                                        child: const Text(
-                                          "พบปัญหาการเข้าสู่ระบบ",
-                                          //style: blackTextButton,
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              "เพิ่มแอปไปที่หน้าจอหลัก",
+                                              //style: blackTextButton,
+                                            ),
+                                            Text(
+                                              "เพิ่ม",
+                                              //style: blackTextButton,
+                                            )
+                                          ],
                                         ),
                                       ),
                                     ),
