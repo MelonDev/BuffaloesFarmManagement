@@ -15,7 +15,7 @@ class ReportPage extends StatefulWidget {
   const ReportPage({Key? key}) : super(key: key);
 
   @override
-  _ReportPageState createState() => _ReportPageState();
+  State<ReportPage> createState() => _ReportPageState();
 }
 
 class _ReportPageState extends State<ReportPage> {
@@ -72,7 +72,7 @@ class _ReportPageState extends State<ReportPage> {
           systemNavigationBarIconBrightness: Brightness.dark,
           //statusBarIconBrightness: Brightness.dark,
           //statusBarBrightness: Brightness.light,
-          //statusBarColor: Colors.white
+          statusBarColor: primaryColor
           //systemNavigationBarContrastEnforced: true,
         ),
         child: Container(
@@ -100,11 +100,14 @@ class _ReportPageState extends State<ReportPage> {
                                           elevation: 0.0,
                                           surfaceTintColor: primaryColor,
                                           systemOverlayStyle:
-                                          const SystemUiOverlayStyle(
+                                          SystemUiOverlayStyle(
                                               statusBarIconBrightness:
                                               Brightness.dark,
                                               statusBarBrightness: Brightness.light,
-                                              statusBarColor: Colors.white),
+                                              statusBarColor: primaryColor,
+                                            systemNavigationBarColor: primaryColor,
+                                            systemNavigationBarIconBrightness: Brightness.dark
+                                          ),
                                           shape: const RoundedRectangleBorder(
                                             borderRadius: BorderRadius
                                                 .vertical(

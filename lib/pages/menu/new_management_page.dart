@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:buffaloes_farm_management/cubit/home/home_cubit.dart';
+import 'package:buffaloes_farm_management/pages/sell_page.dart';
 import 'package:buffaloes_farm_management/tools/ColorHelper.dart';
 import 'package:buffaloes_farm_management/tools/NavigatorHelper.dart';
 import 'package:flutter/material.dart';
@@ -23,20 +24,24 @@ class NewManagementPage extends StatelessWidget {
       "title": TitleManagementMenu("ชนิดกระบือ"),
       "children": [
         TileManagementMenu("พ่อพันธุ์",
-            modal: "assets/image_icon/male-gender.png",code: "M"),
-        TileManagementMenu("แม่พันธุ์", modal: "assets/image_icon/female.png",code: "F"),
-        TileManagementMenu("กระบือรุ่น", modal: "assets/image_icon/star.png",code: "T"),
-        TileManagementMenu("กระบือขุน", modal: "assets/image_icon/wheat.png",code: "G"),
+            modal: "assets/image_icon/male-gender.png", code: "M"),
+        TileManagementMenu(
+            "แม่พันธุ์", modal: "assets/image_icon/female.png", code: "F"),
+        TileManagementMenu(
+            "กระบือรุ่น", modal: "assets/image_icon/star.png", code: "T"),
+        TileManagementMenu(
+            "กระบือขุน", modal: "assets/image_icon/wheat.png", code: "G"),
         TileManagementMenu("ลูกกระบือแรกเกิด",
-            modal: "assets/image_icon/pacifier.png",code: "B")
+            modal: "assets/image_icon/pacifier.png", code: "B")
       ]
     },
     {
       "title": TitleManagementMenu("เครื่องมือ"),
       "children": [
-        TileManagementMenu("งการจำหน่าย",
-            icon: "assets/image_icon/money-bag.png"),
-        TileManagementMenu("รายงาน", icon: "assets/image_icon/analysis.png",code: "R"),
+        TileManagementMenu("การจำหน่าย",
+            icon: "assets/image_icon/money-bag.png", code: "S"),
+        TileManagementMenu(
+            "รายงาน", icon: "assets/image_icon/analysis.png", code: "R"),
       ]
     }
   ];
@@ -84,7 +89,6 @@ class NewManagementPage extends StatelessWidget {
 
   Widget child(BuildContext context, HomeManagementState state) {
     return listView(context, state);
-
   }
 
   Widget listView(BuildContext context, HomeManagementState state) {
@@ -123,21 +127,30 @@ class NewManagementPage extends StatelessWidget {
   Widget _tileCard(BuildContext context, TileManagementMenu tile) {
     return Container(
         width: (isLandscapeMode(context)
-                ? 460
-                : MediaQuery.of(context).size.width - 40) /
+            ? 460
+            : MediaQuery
+            .of(context)
+            .size
+            .width - 40) /
             2,
         height: 120,
         margin: const EdgeInsets.only(bottom: 16, left: 5, right: 5),
         child: ElevatedButton(
           onPressed: () {
-            if(tile.code != null){
-              if(tile.code == "R"){
+            if (tile.code != null) {
+              if (tile.code == "R") {
                 Navigator.of(context).push(
                   NavigatorHelper.slide(
                     const ReportPage(),
                   ),
                 );
-              }else {
+              } else if (tile.code == "S") {
+                Navigator.of(context).push(
+                  NavigatorHelper.slide(
+                    const SellPage(),
+                  ),
+                );
+              } else {
                 context.read<HomeCubit>().management(code: tile.code);
                 Navigator.of(context).push(
                   NavigatorHelper.slide(
@@ -154,9 +167,9 @@ class NewManagementPage extends StatelessWidget {
           },
           style: ButtonStyle(
             overlayColor: MaterialStateProperty.all(ColorHelper.lighten(
-                    primaryColor, isLandscapeMode(context) ? .45 : .35)
-                //Colors.blue
-                ),
+                primaryColor, isLandscapeMode(context) ? .45 : .35)
+              //Colors.blue
+            ),
             elevation: MaterialStateProperty.all(0),
             backgroundColor: MaterialStateProperty.all(ColorHelper.lighten(
                 primaryColor, isLandscapeMode(context) ? .84 : .45)),
@@ -168,10 +181,13 @@ class NewManagementPage extends StatelessWidget {
           ),
           child: Container(
               decoration:
-                  BoxDecoration(borderRadius: BorderRadius.circular(12)),
+              BoxDecoration(borderRadius: BorderRadius.circular(12)),
               width: (isLandscapeMode(context)
-                      ? 460
-                      : MediaQuery.of(context).size.width - 40) /
+                  ? 460
+                  : MediaQuery
+                  .of(context)
+                  .size
+                  .width - 40) /
                   2,
               padding: const EdgeInsets.only(left: 14, right: 14),
               height: 120,
@@ -193,28 +209,28 @@ class NewManagementPage extends StatelessWidget {
                           ),
                           tile.modal != null
                               ? Align(
-                                  alignment: Alignment.bottomRight,
-                                  child: Container(
-                                    height: 26,
-                                    width: 26,
-                                    padding: EdgeInsets.all(4),
-                                    decoration: BoxDecoration(
-                                        color: ColorHelper.darken(
-                                            primaryColor, .36),
-                                        borderRadius: BorderRadius.circular(20),
-                                        border: Border.all(
-                                            color: ColorHelper.lighten(
-                                                primaryColor, .44),
-                                            width: 2.4)),
-                                    child: Image.asset(
-                                      tile.modal!,
-                                      width: 26,
-                                      height: 26,
+                            alignment: Alignment.bottomRight,
+                            child: Container(
+                              height: 26,
+                              width: 26,
+                              padding: EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                  color: ColorHelper.darken(
+                                      primaryColor, .36),
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
                                       color: ColorHelper.lighten(
                                           primaryColor, .44),
-                                    ),
-                                  ),
-                                )
+                                      width: 2.4)),
+                              child: Image.asset(
+                                tile.modal!,
+                                width: 26,
+                                height: 26,
+                                color: ColorHelper.lighten(
+                                    primaryColor, .44),
+                              ),
+                            ),
+                          )
                               : Container()
                         ],
                       )),
@@ -298,7 +314,7 @@ class NewManagementPage extends StatelessWidget {
           Text(
             title,
             style: GoogleFonts.itim(
-                //color: ColorHelper.lighten(primaryColor, .3).withOpacity(0.7),
+              //color: ColorHelper.lighten(primaryColor, .3).withOpacity(0.7),
                 color: ColorHelper.lighten(primaryColor, .42).withOpacity(0.84),
                 fontSize: 22),
           ),
@@ -311,14 +327,23 @@ class NewManagementPage extends StatelessWidget {
   }
 
   bool isLandscapeMode(BuildContext context) {
-    if (MediaQuery.of(context).orientation == Orientation.landscape &&
-        MediaQuery.of(context).size.width >= 700) {
+    if (MediaQuery
+        .of(context)
+        .orientation == Orientation.landscape &&
+        MediaQuery
+            .of(context)
+            .size
+            .width >= 700) {
       return true;
-    } else if (MediaQuery.of(context).size.width >= 500) {
+    } else if (MediaQuery
+        .of(context)
+        .size
+        .width >= 500) {
       return true;
     }
 
     return false;
+
   }
 }
 
@@ -338,5 +363,5 @@ class TileManagementMenu extends ManagementMenu {
   String? code;
 
   TileManagementMenu(super.name,
-      {this.icon = "assets/image_icon/buffalo.png", this.modal,this.code});
+      {this.icon = "assets/image_icon/buffalo.png", this.modal, this.code});
 }

@@ -53,7 +53,7 @@ class MorePage extends StatelessWidget {
           context,
           "ลงชื่อออก",
           icon: FontAwesomeIcons.doorOpen,
-          color: Colors.red,
+          color: ColorHelper.lighten(primaryColor, .45).withOpacity(0.99),
           onTap: () async {
             context.read<AuthenticationCubit>().signOut(context);
           },
@@ -64,7 +64,7 @@ class MorePage extends StatelessWidget {
 
   Widget button(BuildContext context,String title, {Function? onTap, IconData? icon, Color? color}) {
     return SizedBox(
-        height: 48, // <-- Your height
+        height: 64, // <-- Your height
         child: ElevatedButton(
           onPressed: () {
             onTap?.call();
@@ -75,8 +75,8 @@ class MorePage extends StatelessWidget {
                     .withOpacity(0.1)),
             elevation: MaterialStateProperty.all(0),
             backgroundColor: MaterialStateProperty.all(
-                ColorHelper.lighten(color ?? primaryColor, .05)
-                    .withOpacity(0.3)),
+                ColorHelper.lighten(color ?? primaryColor, .45)
+                    .withOpacity(0.15)),
             shape: MaterialStateProperty.all<RoundedRectangleBorder>(
               RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16.0),
@@ -93,16 +93,17 @@ class MorePage extends StatelessWidget {
                   const SizedBox(width: 0),
                   Icon(
                     icon ?? FontAwesomeIcons.ellipsis,
-                    color: Colors.white.withOpacity(0.8),
-                    size: 18,
+                    color: Colors.white.withOpacity(0.99),
+                    size: 22,
                   ),
                   Container(width: 16),
                   Text(
                     title,
                     style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.white.withOpacity(0.8)),
-                  )
+                        fontSize: 22,
+                        color: Colors.white.withOpacity(0.99)),
+                  ),
+
                 ],
               )),
         ));
