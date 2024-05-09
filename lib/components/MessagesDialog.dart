@@ -100,7 +100,6 @@ void bottomDialog(BuildContext context, Widget child,{double? height,Color? back
     ),
     context: context,
     expand: false,
-    //backgroundColor: const Color(0xFF0C0C0C),
     backgroundColor: backgroundColor ?? const Color(0xFF060606),
     barrierColor: Colors.black.withOpacity(0.96),
     builder: (context) =>  SizedBox(height: height,child: child),

@@ -34,7 +34,7 @@ class NewManagementPage extends StatelessWidget {
     {
       "title": TitleManagementMenu("เครื่องมือ"),
       "children": [
-        TileManagementMenu("การจำหน่าย",
+        TileManagementMenu("งการจำหน่าย",
             icon: "assets/image_icon/money-bag.png"),
         TileManagementMenu("รายงาน", icon: "assets/image_icon/analysis.png",code: "R"),
       ]

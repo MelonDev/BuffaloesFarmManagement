@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:buffaloes_farm_management/components/CustomTextFormField.dart';
 import 'package:buffaloes_farm_management/components/MessagesDialog.dart';
 import 'package:buffaloes_farm_management/components/SlidingTimePicker.dart';
@@ -11,24 +10,25 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class BreedingPage extends StatefulWidget {
-  const BreedingPage({super.key,required this.buffId});
+class LegacyBreedingPage extends StatefulWidget {
+  LegacyBreedingPage({Key? key, required this.buffId}) : super(key: key);
 
-  final String buffId;
+  String buffId;
 
   @override
-  State<BreedingPage> createState() => _BreedingPageState();
+  _LegacyBreedingPageState createState() => _LegacyBreedingPageState();
 }
 
-class _BreedingPageState extends State<BreedingPage> {
+class _LegacyBreedingPageState extends State<LegacyBreedingPage> {
   TextEditingController tfName = TextEditingController();
 
   TextEditingController tfDateTime = TextEditingController();
   TextEditingController tfReturnDateTime = TextEditingController();
 
-  Color primaryColor = Colors.pink;
+
+  Color primaryColor = Colors.indigo;
   Color backgroundColor = const Color(0xFF050505);
-  Color tabColor = ColorHelper.darken(Colors.pink, .1);
+  Color tabColor = ColorHelper.darken(Colors.indigo, .1);
 
   bool isSaving = false, isSaved = false;
 
@@ -39,24 +39,25 @@ class _BreedingPageState extends State<BreedingPage> {
   DateTime? pickedDatetime;
   DateTime? pickedReturnDatetime;
 
+
   @override
   void initState() {
     super.initState();
 
     tfDateTime.text = getCurrentDate();
-    //tfDateTime.text = getCurrentDate();
+    tfDateTime.text = getCurrentDate();
   }
 
   onSubmit() async {
     setState(() {
       isSaving = true;
     });
-    if (tfName.text.isNotEmpty || type == 1) {
-      String? result = await FarmService.addInducting(
+    if (tfName.text.isNotEmpty) {
+      String? result = await FarmService.addBreeding(
           buffId: widget.buffId,
-          induction: type == 0 ? true : false,
-          method: type == 0 ? tfName.text : null,
-          date: pickedReturnDatetime ?? DateTime.now());
+          artificialInsemination: type == 0 ? true : false,
+          breederName: tfName.text,
+          date: pickedDatetime ?? DateTime.now());
 
       if (result != null) {
         if (result == "SUCCESS") {
@@ -65,9 +66,9 @@ class _BreedingPageState extends State<BreedingPage> {
           if (!mounted) return;
           messageDialog(context, title: "แจ้งเตือน", message: "บันทึกเรียบร้อย",
               function: () {
-                //context.read<HomeCubit>().management();
-                Navigator.of(context).pop(true);
-              });
+            //context.read<HomeCubit>().management();
+            Navigator.of(context).pop(true);
+          });
         } else {
           if (!mounted) return;
           messageDialog(context, title: "แจ้งเตือน", message: result);
@@ -80,7 +81,7 @@ class _BreedingPageState extends State<BreedingPage> {
     } else {
       if (tfName.text.isEmpty) {
         messageDialog(context,
-            title: "แจ้งเตือน", message: "กรุณากรอกวิธีเหนี่ยวนำ");
+            title: "แจ้งเตือน", message: "กรุณากรอกชื่อพ่อพันธุ์");
       }
     }
     setState(() {
@@ -124,7 +125,7 @@ class _BreedingPageState extends State<BreedingPage> {
                         ),
                         centerTitle: true,
                         title: Text(
-                          "เริ่มการผสมพันธุ์",
+                          "เพิ่มการผสมพันธุ์",
                           style: GoogleFonts.itim(
                             color: Colors.white,
                             fontSize: 23,
@@ -143,41 +144,41 @@ class _BreedingPageState extends State<BreedingPage> {
                         actions: [],
                       ),
                       floatingActionButtonLocation:
-                      FloatingActionButtonLocation.centerFloat,
+                          FloatingActionButtonLocation.centerFloat,
                       floatingActionButton: submitButtonEnabled()
                           ? FloatingActionButton.extended(
-                        onPressed: () {
-                          onSubmit();
-                        },
-                        heroTag: null,
-                        backgroundColor:
-                        ColorHelper.lighten(primaryColor, .1)
-                            .withOpacity(0.6),
-                        extendedPadding:
-                        const EdgeInsets.only(left: 74, right: 74),
-                        extendedIconLabelSpacing: 12,
-                        elevation: 0,
-                        //splashColor: Colors.greenAccent.withOpacity(0.4),
-                        splashColor: Colors.white,
-                        shape: const RoundedRectangleBorder(
-                            borderRadius:
-                            BorderRadius.all(Radius.circular(14))),
-                        label: Text("บันทึก",
-                            style: GoogleFonts.itim(
-                              //color: primaryColor,
-                                color: Colors.white.withOpacity(0.9),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18)),
-                        icon: Icon(FontAwesomeIcons.solidFloppyDisk,
-                            color: Colors.white.withOpacity(0.9)),
-                      )
+                              onPressed: () {
+                                onSubmit();
+                              },
+                              heroTag: null,
+                              backgroundColor:
+                                  ColorHelper.lighten(primaryColor, .1)
+                                      .withOpacity(0.6),
+                              extendedPadding:
+                                  const EdgeInsets.only(left: 74, right: 74),
+                              extendedIconLabelSpacing: 12,
+                              elevation: 0,
+                              //splashColor: Colors.greenAccent.withOpacity(0.4),
+                              splashColor: Colors.white,
+                              shape: const RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(14))),
+                              label: Text("บันทึก",
+                                  style: GoogleFonts.itim(
+                                      //color: primaryColor,
+                                      color: Colors.white.withOpacity(0.9),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18)),
+                              icon: Icon(FontAwesomeIcons.solidFloppyDisk,
+                                  color: Colors.white.withOpacity(0.9)),
+                            )
                           : null,
                       body: isSaving == true || isSaved == true
                           ? const Center(
-                          child: SpinKitThreeBounce(
-                            color: Colors.white,
-                            size: 50.0,
-                          ))
+                              child: SpinKitThreeBounce(
+                              color: Colors.white,
+                              size: 50.0,
+                            ))
                           : body(context),
                     ))),
           )),
@@ -193,8 +194,7 @@ class _BreedingPageState extends State<BreedingPage> {
             bottom: Radius.circular(22),
           ),
         ),
-        height: type == 0
-            ? 422 : 262,
+        height: 422,
         padding: const EdgeInsets.only(
           left: 20,
           right: 20,
@@ -211,8 +211,8 @@ class _BreedingPageState extends State<BreedingPage> {
               tabBar(
                 initialValue: type,
                 children: {
-                  0: buildSegment("เหนื่ยวนำ", 0, type),
-                  1: buildSegment("ไม่เหนื่ยวนำ", 1, type),
+                  0: buildSegment("ผสมเทียม", 0, type),
+                  1: buildSegment("ผสมจริง", 1, type),
                 },
                 callback: (value) {
                   setState(() {
@@ -220,29 +220,19 @@ class _BreedingPageState extends State<BreedingPage> {
                   });
                 },
               ),
-              type == 0
-                  ? const SizedBox(height: 20) : Container(),
-              type == 0
-                  ? textField(
-                  hint: "วิธีที่ใช้เหนี่ยวนำ",
-                  controller: tfName,
-                  required: true)
-                  : Container(),
-              type == 0 ? const SizedBox(height: 6) : Container(),
-              type == 0 ? const SizedBox(height: 8) : Container(),
-              type == 0
-                  ? textHeader(title: "วัน/เดือน/ปี ที่เหนี่ยวนำ")
-                  : Container(),
-              type == 0
-                  ? textField(
+              const SizedBox(height: 20),
+              textField(
+                  hint: "วิธีที่ใช้เหนี่ยวนำ", controller: tfName, required: true),              const SizedBox(height: 6),
+              const SizedBox(height: 8),
+              textHeader(title: "วัน/เดือน/ปี ที่เหนี่ยวนำ"),
+              textField(
                 enabled: true,
                 hint: "",
                 //hint: "วัน/เดือน/ปี",
                 readOnly: true,
                 controller: tfDateTime,
                 onTap: () async {
-                  DateTime? selectdDateTime = await SlidingTimePicker(
-                      context,
+                  DateTime? selectdDateTime = await SlidingTimePicker(context,
                       dateTime: pickedDatetime);
                   if (selectdDateTime != null) {
                     setState(() {
@@ -253,8 +243,7 @@ class _BreedingPageState extends State<BreedingPage> {
                     //x = "${DateFormat.Hm().format(selectdDateTime)}:00";
                   }
                 },
-              )
-                  : Container(),
+              ),
               const SizedBox(height: 14),
               divider(),
               const SizedBox(height: 6),
@@ -262,7 +251,7 @@ class _BreedingPageState extends State<BreedingPage> {
               textField(
                 enabled: true,
                 hint: "",
-                value: getReturnDate(days: 21+1),
+                value: getReturnDate(days: 21),
                 //hint: "วัน/เดือน/ปี",
                 readOnly: true,
                 //controller: tfReturnDateTime,
@@ -325,13 +314,13 @@ class _BreedingPageState extends State<BreedingPage> {
 
   Widget textField(
       {TextEditingController? controller,
-        String? value,
-        bool readOnly = false,
-        VoidCallback? onTap,
-        bool enabled = true,
-        bool required = false,
-        TextAlign textAlign = TextAlign.start,
-        required String hint}) {
+      String? value,
+      bool readOnly = false,
+      VoidCallback? onTap,
+      bool enabled = true,
+      bool required = false,
+      TextAlign textAlign = TextAlign.start,
+      required String hint}) {
     return CustomTextFormField.create(
         hint: hint,
         readOnly: readOnly,
@@ -354,8 +343,8 @@ class _BreedingPageState extends State<BreedingPage> {
 
   Widget tabBar(
       {required Map<int, Widget> children,
-        required int initialValue,
-        required Function(int) callback}) {
+      required int initialValue,
+      required Function(int) callback}) {
     return Container(
       alignment: Alignment.topLeft,
       margin: const EdgeInsets.only(left: 0, right: 0),
@@ -414,14 +403,14 @@ class _BreedingPageState extends State<BreedingPage> {
 
   String getCurrentDate({DateTime? tempDate}) {
     tempDate ??= DateTime.now();
-    //tempDate = tempDate.add(const Duration(days: 21));
+    tempDate = tempDate.add(const Duration(days: 21));
     pickedDatetime = tempDate;
 
     return dateTimeToString(tempDate);
   }
 
   String getReturnDate({int days = 21}) {
-    DateTime tempDate = pickedDatetime!.add(Duration(days: days));
+    DateTime tempDate = pickedDatetime!.add( Duration(days: days));
     pickedReturnDatetime = tempDate;
 
     return "${tempDate.day} ${getMonthName(tempDate.month - 1)} ${tempDate.year + 543}";

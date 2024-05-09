@@ -59,10 +59,11 @@ class _AddBuffPage extends State<AddBuffPage> {
 
   TextEditingController tfFather = TextEditingController();
   TextEditingController tfMother = TextEditingController();
-  TextEditingController tfSource = TextEditingController();
   TextEditingController tfPrice = TextEditingController();
 
-  String? buffTypeKey, buffSpeciesValue;
+  TextEditingController tfSource = TextEditingController();
+
+  String? buffTypeKey, buffSpeciesValue, buffSourceValue;
 
   File? image;
   Uint8List? bytesImage;
@@ -84,7 +85,20 @@ class _AddBuffPage extends State<AddBuffPage> {
         pickedDatetime = getDate(buff?.birth_date);
         tfFather.text = buff?.father_name ?? "";
         tfMother.text = buff?.mother_name ?? "";
-        tfSource.text = buff?.source ?? "";
+
+        if((buff?.source?.contains("อื่น ๆ")) ?? false){
+          buffSourceValue = "อื่น ๆ";
+
+          String source = buff?.source ?? "";
+
+          final startIndex = source.indexOf("(");
+          final endIndex = source.indexOf(")", startIndex + "(".length);
+          tfSource.text = source.substring(startIndex + "(".length, endIndex);
+        }else {
+          buffSourceValue = buff?.source ?? "";
+        }
+
+        //tfSource.text = buff?.source ?? "";
         tfPrice.text = buff?.price ?? "";
       });
     }
@@ -156,7 +170,7 @@ class _AddBuffPage extends State<AddBuffPage> {
             price: tfPrice.text,
             father: tfFather.text,
             mother: tfMother.text,
-            source: tfSource.text,
+            source: buffSourceValue == "อื่น ๆ" ? "$buffSourceValue (${tfSource.text})" : tfSource.text,
             gender: buffTypeKey == "F" ? "Female" : "Male",
             image: url,
             datetime: DateFormat('yyyy-MM-dd').format(pickedDatetime!));
@@ -171,7 +185,7 @@ class _AddBuffPage extends State<AddBuffPage> {
             price: tfPrice.text,
             father: tfFather.text,
             mother: tfMother.text,
-            source: tfSource.text,
+            source: buffSourceValue == "อื่น ๆ" ? "$buffSourceValue (${tfSource.text})" : buffSourceValue,
             gender: buffTypeKey == "F" ? "Female" : "Male",
             image: url,
             datetime: DateFormat('yyyy-MM-dd').format(pickedDatetime!));
@@ -262,6 +276,7 @@ class _AddBuffPage extends State<AddBuffPage> {
               systemNavigationBarDividerColor: primaryColor,
               systemNavigationBarIconBrightness: Brightness.light,
               statusBarIconBrightness: Brightness.light,
+              statusBarColor: primaryColor,
               statusBarBrightness:
                   Brightness.dark, //systemNavigationBarContrastEnforced: true,
             ),
@@ -283,8 +298,12 @@ class _AddBuffPage extends State<AddBuffPage> {
                                   elevation: 0.0,
                                   surfaceTintColor: primaryColor,
                                   systemOverlayStyle:
-                                      const SystemUiOverlayStyle(
+                                  SystemUiOverlayStyle(
+                                        statusBarColor: primaryColor,
                                     statusBarIconBrightness: Brightness.light,
+                                    statusBarBrightness: Brightness.light,
+                                    systemNavigationBarIconBrightness: Brightness.light,
+                                    systemNavigationBarColor: primaryColor
                                   ),
                                   shape: const RoundedRectangleBorder(
                                     borderRadius: BorderRadius.vertical(
@@ -480,9 +499,26 @@ class _AddBuffPage extends State<AddBuffPage> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                textField(hint: "แหล่งที่มา", controller: tfSource),
+                textField(
+                  hint: "แหล่งที่มา",
+                  value: buffSourceValue,
+                  readOnly: true,
+                  onTap: () {
+                    buffSourceBottomDialog();
+                  },
+                ),
+                if (buffSourceValue == "อื่น ๆ") const SizedBox(height: 8),
+                if (buffSourceValue == "อื่น ๆ")
+                  textField(
+                    hint: "ระบุ",
+                    controller: tfSource,
+                  ),
                 const SizedBox(height: 8),
-                textField(hint: "ราคา", controller: tfPrice,keyboardType: TextInputType.number,inputFormats: [FilteringTextInputFormatter.digitsOnly]),
+                textField(
+                    hint: "ราคา",
+                    controller: tfPrice,
+                    keyboardType: TextInputType.number,
+                    inputFormats: [FilteringTextInputFormatter.digitsOnly]),
                 const SizedBox(
                   height: 40,
                 ),
@@ -545,7 +581,7 @@ class _AddBuffPage extends State<AddBuffPage> {
                     ),
                   )
                 : Container(),
-            bytesImage == null
+            !(bytesImage != null || (buff?.image_url != null))
                 ? Center(
                     child: Container(
                       child: Column(
@@ -585,9 +621,8 @@ class _AddBuffPage extends State<AddBuffPage> {
       String? helper,
       TextInputType keyboardType = TextInputType.text,
       TextAlign textAlign = TextAlign.start,
-        List<TextInputFormatter>? inputFormats,
+      List<TextInputFormatter>? inputFormats,
       required String hint}) {
-
     return CustomTextFormField.create(
         hint: hint,
         readOnly: readOnly,
@@ -761,6 +796,58 @@ class _AddBuffPage extends State<AddBuffPage> {
           ),
         ]
           ..addAll(buffSpecies)
+          ..addAll([
+            const SizedBox(height: 26),
+          ]),
+      ),
+    );
+  }
+
+  buffSourceBottomDialog() {
+    List<String> buffSourceList = [
+      "พ่อค้าคนกลาง",
+      "ผลิตเองในฟาร์ม",
+      "ในหมู่บ้าน",
+      "ตลาดโค-กระบือ",
+      "อื่น ๆ",
+    ];
+
+    List<Widget> buffSource = [];
+    buffSourceList.forEach((value) {
+      buffSource.add(const SizedBox(height: 8));
+      buffSource.add(button(
+        value,
+        icon: FontAwesomeIcons.circle,
+        color: const Color(0xFF010101),
+        onTap: () async {
+          setState(() {
+            buffSourceValue = value;
+          });
+          // await Navigator.of(context).push(
+          //     NavigatorHelper.slide(const DiseaseTreatmentPage()));
+        },
+      ));
+    });
+
+    bottomDialog(
+      context,
+      height: 360,
+      backgroundColor: Colors.white,
+      ListView(
+        padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
+        children: [
+          Container(
+            margin: const EdgeInsets.only(bottom: 8, left: 6),
+            child: Text(
+              "เลือกแหล่งที่มา",
+              style: GoogleFonts.itim(
+                  color: ColorHelper.lighten(const Color(0xFF0C0C0C), .2)
+                      .withOpacity(0.86),
+                  fontSize: 28),
+            ),
+          ),
+        ]
+          ..addAll(buffSource)
           ..addAll([
             const SizedBox(height: 26),
           ]),
