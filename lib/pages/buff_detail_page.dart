@@ -912,7 +912,7 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
               active: active,
               log: BuffActivityLog.breeding,
               function: ActivityFunctionModel(
-                  name: "เริ่มต้นกลับสัด",
+                  name: "สถานะการกลัับสัด",
                   icon: FontAwesomeIcons.stethoscope,
                   function: () async {
                     await Navigator.of(context)

@@ -30,7 +30,7 @@ class _ReturnEstrusPageState extends State<ReturnEstrusPage> {
   bool isSaving = false, isSaved = false;
 
   int notify = 0;
-  int result = 0;
+  int result = 1;
 
   DateTime? pickedBirthDatetime;
   DateTime? pickedEndBirthDatetime;
@@ -106,7 +106,7 @@ class _ReturnEstrusPageState extends State<ReturnEstrusPage> {
                           ),
                           centerTitle: true,
                           title: Text(
-                            "เพิ่มการกลัับสัด",
+                            "สถานะการกลัับสัด",
                             style: GoogleFonts.itim(
                               color: Colors.white,
                               fontSize: 23,
@@ -201,56 +201,60 @@ class _ReturnEstrusPageState extends State<ReturnEstrusPage> {
                   });
                 },
               ),
-              const SizedBox(height: 20),
-              textHeader(title: "วันที่คาดว่าจะคลอด"),
-              textField(
-                enabled: false,
-                hint: "",
-                readOnly: true,
-                value: getBirthDate(days: 290),
-                onTap: () async {
-                  DateTime? selectdDateTime = await SlidingTimePicker(context,
-                      dateTime: pickedBirthDatetime);
-                  if (selectdDateTime != null) {
-                    setState(() {
-                      pickedBirthDatetime = selectdDateTime;
-                    });
-                    //x = "${DateFormat.Hm().format(selectdDateTime)}:00";
-                  }
-                },
-              ),
-              textHeader(title: "ถึง"),
-              textField(
-                enabled: false,
-                hint: "",
-                readOnly: true,
-                value: getEndBirthDate(days: 310),
-                onTap: () async {
-                  DateTime? selectdDateTime = await SlidingTimePicker(context,
-                      dateTime: pickedEndBirthDatetime);
-                  if (selectdDateTime != null) {
-                    setState(() {
-                      pickedEndBirthDatetime = selectdDateTime;
-                    });
-                    //x = "${DateFormat.Hm().format(selectdDateTime)}:00";
-                  }
-                },
-              ),
-              const SizedBox(height: 16),
-              tabBar(
-                initialValue: notify,
-                children: {
-                  0: buildSegment("แจ้งเตือน", 0, notify),
-                  1: buildSegment("ไม่แจ้งเตือน", 1, notify),
-                },
-                callback: (value) {
-                  setState(() {
-                    notify = value;
-                  });
-                },
-              ),
+              if(result == 1)
+                ...[
+                  const SizedBox(height: 20),
+                  textHeader(title: "วันที่คาดว่าจะคลอด"),
+                  textField(
+                    enabled: false,
+                    hint: "",
+                    readOnly: true,
+                    value: getBirthDate(days: 290),
+                    onTap: () async {
+                      DateTime? selectdDateTime = await SlidingTimePicker(context,
+                          dateTime: pickedBirthDatetime);
+                      if (selectdDateTime != null) {
+                        setState(() {
+                          pickedBirthDatetime = selectdDateTime;
+                        });
+                        //x = "${DateFormat.Hm().format(selectdDateTime)}:00";
+                      }
+                    },
+                  ),
+                  textHeader(title: "ถึง"),
+                  textField(
+                    enabled: false,
+                    hint: "",
+                    readOnly: true,
+                    value: getEndBirthDate(days: 310),
+                    onTap: () async {
+                      DateTime? selectdDateTime = await SlidingTimePicker(context,
+                          dateTime: pickedEndBirthDatetime);
+                      if (selectdDateTime != null) {
+                        setState(() {
+                          pickedEndBirthDatetime = selectdDateTime;
+                        });
+                        //x = "${DateFormat.Hm().format(selectdDateTime)}:00";
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  tabBar(
+                    initialValue: notify,
+                    children: {
+                      0: buildSegment("แจ้งเตือน", 0, notify),
+                      1: buildSegment("ไม่แจ้งเตือน", 1, notify),
+                    },
+                    callback: (value) {
+                      setState(() {
+                        notify = value;
+                      });
+                    },
+                  ),
+                ],
+
               const SizedBox(
-                height: 40,
+                height: 20,
               ),
             ],
           ),
