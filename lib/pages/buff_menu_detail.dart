@@ -207,6 +207,7 @@ class BuffMenuDetail extends StatelessWidget {
 
   Widget listView(HomeManagementState state) {
     return ListView.builder(
+      shrinkWrap: true,
       padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 72),
       itemCount: state.data?.length ?? 0,
       itemBuilder: (context, index) {

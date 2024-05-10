@@ -1,3 +1,4 @@
+import 'package:buffaloes_farm_management/components/SlidingTimePicker.dart';
 import 'package:flutter/material.dart';
 import 'package:buffaloes_farm_management/components/CustomTextFormField.dart';
 import 'package:buffaloes_farm_management/components/MessagesDialog.dart';
@@ -11,6 +12,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 class SellingPage extends StatefulWidget {
   const SellingPage({super.key, required this.buffId});
@@ -22,8 +24,10 @@ class SellingPage extends StatefulWidget {
 }
 
 class _SellingPageState extends State<SellingPage> {
-  TextEditingController tfName = TextEditingController();
+  TextEditingController tfBuyerDetail = TextEditingController();
   TextEditingController tfDuration = TextEditingController();
+  TextEditingController tfDistributor = TextEditingController();
+  TextEditingController tfCharacteristics = TextEditingController();
 
   Color primaryColor = Colors.grey.shade500;
   Color backgroundColor = const Color(0xFF050505);
@@ -31,44 +35,48 @@ class _SellingPageState extends State<SellingPage> {
 
   bool isSaving = false, isSaved = false;
 
+  String? sellNoteValue, distributorValue, characteristicsValue;
+
   int notify = 0;
+
+  DateTime? pickedDatetime;
 
   onSubmit() async {
     setState(() {
       isSaving = true;
     });
-    if (tfName.text.isNotEmpty) {
-      String? response = await FarmService.addDeworming(
-          buffId: widget.buffId,
-          anthelminticDrugName: tfName.text,
-          nextDewormingDuration: int.tryParse(tfDuration.text),
-          date: DateTime.now());
-
-      if (response != null) {
-        if (response == "SUCCESS") {
-          isSaved = true;
-
-          if (!mounted) return;
-          messageDialog(context, title: "แจ้งเตือน", message: "บันทึกเรียบร้อย",
-              function: () {
-                //context.read<HomeCubit>().management();
-                Navigator.of(context).pop(true);
-              });
-        } else {
-          if (!mounted) return;
-          messageDialog(context, title: "แจ้งเตือน", message: response);
-        }
-      } else {
-        if (!mounted) return;
-        messageDialog(context,
-            title: "แจ้งเตือน", message: "ไม่สามารถเชื่อมต่อได้");
-      }
-    } else {
-      if (tfName.text.isEmpty) {
-        messageDialog(context,
-            title: "แจ้งเตือน", message: "กรุณากรอกชื่อยาถ่ายพยาธิ");
-      }
-    }
+    // if (tfName.text.isNotEmpty) {
+    //   String? response = await FarmService.addDeworming(
+    //       buffId: widget.buffId,
+    //       anthelminticDrugName: tfName.text,
+    //       nextDewormingDuration: int.tryParse(tfDuration.text),
+    //       date: DateTime.now());
+    //
+    //   if (response != null) {
+    //     if (response == "SUCCESS") {
+    //       isSaved = true;
+    //
+    //       if (!mounted) return;
+    //       messageDialog(context, title: "แจ้งเตือน", message: "บันทึกเรียบร้อย",
+    //           function: () {
+    //             //context.read<HomeCubit>().management();
+    //             Navigator.of(context).pop(true);
+    //           });
+    //     } else {
+    //       if (!mounted) return;
+    //       messageDialog(context, title: "แจ้งเตือน", message: response);
+    //     }
+    //   } else {
+    //     if (!mounted) return;
+    //     messageDialog(context,
+    //         title: "แจ้งเตือน", message: "ไม่สามารถเชื่อมต่อได้");
+    //   }
+    // } else {
+    //   // if (tfBuyerDetail.text.isEmpty) {
+    //   //   messageDialog(context,
+    //   //       title: "แจ้งเตือน", message: "กรุณากรอกชื่อยาถ่ายพยาธิ");
+    //   // }
+    // }
     setState(() {
       isSaving = false;
     });
@@ -129,41 +137,41 @@ class _SellingPageState extends State<SellingPage> {
                           actions: [],
                         ),
                         floatingActionButtonLocation:
-                        FloatingActionButtonLocation.centerFloat,
+                            FloatingActionButtonLocation.centerFloat,
                         floatingActionButton: submitButtonEnabled()
                             ? FloatingActionButton.extended(
-                          onPressed: () {
-                            onSubmit();
-                          },
-                          heroTag: null,
-                          backgroundColor:
-                          ColorHelper.darken(primaryColor, .1)
-                              .withOpacity(0.7),
-                          extendedPadding:
-                          const EdgeInsets.only(left: 74, right: 74),
-                          extendedIconLabelSpacing: 12,
-                          elevation: 0,
-                          //splashColor: Colors.greenAccent.withOpacity(0.4),
-                          splashColor: Colors.white,
-                          shape: const RoundedRectangleBorder(
-                              borderRadius:
-                              BorderRadius.all(Radius.circular(14))),
-                          label: Text("บันทึก",
-                              style: GoogleFonts.itim(
-                                //color: primaryColor,
-                                  color: Colors.white.withOpacity(0.99),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18)),
-                          icon: Icon(FontAwesomeIcons.solidFloppyDisk,
-                              color: Colors.white.withOpacity(0.9)),
-                        )
+                                onPressed: () {
+                                  onSubmit();
+                                },
+                                heroTag: null,
+                                backgroundColor:
+                                    ColorHelper.darken(primaryColor, .1)
+                                        .withOpacity(0.7),
+                                extendedPadding:
+                                    const EdgeInsets.only(left: 74, right: 74),
+                                extendedIconLabelSpacing: 12,
+                                elevation: 0,
+                                //splashColor: Colors.greenAccent.withOpacity(0.4),
+                                splashColor: Colors.white,
+                                shape: const RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(14))),
+                                label: Text("บันทึก",
+                                    style: GoogleFonts.itim(
+                                        //color: primaryColor,
+                                        color: Colors.white.withOpacity(0.99),
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18)),
+                                icon: Icon(FontAwesomeIcons.solidFloppyDisk,
+                                    color: Colors.white.withOpacity(0.9)),
+                              )
                             : null,
                         body: isSaving == true || isSaved == true
                             ? const Center(
-                            child: SpinKitThreeBounce(
-                              color: Colors.white,
-                              size: 50.0,
-                            ))
+                                child: SpinKitThreeBounce(
+                                color: Colors.white,
+                                size: 50.0,
+                              ))
                             : body(context),
                       ))))),
     );
@@ -178,7 +186,7 @@ class _SellingPageState extends State<SellingPage> {
             bottom: Radius.circular(22),
           ),
         ),
-        height: 290,
+        //height: 290,
         padding: const EdgeInsets.only(
           left: 20,
           right: 20,
@@ -189,25 +197,81 @@ class _SellingPageState extends State<SellingPage> {
         //height: MediaQuery.of(context).size.height,
         child: Form(
           child: ListView(
+            shrinkWrap: true,
             padding: const EdgeInsets.only(bottom: 0),
             children: <Widget>[
               const SizedBox(height: 20),
               textHeader(title: "รายละเอียด"),
+              const SizedBox(height: 12),
               textField(
-                  hint: "ชนิดของยาถ่ายพยาธิ",
-                  controller: tfName,
-                  required: true),
-              const SizedBox(height: 8),
+                hint: "วัน/เดือน/ปี",
+                required: true,
+                readOnly: true,
+                value: pickedDatetime != null
+                    ? DateFormat('d MMMM y', 'th').format(pickedDatetime!)
+                    : null,
+                onTap: () async {
+                  DateTime? selectdDateTime = await SlidingTimePicker(context,
+                      dateTime: pickedDatetime);
+                  if (selectdDateTime != null) {
+                    setState(() {
+                      pickedDatetime = selectdDateTime;
+                    });
+                    //x = "${DateFormat.Hm().format(selectdDateTime)}:00";
+                  }
+                },
+              ),
+              const SizedBox(height: 16),
               textField(
-                hint: "ระยะเวลาถ่ายพยาธิซ้ำ (วัน)",
-                helperText: "ค่าเริ่มต้น = ไม่ถ่ายซ้ำ (0 วัน) ",
+                hint: "สรุปจำนวนวันที่เลี้ยง",
                 controller: tfDuration,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 keyboardType: TextInputType.number,
               ),
               const SizedBox(height: 16),
-              textHeader(title: "แจ้งเตือนการถ่ายพยาธิครั้งต่อไป"),
-              tabBar(),
+              textField(
+                hint: "เหตุผลการจำหน่าย",
+                value: sellNoteValue,
+                readOnly: true,
+                onTap: () {
+                  sellNoteBottomDialog();
+                },
+              ),
+              const SizedBox(height: 26),
+              textField(
+                  hint: "ข้อมูลผู้ซื้อ",
+                  controller: tfBuyerDetail,
+                  required: false),
+              const SizedBox(height: 16),
+              textField(
+                hint: "ช่องทางการจำหน่าย",
+                value: distributorValue,
+                readOnly: true,
+                onTap: () {
+                  distributorBottomDialog();
+                },
+              ),
+              if (distributorValue == "อื่น ๆ") const SizedBox(height: 8),
+              if (distributorValue == "อื่น ๆ")
+                textField(
+                  hint: "ระบุ",
+                  controller: tfDistributor,
+                ),
+              const SizedBox(height: 26),
+              textField(
+                hint: "ลักษณะการจำหน่าย",
+                value: characteristicsValue,
+                readOnly: true,
+                onTap: () {
+                  characteristicsBottomDialog();
+                },
+              ),
+              if (characteristicsValue == "อื่น ๆ") const SizedBox(height: 8),
+              if (characteristicsValue == "อื่น ๆ")
+                textField(
+                  hint: "ระบุ",
+                  controller: tfCharacteristics,
+                ),
               const SizedBox(
                 height: 40,
               ),
@@ -231,16 +295,16 @@ class _SellingPageState extends State<SellingPage> {
 
   Widget textField(
       {TextEditingController? controller,
-        String? value,
-        bool readOnly = false,
-        VoidCallback? onTap,
-        bool enabled = true,
-        bool required = false,
-        TextAlign textAlign = TextAlign.start,
-        TextInputType keyboardType = TextInputType.text,
-        List<TextInputFormatter>? inputFormatters,
-        String? helperText,
-        required String hint}) {
+      String? value,
+      bool readOnly = false,
+      VoidCallback? onTap,
+      bool enabled = true,
+      bool required = false,
+      TextAlign textAlign = TextAlign.start,
+      TextInputType keyboardType = TextInputType.text,
+      List<TextInputFormatter>? inputFormatters,
+      String? helperText,
+      required String hint}) {
     return CustomTextFormField.create(
         hint: hint,
         readOnly: readOnly,
@@ -264,60 +328,205 @@ class _SellingPageState extends State<SellingPage> {
         textAlign: textAlign);
   }
 
-  Widget tabBar() {
-    return Container(
-      alignment: Alignment.topLeft,
-      margin: const EdgeInsets.only(left: 0, right: 0),
-      padding: const EdgeInsets.all(4),
-      child: CustomSlidingSegmentedControl<int>(
-        decoration: BoxDecoration(
-          color: ColorHelper.lighten(backgroundColor, .14),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        //thumbColor: Colors.white,
-        thumbDecoration: BoxDecoration(
-          color: ColorHelper.darken(primaryColor, .15).withOpacity(0.7),
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(.0),
-              blurRadius: 1.0,
-              spreadRadius: 1.0,
-              offset: const Offset(
-                0.0,
-                2.0,
-              ),
-            ),
-          ],
-        ),
-        innerPadding: const EdgeInsets.all(0),
-        initialValue: notify,
-        children: {
-          0: buildSegment("แจ้งเตือน", 0),
-          1: buildSegment("ไม่แจ้งเตือน", 1),
-        },
-        onValueChanged: (value) {
+  sellNoteBottomDialog() {
+    List<String> buffSourceList = [
+      "ขาย",
+      "ทำลาย",
+    ];
+
+    List<Widget> buffSource = [];
+    buffSourceList.forEach((value) {
+      buffSource.add(const SizedBox(height: 8));
+      buffSource.add(button(
+        value,
+        icon: FontAwesomeIcons.circle,
+        color: const Color(0xFF010101),
+        onTap: () async {
           setState(() {
-            notify = value;
+            sellNoteValue = value;
           });
+          // await Navigator.of(context).push(
+          //     NavigatorHelper.slide(const DiseaseTreatmentPage()));
         },
+      ));
+    });
+
+    bottomDialog(
+      context,
+      //height: 360,
+      backgroundColor: Colors.white,
+      ListView(
+        shrinkWrap: true,
+        padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
+        children: [
+          Container(
+            margin: const EdgeInsets.only(bottom: 8, left: 6),
+            child: Text(
+              "เลือกแหล่งที่มา",
+              style: GoogleFonts.itim(
+                  color: ColorHelper.lighten(const Color(0xFF0C0C0C), .2)
+                      .withOpacity(0.86),
+                  fontSize: 28),
+            ),
+          ),
+        ]
+          ..addAll(buffSource)
+          ..addAll([
+            const SizedBox(height: 26),
+          ]),
       ),
     );
   }
 
-  Widget buildSegment(String text, int number) {
-    return Container(
-      padding: const EdgeInsets.only(left: 6, right: 6, top: 4, bottom: 4),
-      child: Text(
-        text,
-        textAlign: TextAlign.center,
-        style: TextStyle(
-            fontSize: notify == number ? 18 : 16,
-            color: notify == number
-                ? Colors.white
-                : Colors.white.withOpacity(0.4)),
+
+  distributorBottomDialog() {
+    List<String> buffSourceList = [
+      "พ่อค้าคนกลาง",
+      "ชำแหละและจำหน่ายเอง",
+      "อื่น ๆ",
+    ];
+
+    List<Widget> buffSource = [];
+    buffSourceList.forEach((value) {
+      buffSource.add(const SizedBox(height: 8));
+      buffSource.add(button(
+        value,
+        icon: FontAwesomeIcons.circle,
+        color: const Color(0xFF010101),
+        onTap: () async {
+          setState(() {
+            distributorValue = value;
+          });
+          // await Navigator.of(context).push(
+          //     NavigatorHelper.slide(const DiseaseTreatmentPage()));
+        },
+      ));
+    });
+
+    bottomDialog(
+      context,
+      backgroundColor: Colors.white,
+      ListView(
+        shrinkWrap: true,
+        padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
+        children: [
+          Container(
+            margin: const EdgeInsets.only(bottom: 8, left: 6),
+            child: Text(
+              "เลือกแหล่งที่มา",
+              style: GoogleFonts.itim(
+                  color: ColorHelper.lighten(const Color(0xFF0C0C0C), .2)
+                      .withOpacity(0.86),
+                  fontSize: 28),
+            ),
+          ),
+        ]
+          ..addAll(buffSource)
+          ..addAll([
+            const SizedBox(height: 26),
+          ]),
       ),
     );
+  }
+
+  characteristicsBottomDialog() {
+    List<String> buffSourceList = [
+      "ประมาณการด้วยสายตา",
+      "ขายตามราคาน้ำหนักมีชีวิต",
+      "อื่น ๆ",
+    ];
+
+    List<Widget> buffSource = [];
+    buffSourceList.forEach((value) {
+      buffSource.add(const SizedBox(height: 8));
+      buffSource.add(button(
+        value,
+        icon: FontAwesomeIcons.circle,
+        color: const Color(0xFF010101),
+        onTap: () async {
+          setState(() {
+            characteristicsValue = value;
+          });
+          // await Navigator.of(context).push(
+          //     NavigatorHelper.slide(const DiseaseTreatmentPage()));
+        },
+      ));
+    });
+
+    bottomDialog(
+      context,
+      //height: 360,
+      backgroundColor: Colors.white,
+      ListView(
+        shrinkWrap: true,
+        padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
+        children: [
+          Container(
+            margin: const EdgeInsets.only(bottom: 8, left: 6),
+            child: Text(
+              "เลือกแหล่งที่มา",
+              style: GoogleFonts.itim(
+                  color: ColorHelper.lighten(const Color(0xFF0C0C0C), .2)
+                      .withOpacity(0.86),
+                  fontSize: 28),
+            ),
+          ),
+        ]
+          ..addAll(buffSource)
+          ..addAll([
+            const SizedBox(height: 26),
+          ]),
+      ),
+    );
+  }
+
+  Widget button(String title, {Function? onTap, IconData? icon, Color? color}) {
+    return SizedBox(
+        height: 48, // <-- Your height
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+            onTap?.call();
+          },
+          style: ButtonStyle(
+            overlayColor: MaterialStateProperty.all(
+                ColorHelper.lighten(color ?? primaryColor, .4)
+                    .withOpacity(0.1)),
+            elevation: MaterialStateProperty.all(0),
+            backgroundColor: MaterialStateProperty.all(
+                ColorHelper.lighten(color ?? primaryColor, .2)
+                    .withOpacity(0.1)),
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+            ),
+          ),
+          child: Align(
+              alignment: Alignment.centerLeft,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(width: 0),
+                  Icon(
+                    icon ?? FontAwesomeIcons.ellipsis,
+                    color: ColorHelper.lighten(color ?? primaryColor, .4)
+                        .withOpacity(0.8),
+                    size: 18,
+                  ),
+                  Container(width: 16),
+                  Text(
+                    title,
+                    style: TextStyle(
+                        fontSize: 20,
+                        color: ColorHelper.lighten(color ?? primaryColor, .4)
+                            .withOpacity(0.8)),
+                  )
+                ],
+              )),
+        ));
   }
 
   bool submitButtonEnabled() {

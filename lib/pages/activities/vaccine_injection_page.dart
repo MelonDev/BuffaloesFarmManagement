@@ -211,7 +211,7 @@ class _VaccineInjectionPageState extends State<VaccineInjectionPage> {
             bottom: Radius.circular(22),
           ),
         ),
-        height: enabledSpecify ? 344 : 200,
+        //height: enabledSpecify ? 344 : 200,
         padding: const EdgeInsets.only(
           left: 20,
           right: 20,
@@ -222,6 +222,7 @@ class _VaccineInjectionPageState extends State<VaccineInjectionPage> {
         //height: MediaQuery.of(context).size.height,
         child: Form(
           child: ListView(
+            shrinkWrap: true,
             padding: const EdgeInsets.only(bottom: 0),
             children: <Widget>[
               const SizedBox(height: 20),

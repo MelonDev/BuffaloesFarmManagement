@@ -404,6 +404,7 @@ class _AddBuffPage extends State<AddBuffPage> {
           //height: MediaQuery.of(context).size.height,
           child: Form(
             child: ListView(
+              shrinkWrap: true,
               padding: const EdgeInsets.only(bottom: 0),
               children: <Widget>[
                 const SizedBox(height: 20),

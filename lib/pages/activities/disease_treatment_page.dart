@@ -1,5 +1,6 @@
 import 'package:buffaloes_farm_management/components/CustomTextFormField.dart';
 import 'package:buffaloes_farm_management/components/MessagesDialog.dart';
+import 'package:buffaloes_farm_management/components/SlidingTimePicker.dart';
 import 'package:buffaloes_farm_management/constants/ColorConstants.dart';
 import 'package:buffaloes_farm_management/constants/StyleConstants.dart';
 import 'package:buffaloes_farm_management/service/FarmService.dart';
@@ -10,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 class DiseaseTreatmentPage extends StatefulWidget {
   DiseaseTreatmentPage({Key? key,required this.buffId}) : super(key: key);
@@ -23,11 +25,13 @@ class _DiseaseTreatmentPageState extends State<DiseaseTreatmentPage> {
 
   TextEditingController tfName = TextEditingController();
   TextEditingController tfSymptom = TextEditingController();
-  TextEditingController tfDrugs = TextEditingController();
+  TextEditingController tfDisease = TextEditingController();
+  TextEditingController tfGroupSymptom = TextEditingController();
+  TextEditingController tfHealer = TextEditingController();
 
-  TextEditingController tfDuration = TextEditingController();
+  String? groupSymptomValue, diseaseValue,healerValue;
 
-
+  DateTime? symptomDatetime, treatDatetime;
 
   Color primaryColor = Colors.green;
   Color backgroundColor = const Color(0xFF050505);
@@ -43,48 +47,48 @@ class _DiseaseTreatmentPageState extends State<DiseaseTreatmentPage> {
     setState(() {
       isSaving = true;
     });
-    if (tfName.text.isNotEmpty && tfSymptom.text.isNotEmpty && tfDrugs.text.isNotEmpty) {
-      String? response = await FarmService.addDiseaseTreatment(
-          buffId: widget.buffId,
-          diseaseName: tfName.text,
-          symptom: tfSymptom.text,
-          drug: tfDrugs.text,
-          healedStatus: status == 0,
-          duration: status == 1 ? int.tryParse(tfDuration.text) ?? 30 : null,
-          date: DateTime.now());
-
-
-      if (response != null) {
-        if (response == "SUCCESS") {
-          isSaved = true;
-
-          if (!mounted) return;
-          messageDialog(context, title: "แจ้งเตือน", message: "บันทึกเรียบร้อย",
-              function: () {
-                //context.read<HomeCubit>().management();
-                Navigator.of(context).pop(true);
-              });
-        } else {
-          if (!mounted) return;
-          messageDialog(context, title: "แจ้งเตือน", message: response);
-        }
-      } else {
-        if (!mounted) return;
-        messageDialog(context,
-            title: "แจ้งเตือน", message: "ไม่สามารถเชื่อมต่อได้");
-      }
-    } else {
-      if (tfName.text.isEmpty) {
-        messageDialog(context,
-            title: "แจ้งเตือน", message: "กรุณากรอกขื่อโรค");
-      }else if (tfSymptom.text.isEmpty) {
-        messageDialog(context,
-            title: "แจ้งเตือน", message: "กรุณากรอกอาการของโรค");
-      } else if (tfDrugs.text.isEmpty) {
-        messageDialog(context,
-            title: "แจ้งเตือน", message: "กรุณากรอกยาที่ใช้");
-      }
-    }
+    // if (tfName.text.isNotEmpty && tfSymptom.text.isNotEmpty && tfDrugs.text.isNotEmpty) {
+    //   String? response = await FarmService.addDiseaseTreatment(
+    //       buffId: widget.buffId,
+    //       diseaseName: tfName.text,
+    //       symptom: tfSymptom.text,
+    //       drug: tfDrugs.text,
+    //       healedStatus: status == 0,
+    //       duration: status == 1 ? int.tryParse(tfDuration.text) ?? 30 : null,
+    //       date: DateTime.now());
+    //
+    //
+    //   if (response != null) {
+    //     if (response == "SUCCESS") {
+    //       isSaved = true;
+    //
+    //       if (!mounted) return;
+    //       messageDialog(context, title: "แจ้งเตือน", message: "บันทึกเรียบร้อย",
+    //           function: () {
+    //             //context.read<HomeCubit>().management();
+    //             Navigator.of(context).pop(true);
+    //           });
+    //     } else {
+    //       if (!mounted) return;
+    //       messageDialog(context, title: "แจ้งเตือน", message: response);
+    //     }
+    //   } else {
+    //     if (!mounted) return;
+    //     messageDialog(context,
+    //         title: "แจ้งเตือน", message: "ไม่สามารถเชื่อมต่อได้");
+    //   }
+    // } else {
+    //   if (tfName.text.isEmpty) {
+    //     messageDialog(context,
+    //         title: "แจ้งเตือน", message: "กรุณากรอกขื่อโรค");
+    //   }else if (tfSymptom.text.isEmpty) {
+    //     messageDialog(context,
+    //         title: "แจ้งเตือน", message: "กรุณากรอกอาการของโรค");
+    //   } else if (tfDrugs.text.isEmpty) {
+    //     messageDialog(context,
+    //         title: "แจ้งเตือน", message: "กรุณากรอกยาที่ใช้");
+    //   }
+    // }
     setState(() {
       isSaving = false;
     });
@@ -192,7 +196,7 @@ class _DiseaseTreatmentPageState extends State<DiseaseTreatmentPage> {
             bottom: Radius.circular(22),
           ),
         ),
-        height: enabledSpecify ? 504 :418 ,
+        //height: enabledSpecify ? 504 :418 ,
         padding: const EdgeInsets.only(
           left: 20,
           right: 20,
@@ -203,29 +207,135 @@ class _DiseaseTreatmentPageState extends State<DiseaseTreatmentPage> {
         //height: MediaQuery.of(context).size.height,
         child: Form(
           child: ListView(
+            shrinkWrap: true,
             padding: const EdgeInsets.only(bottom: 0),
             children: <Widget>[
               const SizedBox(height: 20),
-              textHeader(title: "รายละเอียด"),
-              textField(hint: "ชื่อโรค", controller: tfName,required: true),
+
+              textHeader(title: "อาการ"),
+              const SizedBox(height: 8),
+              textField(
+                hint: "วัน/เดือน/ปี ที่สังเกตเห็นอาการ",
+                required: false,
+                readOnly: true,
+                value: symptomDatetime != null
+                    ? DateFormat('d MMMM y', 'th').format(symptomDatetime!)
+                    : null,
+                onTap: () async {
+                  DateTime? selectdDateTime = await SlidingTimePicker(context,
+                      dateTime: symptomDatetime);
+                  if (selectdDateTime != null) {
+                    setState(() {
+                      symptomDatetime = selectdDateTime;
+                    });
+                    //x = "${DateFormat.Hm().format(selectdDateTime)}:00";
+                  }
+                },
+              ),
+              const SizedBox(height: 12),
+              textField(hint: "ลักษณะอาการเบื้องต้น", controller: tfName,required: false),
+              const SizedBox(height: 12),
+              textField(
+                hint: "กลุ่มอาการ",
+                value: groupSymptomValue,
+                readOnly: true,
+                onTap: () {
+                  groupSymptomBottomDialog();
+                },
+              ),
+              if (groupSymptomValue == "อื่น ๆ") const SizedBox(height: 8),
+              if (groupSymptomValue == "อื่น ๆ")
+                textField(
+                  hint: "ระบุ",
+                  controller: tfSymptom,
+                ),
+
+              const SizedBox(height: 12),
+              textField(
+                hint: "โรค",
+                value: diseaseValue,
+                readOnly: true,
+                onTap: () {
+                  diseaseBottomDialog();
+                },
+              ),
+              if (diseaseValue == "อื่น ๆ") const SizedBox(height: 8),
+              if (diseaseValue == "อื่น ๆ")
+                textField(
+                    hint: "ระบุ",
+                    controller: tfDisease),
               const SizedBox(height: 22),
 
-              textField(hint: "อาการของโรค",helperText: 'หากมีหลายอาการ กรุณาใช้เครื่องหมาย "จุลภาค"(,) แบ่งแต่ละอาการ', controller: tfSymptom,required: true),
+
+              textHeader(title: "การรักษา"),
               const SizedBox(height: 8),
-              textField(hint: "ยาที่ใช้",helperText: 'หากใช้ยาหลายตัว กรุณาใช้เครื่องหมาย "จุลภาค"(,) แบ่งยาแต่ละตัว', controller: tfDrugs,required: true),
-              const SizedBox(height: 16),
-              textHeader(title: "สถานะการรักษา"),
+              textField(
+                hint: "วัน/เดือน/ปี ที่รักษา",
+                required: false,
+                readOnly: true,
+                value: treatDatetime != null
+                    ? DateFormat('d MMMM y', 'th').format(treatDatetime!)
+                    : null,
+                onTap: () async {
+                  DateTime? selectdDateTime = await SlidingTimePicker(context,
+                      dateTime: treatDatetime);
+                  if (selectdDateTime != null) {
+                    setState(() {
+                      treatDatetime = selectdDateTime;
+                    });
+                    //x = "${DateFormat.Hm().format(selectdDateTime)}:00";
+                  }
+                },
+              ),
+
+              const SizedBox(height: 12),
+              textField(
+                hint: "ผู้รักษา",
+                value: healerValue,
+                readOnly: true,
+                onTap: () {
+                  healingBottomDialog();
+                },
+              ),
+              if (healerValue == "อื่น ๆ") const SizedBox(height: 8),
+              if (healerValue == "อื่น ๆ")
+                textField(
+                    hint: "ระบุ",
+                    controller: tfHealer),
+              const SizedBox(height: 12),
+
+              textField(hint: "วิธีการรักษา", controller: tfName,required: false),
+              const SizedBox(height: 22),
+
+              textField(hint: "ยาที่ใช้", controller: tfSymptom,required: false),
+              const SizedBox(height: 22),
+
+
+              textHeader(title: "ผลการรักษา"),
+              const SizedBox(height: 8),
+              textField(
+                hint: "วัน/เดือน/ปี ที่ตรวจอีกครั้ง",
+                required: false,
+                readOnly: true,
+                value: treatDatetime != null
+                    ? DateFormat('d MMMM y', 'th').format(treatDatetime!)
+                    : null,
+                onTap: () async {
+                  DateTime? selectdDateTime = await SlidingTimePicker(context,
+                      dateTime: treatDatetime);
+                  if (selectdDateTime != null) {
+                    setState(() {
+                      treatDatetime = selectdDateTime;
+                    });
+                    //x = "${DateFormat.Hm().format(selectdDateTime)}:00";
+                  }
+                },
+              ),
+              const SizedBox(height: 12),
+
+              //textField(hint: "ยาที่ใช้",helperText: 'หากใช้ยาหลายตัว กรุณาใช้เครื่องหมาย "จุลภาค"(,) แบ่งยาแต่ละตัว', controller: tfDrugs,required: true),
+              textHeader(title: "ผลการรักษา"),
               tabBar(),
-              enabledSpecify ? const SizedBox(height: 8) : Container(),
-              enabledSpecify
-                  ? textField(
-                hint: "ระยะเวลารักษา (วัน)",
-                helperText: "ค่าเริ่มต้น = 30 วัน ",
-                controller: tfDuration,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                keyboardType: TextInputType.number,
-              )
-                  : Container(),
               const SizedBox(
                 height: 40,
               ),
@@ -281,6 +391,166 @@ class _DiseaseTreatmentPageState extends State<DiseaseTreatmentPage> {
         helper: helperText,
         textAlign: textAlign);
   }
+
+  groupSymptomBottomDialog() {
+    List<String> buffSourceList = [
+      "อาการทางระบบหมันเวียนโลหิต",
+      "อาการทางระบบทางเดินหายใจ",
+      "อาการที่ระบบสืบพันธุ์และทางเดินปัสสาวะ",
+      "อาการทางเดินอาหาร",
+      "อาการที่เกี่ยวกับระบบประสาท",
+      "อาการทางผิวหนัง",
+
+      "อื่น ๆ",
+    ];
+
+    List<Widget> buffSource = [];
+    buffSourceList.forEach((value) {
+      buffSource.add(const SizedBox(height: 8));
+      buffSource.add(button(
+        value,
+        icon: FontAwesomeIcons.circle,
+        color: const Color(0xFF010101),
+        onTap: () async {
+          setState(() {
+            groupSymptomValue = value;
+          });
+          // await Navigator.of(context).push(
+          //     NavigatorHelper.slide(const DiseaseTreatmentPage()));
+        },
+      ));
+    });
+
+    bottomDialog(
+      context,
+      backgroundColor: Colors.white,
+      ListView(
+        shrinkWrap: true,
+        padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
+        children: [
+          Container(
+            margin: const EdgeInsets.only(bottom: 8, left: 6),
+            child: Text(
+              "เลือกกลุ่มอาการ",
+              style: GoogleFonts.itim(
+                  color: ColorHelper.lighten(const Color(0xFF0C0C0C), .2)
+                      .withOpacity(0.86),
+                  fontSize: 28),
+            ),
+          ),
+        ]
+          ..addAll(buffSource)
+          ..addAll([
+            const SizedBox(height: 26),
+          ]),
+      ),
+    );
+  }
+
+  diseaseBottomDialog() {
+    List<String> buffSourceList = [
+      "ปากและเท้าเปื่อย",
+      "แท้งติดต่อ",
+      "คอบวม",
+      "วัณโรค",
+      "แอนแทรกซ์",
+      "อื่น ๆ",
+    ];
+
+    List<Widget> buffSource = [];
+    buffSourceList.forEach((value) {
+      buffSource.add(const SizedBox(height: 8));
+      buffSource.add(button(
+        value,
+        icon: FontAwesomeIcons.circle,
+        color: const Color(0xFF010101),
+        onTap: () async {
+          setState(() {
+            diseaseValue = value;
+          });
+          // await Navigator.of(context).push(
+          //     NavigatorHelper.slide(const DiseaseTreatmentPage()));
+        },
+      ));
+    });
+
+    bottomDialog(
+      context,
+      backgroundColor: Colors.white,
+      ListView(
+        shrinkWrap: true,
+        padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
+        children: [
+          Container(
+            margin: const EdgeInsets.only(bottom: 8, left: 6),
+            child: Text(
+              "เลือกโรค",
+              style: GoogleFonts.itim(
+                  color: ColorHelper.lighten(const Color(0xFF0C0C0C), .2)
+                      .withOpacity(0.86),
+                  fontSize: 28),
+            ),
+          ),
+        ]
+          ..addAll(buffSource)
+          ..addAll([
+            const SizedBox(height: 26),
+          ]),
+      ),
+    );
+  }
+
+  healingBottomDialog() {
+    List<String> buffSourceList = [
+      "สัตวแพทย์",
+      "รักษาเอง",
+      "เจ้าหน้าที่กรมปศุสัตว์",
+      "อื่น ๆ",
+    ];
+
+    List<Widget> buffSource = [];
+    buffSourceList.forEach((value) {
+      buffSource.add(const SizedBox(height: 8));
+      buffSource.add(button(
+        value,
+        icon: FontAwesomeIcons.circle,
+        color: const Color(0xFF010101),
+        onTap: () async {
+          setState(() {
+            diseaseValue = value;
+          });
+          // await Navigator.of(context).push(
+          //     NavigatorHelper.slide(const DiseaseTreatmentPage()));
+        },
+      ));
+    });
+
+    bottomDialog(
+      context,
+      backgroundColor: Colors.white,
+      ListView(
+        shrinkWrap: true,
+        padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
+        children: [
+          Container(
+            margin: const EdgeInsets.only(bottom: 8, left: 6),
+            child: Text(
+              "เลือกโรค",
+              style: GoogleFonts.itim(
+                  color: ColorHelper.lighten(const Color(0xFF0C0C0C), .2)
+                      .withOpacity(0.86),
+                  fontSize: 28),
+            ),
+          ),
+        ]
+          ..addAll(buffSource)
+          ..addAll([
+            const SizedBox(height: 26),
+          ]),
+      ),
+    );
+  }
+
 
   Widget tabBar() {
     return Container(
@@ -338,6 +608,62 @@ class _DiseaseTreatmentPageState extends State<DiseaseTreatmentPage> {
       ),
     );
   }
+
+  Widget button(String title, {Function? onTap, IconData? icon, Color? color}) {
+    return Container(
+      constraints: BoxConstraints(
+        minHeight: 48
+      ),
+        //height: 48,
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+            onTap?.call();
+          },
+          style: ButtonStyle(
+            overlayColor: MaterialStateProperty.all(
+                ColorHelper.lighten(color ?? primaryColor, .4)
+                    .withOpacity(0.1)),
+            elevation: MaterialStateProperty.all(0),
+            backgroundColor: MaterialStateProperty.all(
+                ColorHelper.lighten(color ?? primaryColor, .2)
+                    .withOpacity(0.1)),
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+            ),
+          ),
+          child: Align(
+              alignment: Alignment.centerLeft,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  const SizedBox(width: 0),
+                  Icon(
+                    icon ?? FontAwesomeIcons.ellipsis,
+                    color: ColorHelper.lighten(color ?? primaryColor, .4)
+                        .withOpacity(0.8),
+                    size: 18,
+                  ),
+                  Container(width: 16),
+                  Expanded(child: SizedBox(
+                    child: Text(
+                      title,
+                      maxLines: 2,
+                      style: TextStyle(
+                          fontSize: 20,
+                          color: ColorHelper.lighten(color ?? primaryColor, .4)
+                              .withOpacity(0.8)),
+                    ),
+                  ))
+                ],
+              )),
+        ));
+  }
+
 
   bool submitButtonEnabled() {
     if (isSaving == true) {

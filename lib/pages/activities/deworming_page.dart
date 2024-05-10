@@ -177,7 +177,7 @@ class _DewormingPageState extends State<DewormingPage> {
             bottom: Radius.circular(22),
           ),
         ),
-        height: 290,
+        //height: 290,
         padding: const EdgeInsets.only(
           left: 20,
           right: 20,
@@ -188,6 +188,7 @@ class _DewormingPageState extends State<DewormingPage> {
         //height: MediaQuery.of(context).size.height,
         child: Form(
           child: ListView(
+            shrinkWrap: true,
             padding: const EdgeInsets.only(bottom: 0),
             children: <Widget>[
               const SizedBox(height: 20),

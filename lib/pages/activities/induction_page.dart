@@ -25,6 +25,8 @@ class _InductionPageState extends State<InductionPage> {
   TextEditingController tfDateTime = TextEditingController();
   TextEditingController tfReturnDateTime = TextEditingController();
 
+  String? buffSpeciesValue;
+
   Color primaryColor = Colors.pink;
   Color backgroundColor = const Color(0xFF050505);
   Color tabColor = ColorHelper.darken(Colors.pink, .1);
@@ -146,7 +148,7 @@ class _InductionPageState extends State<InductionPage> {
                       floatingActionButton: submitButtonEnabled()
                           ? FloatingActionButton.extended(
                               onPressed: () {
-                                onSubmit();
+                                //onSubmit();
                               },
                               heroTag: null,
                               backgroundColor:
@@ -192,8 +194,8 @@ class _InductionPageState extends State<InductionPage> {
             bottom: Radius.circular(22),
           ),
         ),
-        height: type == 0
-            ? 422 : 262,
+        // height: type == 0
+        //     ? 422 : 262,
         padding: const EdgeInsets.only(
           left: 20,
           right: 20,
@@ -204,6 +206,7 @@ class _InductionPageState extends State<InductionPage> {
         //height: MediaQuery.of(context).size.height,
         child: Form(
           child: ListView(
+            shrinkWrap: true,
             padding: const EdgeInsets.only(bottom: 0),
             children: <Widget>[
               const SizedBox(height: 20),
@@ -219,49 +222,16 @@ class _InductionPageState extends State<InductionPage> {
                   });
                 },
               ),
-              type == 0
-                  ? const SizedBox(height: 20) : Container(),
-              type == 0
-                  ? textField(
-                      hint: "วิธีที่ใช้เหนี่ยวนำ",
-                      controller: tfName,
-                      required: true)
-                  : Container(),
-              type == 0 ? const SizedBox(height: 6) : Container(),
-              type == 0 ? const SizedBox(height: 8) : Container(),
-              type == 0
-                  ? textHeader(title: "วัน/เดือน/ปี ที่เหนี่ยวนำ")
-                  : Container(),
-              type == 0
-                  ? textField(
-                      enabled: true,
-                      hint: "",
-                      //hint: "วัน/เดือน/ปี",
-                      readOnly: true,
-                      controller: tfDateTime,
-                      onTap: () async {
-                        DateTime? selectdDateTime = await SlidingTimePicker(
-                            context,
-                            dateTime: pickedDatetime);
-                        if (selectdDateTime != null) {
-                          setState(() {
-                            pickedReturnDatetime = selectdDateTime;
-                            pickedDatetime = selectdDateTime;
-                            tfDateTime.text = dateTimeToString(selectdDateTime);
-                          });
-                          //x = "${DateFormat.Hm().format(selectdDateTime)}:00";
-                        }
-                      },
-                    )
-                  : Container(),
-               const SizedBox(height: 14),
+              if (type == 0) ...inductionWidget(context),
+              if (type == 1) ...nonInductionWidget(context),
+              const SizedBox(height: 14),
               divider(),
               const SizedBox(height: 6),
               textHeader(title: "วัน/เดือน/ปี ที่แสดงการกลับสัด"),
               textField(
                 enabled: true,
                 hint: "",
-                value: getReturnDate(days: 21+1),
+                value: getReturnDate(days: 21 + 1),
                 //hint: "วัน/เดือน/ปี",
                 readOnly: true,
                 //controller: tfReturnDateTime,
@@ -286,6 +256,212 @@ class _InductionPageState extends State<InductionPage> {
           ),
         ));
   }
+
+  List<Widget> inductionWidget(BuildContext context) {
+    return [
+      const SizedBox(height: 20),
+      textField(
+          hint: "วิธีที่ใช้เหนี่ยวนำ", controller: tfName, required: true),
+      const SizedBox(height: 14),
+      textHeader(title: "วัน/เดือน/ปี ที่เหนี่ยวนำ"),
+      textField(
+        enabled: true,
+        hint: "",
+        //hint: "วัน/เดือน/ปี",
+        readOnly: true,
+        controller: tfDateTime,
+        onTap: () async {
+          DateTime? selectdDateTime =
+              await SlidingTimePicker(context, dateTime: pickedDatetime);
+          if (selectdDateTime != null) {
+            setState(() {
+              pickedReturnDatetime = selectdDateTime;
+              pickedDatetime = selectdDateTime;
+              tfDateTime.text = dateTimeToString(selectdDateTime);
+            });
+            //x = "${DateFormat.Hm().format(selectdDateTime)}:00";
+          }
+        },
+      )
+    ];
+  }
+
+  List<Widget> nonInductionWidget(BuildContext context) {
+    return [
+      const SizedBox(height: 20),
+      textHeader(title: "วัน/เดือน/ปี ที่ผสม"),
+      textField(
+        enabled: true,
+        hint: "",
+        //hint: "วัน/เดือน/ปี",
+        readOnly: true,
+        controller: tfDateTime,
+        onTap: () async {
+          DateTime? selectdDateTime =
+          await SlidingTimePicker(context, dateTime: pickedDatetime);
+          if (selectdDateTime != null) {
+            setState(() {
+              pickedReturnDatetime = selectdDateTime;
+              pickedDatetime = selectdDateTime;
+              tfDateTime.text = dateTimeToString(selectdDateTime);
+            });
+            //x = "${DateFormat.Hm().format(selectdDateTime)}:00";
+          }
+        },
+      ),
+      const SizedBox(height: 14),
+      tabBar(
+        initialValue: notify,
+        children: {
+          0: buildSegment("ผสมธรรมชาติ", 0, notify),
+          1: buildSegment("ผสมเทียม", 1, notify),
+        },
+        callback: (value) {
+          setState(() {
+            notify = value;
+          });
+        },
+      ),
+      const SizedBox(height: 20),
+      textHeader(title: "รายละเอียดน้ำเชื้อพ่อพันธุ์"),
+      const SizedBox(height: 8),
+      textField(
+          hint: "ชื่อ", controller: tfName, required: false),
+      const SizedBox(height: 14),
+      textField(
+          hint: "เบอร์หู", controller: tfName, required: false),
+      const SizedBox(height: 20),
+      textHeader(title: "ข้อมูลหลอดน้ำเชื้อ"),
+      const SizedBox(height: 8),
+      textField(
+        hint: "สายพันธุ์",
+        value: buffSpeciesValue,
+        required: true,
+        readOnly: true,
+        onTap: () {
+          buffSpeciesBottomDialog();
+        },
+      ),
+      const SizedBox(height: 14),
+
+      textField(
+          hint: "เปอร์เซ็นต์เลือด (0-100)",
+          //controller: tfBlood,
+          keyboardType: TextInputType.number,
+          required: false),
+      const SizedBox(height: 14),
+      textField(
+          hint: "ผลิตโดย", controller: tfName, required: false),
+      const SizedBox(height: 14),
+      textField(
+          hint: "ราคา",
+          //controller: tfBlood,
+          keyboardType: TextInputType.number,
+          required: false),
+
+    ];
+  }
+
+  buffSpeciesBottomDialog() {
+    List<String> buffSpeciesList = [
+      "กระบือไทย (ควายปลัก)",
+      "กระบือมูร่าห์ (ควายแม่น้ํา)",
+      "กระบือไทยผสมมูร่าห์"
+    ];
+
+    List<Widget> buffSpecies = [];
+    buffSpeciesList.forEach((value) {
+      buffSpecies.add(const SizedBox(height: 8));
+      buffSpecies.add(button(
+        value,
+        icon: FontAwesomeIcons.circle,
+        color: const Color(0xFF010101),
+        onTap: () async {
+          setState(() {
+            buffSpeciesValue = value;
+          });
+          // await Navigator.of(context).push(
+          //     NavigatorHelper.slide(const DiseaseTreatmentPage()));
+        },
+      ));
+    });
+
+    bottomDialog(
+      context,
+      backgroundColor: Colors.white,
+      ListView(
+        shrinkWrap: true,
+        padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
+        children: [
+          Container(
+            margin: const EdgeInsets.only(bottom: 8, left: 6),
+            child: Text(
+              "เลือกสายพันธุ์",
+              style: GoogleFonts.itim(
+                  color: ColorHelper.lighten(const Color(0xFF0C0C0C), .2)
+                      .withOpacity(0.86),
+                  fontSize: 28),
+            ),
+          ),
+        ]
+          ..addAll(buffSpecies)
+          ..addAll([
+            const SizedBox(height: 26),
+          ]),
+      ),
+    );
+  }
+
+
+  providerBottomDialog() {
+    List<String> buffSourceList = [
+      "ผสมธรรมชาติ",
+      "ผสมเทียม",
+      "เจ้าหน้าที่กรมปศุสัตว์",
+      "อื่น ๆ",
+    ];
+
+    List<Widget> buffSource = [];
+    buffSourceList.forEach((value) {
+      buffSource.add(const SizedBox(height: 8));
+      buffSource.add(button(
+        value,
+        icon: FontAwesomeIcons.circle,
+        color: const Color(0xFF010101),
+        onTap: () async {
+          setState(() {
+            //diseaseValue = value;
+          });
+             },
+      ));
+    });
+
+    bottomDialog(
+      context,
+      backgroundColor: Colors.white,
+      ListView(
+        shrinkWrap: true,
+        padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
+        children: [
+          Container(
+            margin: const EdgeInsets.only(bottom: 8, left: 6),
+            child: Text(
+              "เลือกประเภทการผสมพันธุ์",
+              style: GoogleFonts.itim(
+                  color: ColorHelper.lighten(const Color(0xFF0C0C0C), .2)
+                      .withOpacity(0.86),
+                  fontSize: 28),
+            ),
+          ),
+        ]
+          ..addAll(buffSource)
+          ..addAll([
+            const SizedBox(height: 26),
+          ]),
+      ),
+    );
+  }
+
 
   Widget divider() {
     return Container(
@@ -329,7 +505,8 @@ class _InductionPageState extends State<InductionPage> {
       VoidCallback? onTap,
       bool enabled = true,
       bool required = false,
-      TextAlign textAlign = TextAlign.start,
+        TextInputType keyboardType = TextInputType.text,
+        TextAlign textAlign = TextAlign.start,
       required String hint}) {
     return CustomTextFormField.create(
         hint: hint,
@@ -339,6 +516,7 @@ class _InductionPageState extends State<InductionPage> {
         enabled: enabled,
         onTap: onTap,
         required: required,
+        keyboardType: keyboardType,
         value: value,
         darkMode: true,
         isTransparentBorder: true,
@@ -401,6 +579,61 @@ class _InductionPageState extends State<InductionPage> {
                 : Colors.white.withOpacity(0.4)),
       ),
     );
+  }
+
+  Widget button(String title, {Function? onTap, IconData? icon, Color? color}) {
+    return Container(
+        constraints: BoxConstraints(
+            minHeight: 48
+        ),
+        //height: 48,
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+            onTap?.call();
+          },
+          style: ButtonStyle(
+            overlayColor: MaterialStateProperty.all(
+                ColorHelper.lighten(color ?? primaryColor, .4)
+                    .withOpacity(0.1)),
+            elevation: MaterialStateProperty.all(0),
+            backgroundColor: MaterialStateProperty.all(
+                ColorHelper.lighten(color ?? primaryColor, .2)
+                    .withOpacity(0.1)),
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+            ),
+          ),
+          child: Align(
+              alignment: Alignment.centerLeft,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  const SizedBox(width: 0),
+                  Icon(
+                    icon ?? FontAwesomeIcons.ellipsis,
+                    color: ColorHelper.lighten(color ?? primaryColor, .4)
+                        .withOpacity(0.8),
+                    size: 18,
+                  ),
+                  Container(width: 16),
+                  Expanded(child: SizedBox(
+                    child: Text(
+                      title,
+                      maxLines: 2,
+                      style: TextStyle(
+                          fontSize: 20,
+                          color: ColorHelper.lighten(color ?? primaryColor, .4)
+                              .withOpacity(0.8)),
+                    ),
+                  ))
+                ],
+              )),
+        ));
   }
 
   bool submitButtonEnabled() {

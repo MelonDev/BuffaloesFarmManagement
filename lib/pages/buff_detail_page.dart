@@ -141,7 +141,16 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
                     onPressed: () async {
                       bottomDialog(
                         context,
-                        height: buff?.gender == "FEMALE" ? 400 : 300,
+                        height: (buff?.gender == "FEMALE" &&
+                                (buff?.history.indexWhere((element) =>
+                                            element is BreedingActivityModel
+                                                ? element.status == true &&
+                                                    element.delete == false
+                                                : false) ??
+                                        0) ==
+                                    -1)
+                            ? 400
+                            : 300,
                         Container(
                           child: Center(
                               child: Container(
@@ -163,7 +172,16 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
                                               fontSize: 28),
                                         ),
                                       ),
-                                      if (buff?.gender == "FEMALE")
+                                      if (buff?.gender == "FEMALE" &&
+                                          (buff?.history.indexWhere((element) =>
+                                                      element is BreedingActivityModel
+                                                          ? element.status ==
+                                                                  true &&
+                                                              element.delete ==
+                                                                  false
+                                                          : false) ??
+                                                  0) ==
+                                              -1)
                                         Row(children: [
                                           Expanded(
                                             flex: 100,
@@ -177,7 +195,7 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
                                                   await Navigator.of(context)
                                                       .push(
                                                           NavigatorHelper.slide(
-                                                              BreedingPage(
+                                                              InductionPage(
                                                     buffId: widget.id,
                                                   )));
                                                   onLoad();
@@ -194,7 +212,16 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
                                             ),
                                           ),
                                         ]),
-                                      if (buff?.gender == "FEMALE")
+                                      if (buff?.gender == "FEMALE" &&
+                                          (buff?.history.indexWhere((element) =>
+                                                      element is BreedingActivityModel
+                                                          ? element.status ==
+                                                                  true &&
+                                                              element.delete ==
+                                                                  false
+                                                          : false) ??
+                                                  0) ==
+                                              -1)
                                         const SizedBox(height: 8),
                                       Row(children: [
                                         Expanded(
