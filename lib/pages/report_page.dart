@@ -32,7 +32,7 @@ class _ReportPageState extends State<ReportPage> {
     initialData();
   }
 
-  initialData() async{
+  initialData() async {
     Map<String, dynamic>? data = await FarmService.report();
     List<ReportBaseModel>? mapModels;
     if (data != null) {
@@ -41,40 +41,40 @@ class _ReportPageState extends State<ReportPage> {
           data: data,
           key: "farms",
           title: "จำนวนฟาร์ม 4 จังหวัดภาคเหนือ",
-          surfix: "ฟาร์ม"));
-      mapModels.add(mapProvince(
-          data: data,
-          key: "buffs",
-          title: "จำนวนกระบือ 4 จังหวัดภาคเหนือ",
-          surfix: "ตัว",
-          color: Colors.blueAccent));
+          surfix: "คน"));
+      // mapModels.add(mapProvince(
+      //     data: data,
+      //     key: "buffs",
+      //     title: "จำนวนกระบือ 4 จังหวัดภาคเหนือ",
+      //     surfix: "ตัว",
+      //     color: Colors.blueAccent));
+      mapModels.add(mapPhayao(data: data));
+      mapModels.add(mapChiangRai(data: data));
+      mapModels.add(mapNan(data: data));
+      mapModels.add(mapPhrae(data: data));
       mapModels.add(ReportPieChartModel(data['TYPE']));
     }
 
     setState(() {
       this.data = data;
       this.mapModels = mapModels;
-
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    double statusBarHeight = MediaQuery
-        .of(context)
-        .viewPadding
-        .top;
+    double statusBarHeight = MediaQuery.of(context).viewPadding.top;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.dark.copyWith(
-          systemNavigationBarColor: primaryColor,
-          systemNavigationBarDividerColor: primaryColor,
-          systemNavigationBarIconBrightness: Brightness.dark,
-          //statusBarIconBrightness: Brightness.dark,
-          //statusBarBrightness: Brightness.light,
-          statusBarColor: primaryColor
-          //systemNavigationBarContrastEnforced: true,
-        ),
+            systemNavigationBarColor: primaryColor,
+            systemNavigationBarDividerColor: primaryColor,
+            systemNavigationBarIconBrightness: Brightness.dark,
+            //statusBarIconBrightness: Brightness.dark,
+            //statusBarBrightness: Brightness.light,
+            statusBarColor: primaryColor
+            //systemNavigationBarContrastEnforced: true,
+            ),
         child: Container(
             color: primaryColor,
             child: Center(
@@ -92,25 +92,25 @@ class _ReportPageState extends State<ReportPage> {
                                 child: Center(
                                     child: Container(
                                         constraints:
-                                        const BoxConstraints(maxWidth: 500),
+                                            const BoxConstraints(maxWidth: 500),
                                         child: AppBar(
-                                          backgroundColor: Colors
-                                              .white.withOpacity(0.0),
+                                          backgroundColor:
+                                              Colors.white.withOpacity(0.0),
                                           shadowColor: Colors.transparent,
                                           elevation: 0.0,
                                           surfaceTintColor: primaryColor,
-                                          systemOverlayStyle:
-                                          SystemUiOverlayStyle(
+                                          systemOverlayStyle: SystemUiOverlayStyle(
                                               statusBarIconBrightness:
-                                              Brightness.dark,
-                                              statusBarBrightness: Brightness.light,
+                                                  Brightness.dark,
+                                              statusBarBrightness:
+                                                  Brightness.light,
                                               statusBarColor: primaryColor,
-                                            systemNavigationBarColor: primaryColor,
-                                            systemNavigationBarIconBrightness: Brightness.dark
-                                          ),
+                                              systemNavigationBarColor:
+                                                  primaryColor,
+                                              systemNavigationBarIconBrightness:
+                                                  Brightness.dark),
                                           shape: const RoundedRectangleBorder(
-                                            borderRadius: BorderRadius
-                                                .vertical(
+                                            borderRadius: BorderRadius.vertical(
                                               bottom: Radius.circular(22),
                                             ),
                                           ),
@@ -124,8 +124,7 @@ class _ReportPageState extends State<ReportPage> {
                                           ),
                                           titleSpacing: 0,
                                           leading: IconButton(
-                                            icon: Icon(
-                                                FontAwesomeIcons.xmark,
+                                            icon: Icon(FontAwesomeIcons.xmark,
                                                 color: textOuterColor,
                                                 size: 24),
                                             onPressed: () {
@@ -135,16 +134,15 @@ class _ReportPageState extends State<ReportPage> {
                                         ))))),
                         body: body(),
                       ),
-                    ))))
-    );
+                    )))));
   }
 
   Widget loading() {
     return const Center(
         child: SpinKitThreeBounce(
-          color: Colors.white,
-          size: 50.0,
-        ));
+      color: Colors.white,
+      size: 50.0,
+    ));
   }
 
   Widget body() {
@@ -156,6 +154,8 @@ class _ReportPageState extends State<ReportPage> {
             var model = mapModels![index];
             if (model is ReportMapModel) {
               return widgetMapFarmProvince(model);
+            } else if (model is ReportMapAmpModel) {
+              return widgetMapFarmAmp(model);
             } else if (model is ReportPieChartModel) {
               return buffTypeCard(model.data);
             } else {
@@ -190,30 +190,30 @@ class _ReportPageState extends State<ReportPage> {
             ),
             margin: const EdgeInsets.only(left: 20, right: 20),
             padding:
-            const EdgeInsets.only(left: 16, right: 16, top: 20, bottom: 20),
+                const EdgeInsets.only(left: 16, right: 16, top: 20, bottom: 20),
             child: Row(
               children: [
                 Expanded(
                     child: Container(
-                      height: 250,
-                      //height: MediaQuery.of(context).size.height,
-                      child: SfMaps(
-                        layers: [
-                          MapShapeLayer(
-                            source: model.mapSource,
-                            //legend: MapLegend(MapElement.shape),
-                            showDataLabels: true,
-                            strokeColor: const Color(0xFF9D9D9D),
-                            strokeWidth: 1.0,
-                            dataLabelSettings: const MapDataLabelSettings(
-                                textStyle: TextStyle(
-                                    color: Color(0xFF4D4D4D),
-                                    fontWeight: FontWeight.normal,
-                                    fontSize: 16)),
-                          ),
-                        ],
+                  height: 250,
+                  //height: MediaQuery.of(context).size.height,
+                  child: SfMaps(
+                    layers: [
+                      MapShapeLayer(
+                        source: model.mapSource,
+                        //legend: MapLegend(MapElement.shape),
+                        showDataLabels: true,
+                        strokeColor: const Color(0xFF9D9D9D),
+                        strokeWidth: 1.0,
+                        dataLabelSettings: const MapDataLabelSettings(
+                            textStyle: TextStyle(
+                                color: Color(0xFF4D4D4D),
+                                fontWeight: FontWeight.normal,
+                                fontSize: 16)),
                       ),
-                    )),
+                    ],
+                  ),
+                )),
                 Container(
                   margin: const EdgeInsets.only(left: 10),
                   width: 110,
@@ -247,10 +247,63 @@ class _ReportPageState extends State<ReportPage> {
         ]);
   }
 
-  Widget mapIndicator({required Color color,
-    required String text,
-    int? value,
-    String? surfix}) {
+  Widget widgetMapFarmAmp(ReportMapAmpModel model) {
+    return Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+              margin: const EdgeInsets.only(
+                  left: 30, right: 20, bottom: 3, top: 16),
+              child: Text(
+                model.title,
+                style: TextStyle(
+                    fontSize: 22, color: Colors.black.withOpacity(0.8)),
+              )),
+          Container(
+            decoration: const BoxDecoration(
+              color: kBGColor,
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(22),
+                bottom: Radius.circular(22),
+              ),
+            ),
+            margin: const EdgeInsets.only(left: 20, right: 20),
+            padding:
+                const EdgeInsets.only(left: 16, right: 16, top: 20, bottom: 20),
+            child: Row(
+              children: [
+                Expanded(
+                    child: Container(
+                  //height: MediaQuery.of(context).size.height,
+                  child: SfMaps(
+                    layers: [
+                      MapShapeLayer(
+                        source: model.mapSource,
+                        //legend: MapLegend(MapElement.shape),
+                        showDataLabels: true,
+                        strokeColor: const Color(0xFF9D9D9D),
+                        strokeWidth: 1.0,
+                        dataLabelSettings: const MapDataLabelSettings(
+                            textStyle: TextStyle(
+                                color: Color(0xFF4D4D4D),
+                                fontWeight: FontWeight.normal,
+                                fontSize: 12)),
+                      ),
+                    ],
+                  ),
+                )),
+              ],
+            ),
+          )
+        ]);
+  }
+
+  Widget mapIndicator(
+      {required Color color,
+      required String text,
+      int? value,
+      String? surfix}) {
     return Container(
       margin: EdgeInsets.only(bottom: value == null ? 4 : 0),
       child: Row(
@@ -277,11 +330,11 @@ class _ReportPageState extends State<ReportPage> {
                   ),
                   value != null
                       ? Text(
-                    "$value ${surfix ?? ""}",
-                    style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.black.withOpacity(0.5)),
-                  )
+                          "$value ${surfix ?? ""}",
+                          style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.black.withOpacity(0.5)),
+                        )
                       : Container()
                 ])
           ]),
@@ -305,7 +358,6 @@ class _ReportPageState extends State<ReportPage> {
                   style: TextStyle(
                       fontSize: 22, color: Colors.black.withOpacity(0.8)),
                 )),
-
             Container(
               decoration: const BoxDecoration(
                 color: kBGColor,
@@ -315,8 +367,8 @@ class _ReportPageState extends State<ReportPage> {
                 ),
               ),
               margin: const EdgeInsets.only(left: 20, right: 20),
-              padding:
-              const EdgeInsets.only(left: 16, right: 16, top: 20, bottom: 20),
+              padding: const EdgeInsets.only(
+                  left: 16, right: 16, top: 30, bottom: 20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -325,85 +377,113 @@ class _ReportPageState extends State<ReportPage> {
                   Expanded(
                     child: AspectRatio(
                       aspectRatio: 1.3,
-                      child: PieChart(
-                        PieChartData(
-                          pieTouchData: PieTouchData(
-                            touchCallback:
-                                (FlTouchEvent event, pieTouchResponse) {
-                              // setState(() {
-                              //   if (!event.isInterestedForInteractions ||
-                              //       pieTouchResponse == null ||
-                              //       pieTouchResponse.touchedSection == null) {
-                              //     touchedIndex = -1;
-                              //     return;
-                              //   }
-                              //   touchedIndex = pieTouchResponse
-                              //       .touchedSection!.touchedSectionIndex;
-                              // });
-                            },
+                      child: BarChart(BarChartData(
+                          titlesData: FlTitlesData(
+                            show: true,
+                            rightTitles: AxisTitles(
+                              sideTitles: SideTitles(showTitles: false),
+                            ),
+                            topTitles: AxisTitles(
+                              sideTitles: SideTitles(showTitles: false),
+                            ),
+                            bottomTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: true,
+                                getTitlesWidget: getTitles,
+                                reservedSize: 50,
+                              ),
+                            ),
+                            leftTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                reservedSize: 30,
+                                showTitles: true,
+                              ),
+                            ),
                           ),
                           borderData: FlBorderData(
                             show: false,
                           ),
-                          sectionsSpace: 3,
-                          centerSpaceRadius: 32,
-                          sections: showingBuffTypeSections(data),
-                        ),
-                      ),
+                          gridData: FlGridData(show: false),
+                          barGroups: showingBuffTypeSections(data))),
+                      // child: PieChart(
+                      //   PieChartData(
+                      //     pieTouchData: PieTouchData(
+                      //       touchCallback:
+                      //           (FlTouchEvent event, pieTouchResponse) {
+                      //         // setState(() {
+                      //         //   if (!event.isInterestedForInteractions ||
+                      //         //       pieTouchResponse == null ||
+                      //         //       pieTouchResponse.touchedSection == null) {
+                      //         //     touchedIndex = -1;
+                      //         //     return;
+                      //         //   }
+                      //         //   touchedIndex = pieTouchResponse
+                      //         //       .touchedSection!.touchedSectionIndex;
+                      //         // });
+                      //       },
+                      //     ),
+                      //     borderData: FlBorderData(
+                      //       show: false,
+                      //     ),
+                      //     sectionsSpace: 3,
+                      //     centerSpaceRadius: 32,
+                      //     sections: showingBuffTypeSections(data),
+                      //   ),
+                      // ),
                     ),
                   ),
-                  const SizedBox(
-                    width: 26,
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      mapIndicator(
-                        color: ColorHelper.darken(primaryColor, .1)
-                            .withOpacity(0.9),
-                        text: 'ทั้งหมด',
-                      ),
-                      const SizedBox(
-                        height: 8,
-                      ),
-                      mapIndicator(
-                        color: Colors.blue,
-                        text: 'พ่อพันธุ์',
-                      ),
-                      const SizedBox(
-                        height: 8,
-                      ),
-                      mapIndicator(
-                        color: Colors.pink,
-                        text: 'แม่พันธุ์',
-                      ),
-                      const SizedBox(
-                        height: 8,
-                      ),
-                      mapIndicator(
-                        color: Colors.yellow,
-                        text: 'กระบือรุ่น',
-                      ),
-                      const SizedBox(
-                        height: 8,
-                      ),
-                      mapIndicator(
-                        color: Colors.lightGreen,
-                        text: 'กระบือขุน',
-                      ),
-                      const SizedBox(
-                        height: 8,
-                      ),
-                      mapIndicator(
-                        color: Colors.orange,
-                        text: 'แรกเกิด',
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    width: 16,
-                  ),
+                  // const SizedBox(
+                  //   width: 26,
+                  // ),
+                  // Column(
+                  //   mainAxisAlignment: MainAxisAlignment.end,
+                  //   crossAxisAlignment: CrossAxisAlignment.start,
+                  //   children: <Widget>[
+                  //     mapIndicator(
+                  //       color: ColorHelper.darken(primaryColor, .1)
+                  //           .withOpacity(0.9),
+                  //       text: 'ทั้งหมด',
+                  //     ),
+                  //     const SizedBox(
+                  //       height: 8,
+                  //     ),
+                  //     mapIndicator(
+                  //       color: Colors.blue,
+                  //       text: 'พ่อพันธุ์',
+                  //     ),
+                  //     const SizedBox(
+                  //       height: 8,
+                  //     ),
+                  //     mapIndicator(
+                  //       color: Colors.pink,
+                  //       text: 'แม่พันธุ์',
+                  //     ),
+                  //     const SizedBox(
+                  //       height: 8,
+                  //     ),
+                  //     mapIndicator(
+                  //       color: Colors.yellow,
+                  //       text: 'กระบือรุ่น',
+                  //     ),
+                  //     const SizedBox(
+                  //       height: 8,
+                  //     ),
+                  //     mapIndicator(
+                  //       color: Colors.lightGreen,
+                  //       text: 'กระบือขุน',
+                  //     ),
+                  //     const SizedBox(
+                  //       height: 8,
+                  //     ),
+                  //     mapIndicator(
+                  //       color: Colors.orange,
+                  //       text: 'แรกเกิด',
+                  //     ),
+                  //   ],
+                  // ),
+                  // const SizedBox(
+                  //   width: 16,
+                  // ),
                 ],
               ),
             )
@@ -411,27 +491,78 @@ class _ReportPageState extends State<ReportPage> {
         ));
   }
 
-  List<PieChartSectionData> showingBuffTypeSections(Map<String, dynamic> data) {
+  Widget getTitles(double value, TitleMeta meta) {
+    TextStyle style = TextStyle(
+      color: Colors.black.withOpacity(0.5),
+      fontWeight: FontWeight.bold,
+      fontSize: 14,
+    );
+    Widget text;
+    switch (value.toInt()) {
+      case 0:
+        text = Text('พ่อพันธุ์', style: style);
+        break;
+      case 1:
+        text = Text('แม่พันธุ์', style: style);
+        break;
+      case 2:
+        text = Text('กระบือรุ่น', style: style);
+        break;
+      case 3:
+        text = Text('กระบือขุน', style: style);
+        break;
+      case 4:
+        text = Text('แรกเกิด', style: style);
+        break;
+      case 5:
+        text = Text('S', style: style);
+        break;
+      case 6:
+        text = Text('S', style: style);
+        break;
+      default:
+        text = Text('', style: style);
+        break;
+    }
+    return SideTitleWidget(
+      axisSide: meta.axisSide,
+      space: 16,
+      angle: 0.7,
+      child: text,
+    );
+  }
+
+  List<BarChartGroupData> showingBuffTypeSections(Map<String, dynamic> data) {
     return List.generate(5, (i) {
       switch (i) {
         case 0:
-          return section(value: data['M'].toDouble(),
+          return section(
+              number: 0,
+              value: data['M'].toDouble(),
               title: data['M'].toString(),
               color: Colors.blue);
         case 1:
-          return section(value: data['F'].toDouble(),
+          return section(
+              number: 1,
+              value: data['F'].toDouble(),
               title: data['F'].toString(),
               color: Colors.pink);
         case 2:
-          return section(value: data['T'].toDouble(),
+          return section(
+              number: 2,
+              value: data['T'].toDouble(),
               title: data['T'].toString(),
               color: Colors.yellow);
         case 3:
-          return section(value: data['G'].toDouble(),
+          return section(
+              number: 3,
+              value: data['G'].toDouble(),
               title: data['G'].toString(),
               color: Colors.lightGreen);
         case 4:
-          return section(value: data['B'].toDouble(),
+          return section(
+              number: 4,
+              value: data['B'].toDouble(),
               title: data['B'].toString(),
               color: Colors.orange);
         default:
@@ -440,28 +571,50 @@ class _ReportPageState extends State<ReportPage> {
     });
   }
 
-  PieChartSectionData section(
-      {double value = 0, String? title, Color color = Colors
-          .white, double radius = 50.0, double fontSize = 22.0}) {
-    return PieChartSectionData(
-      color: color,
-      value: value,
-      title: title ?? "",
-      radius: radius,
-      titleStyle: TextStyle(
-        fontSize: fontSize,
-        fontWeight: FontWeight.normal,
-        color: Colors.white.withOpacity(0.95),
-      ),
+  BarChartGroupData section(
+      {required int number,
+      double value = 0,
+      String? title,
+      Color color = Colors.white,
+      double radius = 32.0,
+      double fontSize = 22.0}) {
+    return BarChartGroupData(
+      x: number,
+      barRods: [
+        BarChartRodData(
+          toY: value,
+          color: color,
+          width: radius,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(6),
+            topRight: Radius.circular(6),
+          ),
+          borderSide: const BorderSide(color: Colors.white, width: 0),
+          // backDrawRodData: BackgroundBarChartRodData(
+          //   show: true,
+          //   toY: 20,
+          //   //color: widget.barBackgroundColor,
+          // ),
+        ),
+      ],
+      // color: color,
+      // value: value,
+      // title: title ?? "",
+      // radius: radius,
+      // titleStyle: TextStyle(
+      //   fontSize: fontSize,
+      //   fontWeight: FontWeight.normal,
+      //   color: Colors.white.withOpacity(0.95),
+      // ),
     );
   }
 
   ReportMapModel mapProvince(
       {required data,
-        required String key,
-        required String title,
-        required String surfix,
-        Color color = Colors.lightGreen}) {
+      required String key,
+      required String title,
+      required String surfix,
+      Color color = Colors.lightGreen}) {
     List northProvice = data['north'][key]['provinces'];
     int northTotalCount = data['north'][key]['count'];
 
@@ -501,7 +654,148 @@ class _ReportPageState extends State<ReportPage> {
         items: indicators.reversed.toList(),
         color: color,
         value: northTotalCount,
-        surfix: surfix);
+        surfix: "คน");
+  }
+
+  ReportMapAmpModel mapPhayao({required data}) {
+    List<String> amps = [
+      "เชียงม่วน",
+      "ดอกคำใต้",
+      "จุน",
+      "เชียงคำ",
+      "เมืองพะเยา",
+      "ภูซาง",
+      "ภูกามยาว",
+      "ปง",
+      "แม่ใจ"
+    ];
+    Color color = Colors.purple;
+
+    int totalCount = 4;
+
+    MapShapeSource _mapPhayaoProvince = MapShapeSource.asset(
+      'assets/geojson/phayao_province.json',
+      shapeDataField: 'amp_th',
+      dataCount: amps.length,
+      primaryValueMapper: (int index) {
+        return amps[index];
+      },
+      shapeColorValueMapper: (int index) {
+        // double opacity = (1.0 / (indicators.length)) * (index + 1);
+        // return northTotalCount == 0
+        //     ? Colors.transparent
+        //     : color.withOpacity(opacity);
+      },
+    );
+    return ReportMapAmpModel(
+        title: "จังหวัดพะเยา",
+        mapSource: _mapPhayaoProvince,
+        color: color,
+        value: totalCount,
+        surfix: "คน");
+  }
+
+  ReportMapAmpModel mapChiangRai({required data}) {
+    List<String> amps = [
+      'ดอยหลวง',
+      'แม่ลาว',
+      'เวียงเชียงรุ้ง',
+      'เชียงของ',
+      'เทิง',
+      'เมืองเชียงราย',
+      'เวียงชัย',
+      'ขุนตาล',
+      'แม่ฟ้าหลวง',
+      'พญาเม็งราย',
+      'เวียงแก่น',
+      'แม่สรวย',
+      'เวียงป่าเป้า',
+      'แม่สาย',
+      'แม่จัน',
+      'เชียงแสน',
+      'พาน',
+      'ป่าแดด'
+    ];
+    Color color = Colors.purple;
+
+    int totalCount = 4;
+
+    MapShapeSource _map = MapShapeSource.asset(
+      'assets/geojson/chiangrai_province.json',
+      shapeDataField: 'amp_th',
+      dataCount: amps.length,
+      primaryValueMapper: (int index) {
+        return amps[index];
+      },
+      shapeColorValueMapper: (int index) {
+        // double opacity = (1.0 / (indicators.length)) * (index + 1);
+        // return northTotalCount == 0
+        //     ? Colors.transparent
+        //     : color.withOpacity(opacity);
+      },
+    );
+    return ReportMapAmpModel(
+        title: "จังหวัดเชียงราย",
+        mapSource: _map,
+        color: color,
+        value: totalCount,
+        surfix: "คน");
+  }
+
+  ReportMapAmpModel mapNan({required data}) {
+    List<String> amps = ['ปัว', 'ท่าวังผา', 'บ้านหลวง', 'นาน้อย', 'เมืองน่าน', 'แม่จริม', 'ภูเพียง', 'เฉลิมพระเกียรติ', 'บ่อเกลือ', 'สองแคว', 'นาหมื่น', 'สันติสุข', 'เชียงกลาง', 'เวียงสา', 'ทุ่งช้าง'];
+    Color color = Colors.purple;
+
+    int totalCount = 4;
+
+    MapShapeSource _map = MapShapeSource.asset(
+      'assets/geojson/nan_province.json',
+      shapeDataField: 'amp_th',
+      dataCount: amps.length,
+      primaryValueMapper: (int index) {
+        return amps[index];
+      },
+      shapeColorValueMapper: (int index) {
+        // double opacity = (1.0 / (indicators.length)) * (index + 1);
+        // return northTotalCount == 0
+        //     ? Colors.transparent
+        //     : color.withOpacity(opacity);
+      },
+    );
+    return ReportMapAmpModel(
+        title: "จังหวัดน่าน",
+        mapSource: _map,
+        color: color,
+        value: totalCount,
+        surfix: "คน");
+  }
+
+  ReportMapAmpModel mapPhrae({required data}) {
+    List<String> amps = ['สอง', 'วังชิ้น', 'สูงเม่น', 'เด่นชัย', 'ร้องกวาง', 'ลอง', 'เมืองแพร่', 'หนองม่วงไข่'];
+    Color color = Colors.purple;
+
+    int totalCount = 4;
+
+    MapShapeSource _map = MapShapeSource.asset(
+      'assets/geojson/phrae_province.json',
+      shapeDataField: 'amp_th',
+      dataCount: amps.length,
+      primaryValueMapper: (int index) {
+        return amps[index];
+      },
+      shapeColorValueMapper: (int index) {
+        // double opacity = (1.0 / (indicators.length)) * (index + 1);
+        // return northTotalCount == 0
+        //     ? Colors.transparent
+        //     : color.withOpacity(opacity);
+      },
+    );
+    return ReportMapAmpModel(
+        title: "จังหวัดแพร่",
+        mapSource: _map,
+        color: color,
+        value: totalCount,
+        surfix: "คน");
   }
 }
 
@@ -514,8 +808,7 @@ class IndicatorModel {
       {required this.name, required this.amount, required this.color});
 }
 
-class ReportBaseModel {
-}
+class ReportBaseModel {}
 
 class ReportPieChartModel extends ReportBaseModel {
   Map<String, dynamic> data;
@@ -532,10 +825,27 @@ class ReportMapModel extends ReportBaseModel {
 
   String surfix;
 
-  ReportMapModel({required this.title,
-    required this.value,
-    required this.mapSource,
-    required this.items,
-    required this.color,
-    required this.surfix});
+  ReportMapModel(
+      {required this.title,
+      required this.value,
+      required this.mapSource,
+      required this.items,
+      required this.color,
+      required this.surfix});
+}
+
+class ReportMapAmpModel extends ReportBaseModel {
+  MapShapeSource mapSource;
+  Color color;
+  String title;
+  int value;
+
+  String surfix;
+
+  ReportMapAmpModel(
+      {required this.title,
+      required this.value,
+      required this.mapSource,
+      required this.color,
+      required this.surfix});
 }

@@ -12,6 +12,7 @@ import 'package:buffaloes_farm_management/models/activity/ReturnEstrusActivityMo
 import 'package:buffaloes_farm_management/models/activity/VaccineInjectionActivityModel.dart';
 import 'package:buffaloes_farm_management/pages/activities/breeding_page.dart';
 import 'package:buffaloes_farm_management/pages/activities/induction_page.dart';
+import 'package:buffaloes_farm_management/pages/activities/pregnancy_check_page.dart';
 import 'package:buffaloes_farm_management/pages/activities/selling_page.dart';
 import 'package:buffaloes_farm_management/pages/add_buff_page.dart';
 import 'package:buffaloes_farm_management/service/FarmService.dart';
@@ -26,6 +27,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
+import 'activities/birth_page.dart';
 import 'activities/legacy_breeding_page.dart';
 import 'activities/deworming_page.dart';
 import 'activities/disease_treatment_page.dart';
@@ -916,7 +918,7 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
                   icon: FontAwesomeIcons.stethoscope,
                   function: () async {
                     await Navigator.of(context)
-                        .push(NavigatorHelper.slide(ReturnEstrusPage(
+                        .push(NavigatorHelper.slide(BirthPage(
                       buffId: widget.id,
                     )));
 

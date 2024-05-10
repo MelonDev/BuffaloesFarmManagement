@@ -13,16 +13,17 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
-class ReturnEstrusPage extends StatefulWidget {
-  ReturnEstrusPage({Key? key, required this.buffId}) : super(key: key);
+class PregnancyCheckPage extends StatefulWidget {
+  const PregnancyCheckPage({super.key, required this.buffId});
 
-  String buffId;
+  final String buffId;
+
 
   @override
-  _ReturnEstrusPageState createState() => _ReturnEstrusPageState();
+  State<PregnancyCheckPage> createState() => _PregnancyCheckPageState();
 }
 
-class _ReturnEstrusPageState extends State<ReturnEstrusPage> {
+class _PregnancyCheckPageState extends State<PregnancyCheckPage> {
   Color primaryColor = Colors.indigo;
   Color backgroundColor = const Color(0xFF050505);
   Color tabColor = ColorHelper.darken(Colors.indigo, .1);
@@ -30,12 +31,12 @@ class _ReturnEstrusPageState extends State<ReturnEstrusPage> {
   bool isSaving = false, isSaved = false;
 
   int notify = 0;
-  int result = 1;
+  int result = 0;
 
-  DateTime? pickedCheckReturnEstrusDatetime;
+  DateTime? pickedPregnancyCheckDatetime;
 
-  DateTime? pickedStartReturnEstrusDatetime;
-  DateTime? pickedEndReturnEstrusDatetime;
+  DateTime? pickedStartBirthDatetime;
+  DateTime? pickedEndBirthDatetime;
 
   onSubmit() async {
     setState(() {
@@ -53,9 +54,9 @@ class _ReturnEstrusPageState extends State<ReturnEstrusPage> {
         if (!mounted) return;
         messageDialog(context, title: "แจ้งเตือน", message: "บันทึกเรียบร้อย",
             function: () {
-          //context.read<HomeCubit>().management();
-          Navigator.of(context).pop(true);
-        });
+              //context.read<HomeCubit>().management();
+              Navigator.of(context).pop(true);
+            });
       } else {
         if (!mounted) return;
         messageDialog(context, title: "แจ้งเตือน", message: message);
@@ -107,7 +108,7 @@ class _ReturnEstrusPageState extends State<ReturnEstrusPage> {
                           ),
                           centerTitle: true,
                           title: Text(
-                            "สถานะการกลัับสัด",
+                            "สถานะการท้อง",
                             style: GoogleFonts.itim(
                               color: Colors.white,
                               fontSize: 23,
@@ -126,41 +127,41 @@ class _ReturnEstrusPageState extends State<ReturnEstrusPage> {
                           actions: [],
                         ),
                         floatingActionButtonLocation:
-                            FloatingActionButtonLocation.centerFloat,
+                        FloatingActionButtonLocation.centerFloat,
                         floatingActionButton: submitButtonEnabled()
                             ? FloatingActionButton.extended(
-                                onPressed: () {
-                                  onSubmit();
-                                },
-                                heroTag: null,
-                                backgroundColor:
-                                    ColorHelper.lighten(primaryColor, .1)
-                                        .withOpacity(0.6),
-                                extendedPadding:
-                                    const EdgeInsets.only(left: 74, right: 74),
-                                extendedIconLabelSpacing: 12,
-                                elevation: 0,
-                                //splashColor: Colors.greenAccent.withOpacity(0.4),
-                                splashColor: Colors.white,
-                                shape: const RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(14))),
-                                label: Text("บันทึก",
-                                    style: GoogleFonts.itim(
-                                        //color: primaryColor,
-                                        color: Colors.white.withOpacity(0.9),
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18)),
-                                icon: Icon(FontAwesomeIcons.solidFloppyDisk,
-                                    color: Colors.white.withOpacity(0.9)),
-                              )
+                          onPressed: () {
+                            onSubmit();
+                          },
+                          heroTag: null,
+                          backgroundColor:
+                          ColorHelper.lighten(primaryColor, .1)
+                              .withOpacity(0.6),
+                          extendedPadding:
+                          const EdgeInsets.only(left: 74, right: 74),
+                          extendedIconLabelSpacing: 12,
+                          elevation: 0,
+                          //splashColor: Colors.greenAccent.withOpacity(0.4),
+                          splashColor: Colors.white,
+                          shape: const RoundedRectangleBorder(
+                              borderRadius:
+                              BorderRadius.all(Radius.circular(14))),
+                          label: Text("บันทึก",
+                              style: GoogleFonts.itim(
+                                //color: primaryColor,
+                                  color: Colors.white.withOpacity(0.9),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18)),
+                          icon: Icon(FontAwesomeIcons.solidFloppyDisk,
+                              color: Colors.white.withOpacity(0.9)),
+                        )
                             : null,
                         body: isSaving == true || isSaved == true
                             ? const Center(
-                                child: SpinKitThreeBounce(
-                                color: Colors.white,
-                                size: 50.0,
-                              ))
+                            child: SpinKitThreeBounce(
+                              color: Colors.white,
+                              size: 50.0,
+                            ))
                             : body(context),
                       ))))),
     );
@@ -192,29 +193,29 @@ class _ReturnEstrusPageState extends State<ReturnEstrusPage> {
               const SizedBox(height: 30),
               textField(
                 enabled: true,
-                hint: "วัน/เดือน/ปี ที่ตรวจการกลับสัด",
+                hint: "วัน/เดือน/ปี ที่ตรวจท้อง",
                 readOnly: true,
-                value: pickedCheckReturnEstrusDatetime != null
-                    ? DateFormat('d MMMM y', 'th').format(pickedCheckReturnEstrusDatetime!)
+                value: pickedPregnancyCheckDatetime != null
+                    ? DateFormat('d MMMM y', 'th').format(pickedPregnancyCheckDatetime!)
                     : null,
                 onTap: () async {
                   DateTime? selectdDateTime = await SlidingTimePicker(context,
-                      dateTime: pickedCheckReturnEstrusDatetime);
+                      dateTime: pickedPregnancyCheckDatetime);
                   if (selectdDateTime != null) {
                     setState(() {
-                      pickedCheckReturnEstrusDatetime = selectdDateTime;
+                      pickedPregnancyCheckDatetime = selectdDateTime;
                     });
                     //x = "${DateFormat.Hm().format(selectdDateTime)}:00";
                   }
                 },
               ),
               const SizedBox(height: 20),
-              textHeader(title: "ผลการตรวจการกลับสัด"),
+              textHeader(title: "ผลการตรวจการผสมพันธุ์"),
               tabBar(
                 initialValue: result,
                 children: {
-                  0: buildSegment("กลับสัด", 0, result),
-                  1: buildSegment("ไม่กลับสัด", 1, result),
+                  0: buildSegment("ท้อง", 0, result),
+                  1: buildSegment("ไม่ท้อง", 1, result),
                 },
                 callback: (value) {
                   setState(() {
@@ -222,21 +223,21 @@ class _ReturnEstrusPageState extends State<ReturnEstrusPage> {
                   });
                 },
               ),
-              if (result == 1) ...[
+              if (result == 0) ...[
                 const SizedBox(height: 20),
-                textHeader(title: "วันที่ควรตรวจท้อง"),
+                textHeader(title: "วันที่คาดว่าจะคลอด"),
                 textField(
                   enabled: false,
                   hint: "",
                   readOnly: true,
-                  value: getStartReturnEstrusDate(days: 45),
+                  value: getBirthDate(days: 279),
                 ),
                 textHeader(title: "ถึง"),
                 textField(
                   enabled: false,
                   hint: "",
                   readOnly: true,
-                  value: getEndReturnEstrusDate(days: 48),
+                  value: getEndBirthDate(days: 289),
                 ),
                 const SizedBox(height: 16),
                 tabBar(
@@ -297,13 +298,13 @@ class _ReturnEstrusPageState extends State<ReturnEstrusPage> {
 
   Widget textField(
       {TextEditingController? controller,
-      String? value,
-      bool readOnly = false,
-      VoidCallback? onTap,
-      bool enabled = true,
-      bool required = false,
-      TextAlign textAlign = TextAlign.start,
-      required String hint}) {
+        String? value,
+        bool readOnly = false,
+        VoidCallback? onTap,
+        bool enabled = true,
+        bool required = false,
+        TextAlign textAlign = TextAlign.start,
+        required String hint}) {
     return CustomTextFormField.create(
         hint: hint,
         readOnly: readOnly,
@@ -326,8 +327,8 @@ class _ReturnEstrusPageState extends State<ReturnEstrusPage> {
 
   Widget tabBar(
       {required Map<int, Widget> children,
-      required int initialValue,
-      required Function(int) callback}) {
+        required int initialValue,
+        required Function(int) callback}) {
     return Container(
       alignment: Alignment.topLeft,
       margin: const EdgeInsets.only(left: 0, right: 0),
@@ -384,20 +385,21 @@ class _ReturnEstrusPageState extends State<ReturnEstrusPage> {
     }
   }
 
-  String getStartReturnEstrusDate({int days = 45}) {
-    if(pickedCheckReturnEstrusDatetime == null) return "";
-    DateTime tempDate = pickedCheckReturnEstrusDatetime!;
+
+  String getBirthDate({int days = 290}) {
+    if(pickedPregnancyCheckDatetime == null) return "";
+    DateTime tempDate = pickedPregnancyCheckDatetime!;
     tempDate = tempDate.add(Duration(days: days));
-    pickedStartReturnEstrusDatetime = tempDate;
+    pickedStartBirthDatetime = tempDate;
 
     return "${tempDate.day} ${getMonthName(tempDate.month - 1)} ${tempDate.year + 543}";
   }
 
-  String getEndReturnEstrusDate({int days = 45}) {
-    if(pickedCheckReturnEstrusDatetime == null) return "";
-    DateTime tempDate = pickedCheckReturnEstrusDatetime!;
+  String getEndBirthDate({int days = 310}) {
+    if(pickedPregnancyCheckDatetime == null) return "";
+    DateTime tempDate = pickedPregnancyCheckDatetime!;
     tempDate = tempDate.add(Duration(days: days));
-    pickedEndReturnEstrusDatetime = tempDate;
+    pickedEndBirthDatetime = tempDate;
 
     return "${tempDate.day} ${getMonthName(tempDate.month - 1)} ${tempDate.year + 543}";
   }
