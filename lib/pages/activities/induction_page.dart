@@ -23,9 +23,11 @@ class _InductionPageState extends State<InductionPage> {
   TextEditingController tfName = TextEditingController();
 
   TextEditingController tfDateTime = TextEditingController();
+  TextEditingController tfProvider = TextEditingController();
+
   TextEditingController tfReturnDateTime = TextEditingController();
 
-  String? buffSpeciesValue;
+  String? buffSpeciesValue,buffInseminationProviderValue;
 
   Color primaryColor = Colors.pink;
   Color backgroundColor = const Color(0xFF050505);
@@ -33,6 +35,7 @@ class _InductionPageState extends State<InductionPage> {
 
   bool isSaving = false, isSaved = false;
 
+  int insemination = 0;
   int notify = 0;
   int type = 0;
   int result = 0;
@@ -49,44 +52,47 @@ class _InductionPageState extends State<InductionPage> {
   }
 
   onSubmit() async {
-    setState(() {
-      isSaving = true;
-    });
-    if (tfName.text.isNotEmpty || type == 1) {
-      String? result = await FarmService.addInducting(
-          buffId: widget.buffId,
-          induction: type == 0 ? true : false,
-          method: type == 0 ? tfName.text : null,
-          date: pickedReturnDatetime ?? DateTime.now());
+    messageDialog(context,
+        title: "แจ้งเตือน", message: "เกิดข้อผิดพลาด");
 
-      if (result != null) {
-        if (result == "SUCCESS") {
-          isSaved = true;
-
-          if (!mounted) return;
-          messageDialog(context, title: "แจ้งเตือน", message: "บันทึกเรียบร้อย",
-              function: () {
-            //context.read<HomeCubit>().management();
-            Navigator.of(context).pop(true);
-          });
-        } else {
-          if (!mounted) return;
-          messageDialog(context, title: "แจ้งเตือน", message: result);
-        }
-      } else {
-        if (!mounted) return;
-        messageDialog(context,
-            title: "แจ้งเตือน", message: "ไม่สามารถเชื่อมต่อได้");
-      }
-    } else {
-      if (tfName.text.isEmpty) {
-        messageDialog(context,
-            title: "แจ้งเตือน", message: "กรุณากรอกวิธีเหนี่ยวนำ");
-      }
-    }
-    setState(() {
-      isSaving = false;
-    });
+    // setState(() {
+    //   isSaving = true;
+    // });
+    // if (tfName.text.isNotEmpty || type == 1) {
+    //   String? result = await FarmService.addInducting(
+    //       buffId: widget.buffId,
+    //       induction: type == 0 ? true : false,
+    //       method: type == 0 ? tfName.text : null,
+    //       date: pickedReturnDatetime ?? DateTime.now());
+    //
+    //   if (result != null) {
+    //     if (result == "SUCCESS") {
+    //       isSaved = true;
+    //
+    //       if (!mounted) return;
+    //       messageDialog(context, title: "แจ้งเตือน", message: "บันทึกเรียบร้อย",
+    //           function: () {
+    //         //context.read<HomeCubit>().management();
+    //         Navigator.of(context).pop(true);
+    //       });
+    //     } else {
+    //       if (!mounted) return;
+    //       messageDialog(context, title: "แจ้งเตือน", message: result);
+    //     }
+    //   } else {
+    //     if (!mounted) return;
+    //     messageDialog(context,
+    //         title: "แจ้งเตือน", message: "ไม่สามารถเชื่อมต่อได้");
+    //   }
+    // } else {
+    //   if (tfName.text.isEmpty) {
+    //     messageDialog(context,
+    //         title: "แจ้งเตือน", message: "กรุณากรอกวิธีเหนี่ยวนำ");
+    //   }
+    // }
+    // setState(() {
+    //   isSaving = false;
+    // });
   }
 
   @override
@@ -148,7 +154,7 @@ class _InductionPageState extends State<InductionPage> {
                       floatingActionButton: submitButtonEnabled()
                           ? FloatingActionButton.extended(
                               onPressed: () {
-                                //onSubmit();
+                                onSubmit();
                               },
                               heroTag: null,
                               backgroundColor:
@@ -309,19 +315,39 @@ class _InductionPageState extends State<InductionPage> {
           }
         },
       ),
-      const SizedBox(height: 14),
+      const SizedBox(height: 20),
       tabBar(
-        initialValue: notify,
+        initialValue: insemination,
         children: {
-          0: buildSegment("ผสมธรรมชาติ", 0, notify),
-          1: buildSegment("ผสมเทียม", 1, notify),
+          0: buildSegment("ผสมธรรมชาติ", 0, insemination),
+          1: buildSegment("ผสมเทียม", 1, insemination),
         },
         callback: (value) {
           setState(() {
-            notify = value;
+            insemination = value;
           });
         },
       ),
+      if(insemination == 1)
+        const SizedBox(height: 14),
+      if(insemination == 1)
+      textField(
+        hint: "ผู้ให้บริการผสมเทียม",
+        value: buffInseminationProviderValue,
+        readOnly: true,
+        onTap: () {
+          providerBottomDialog();
+        },
+      ),
+      if (insemination == 1 && buffInseminationProviderValue == "อื่น ๆ") const SizedBox(height: 8),
+      if (insemination == 1 && buffInseminationProviderValue == "อื่น ๆ")
+        textField(
+            hint: "ระบุ",
+            controller: tfProvider),
+      if(insemination == 1)
+        const SizedBox(height: 12),
+
+
       const SizedBox(height: 20),
       textHeader(title: "รายละเอียดน้ำเชื้อพ่อพันธุ์"),
       const SizedBox(height: 8),
@@ -330,35 +356,35 @@ class _InductionPageState extends State<InductionPage> {
       const SizedBox(height: 14),
       textField(
           hint: "เบอร์หู", controller: tfName, required: false),
-      const SizedBox(height: 20),
-      textHeader(title: "ข้อมูลหลอดน้ำเชื้อ"),
-      const SizedBox(height: 8),
-      textField(
-        hint: "สายพันธุ์",
-        value: buffSpeciesValue,
-        required: true,
-        readOnly: true,
-        onTap: () {
-          buffSpeciesBottomDialog();
-        },
-      ),
-      const SizedBox(height: 14),
 
-      textField(
-          hint: "เปอร์เซ็นต์เลือด (0-100)",
-          //controller: tfBlood,
-          keyboardType: TextInputType.number,
-          required: false),
-      const SizedBox(height: 14),
-      textField(
-          hint: "ผลิตโดย", controller: tfName, required: false),
-      const SizedBox(height: 14),
-      textField(
-          hint: "ราคา",
-          //controller: tfBlood,
-          keyboardType: TextInputType.number,
-          required: false),
-
+      if (insemination == 1) ...[
+        const SizedBox(height: 20),
+        textHeader(title: "ข้อมูลหลอดน้ำเชื้อ"),
+        const SizedBox(height: 8),
+        textField(
+          hint: "สายพันธุ์",
+          value: buffSpeciesValue,
+          required: true,
+          readOnly: true,
+          onTap: () {
+            buffSpeciesBottomDialog();
+          },
+        ),
+        const SizedBox(height: 14),
+        textField(
+            hint: "เปอร์เซ็นต์เลือด (0-100)",
+            //controller: tfBlood,
+            keyboardType: TextInputType.number,
+            required: false),
+        const SizedBox(height: 14),
+        textField(hint: "ผลิตโดย", controller: tfName, required: false),
+        const SizedBox(height: 14),
+        textField(
+            hint: "ราคา",
+            //controller: tfBlood,
+            keyboardType: TextInputType.number,
+            required: false),
+      ]
     ];
   }
 
@@ -430,7 +456,7 @@ class _InductionPageState extends State<InductionPage> {
         color: const Color(0xFF010101),
         onTap: () async {
           setState(() {
-            //diseaseValue = value;
+            buffInseminationProviderValue = value;
           });
              },
       ));

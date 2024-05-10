@@ -891,16 +891,17 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
               subMessage: "วันที่กลับสัด: ${getBirthDate(item.date)}",
               active: active,
               log: BuffActivityLog.inducting,
-              function: ActivityFunctionModel(
+              function: item.induction == true ? ActivityFunctionModel(
                   name: "เริ่มต้นการผสมพันธุ์",
                   icon: FontAwesomeIcons.stethoscope,
                   function: () async {
                     await Navigator.of(context)
-                        .push(NavigatorHelper.slide(LegacyBreedingPage(
+                        .push(NavigatorHelper.slide(BreedingPage(
                       buffId: widget.id,
                     )));
+
                     onLoad();
-                  }))
+                  }) : null)
           : null;
     } else if (item is BreedingActivityModel) {
       return item.status == active
@@ -918,6 +919,7 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
                         .push(NavigatorHelper.slide(ReturnEstrusPage(
                       buffId: widget.id,
                     )));
+
                     onLoad();
                   }))
           : null;
@@ -951,17 +953,20 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
           : null;
     } else if (item is DiseaseTreatmentActivityModel) {
       return item.status == active
-          ? card(context,
+          ? card(
+              context,
               message: "อาการ: ${item.symptom}",
               subMessage: "ยาที่ใช้: ${item.drugs ?? "-"}",
               active: active,
               log: BuffActivityLog.diseaseTreatment,
-              function: ActivityFunctionModel(
-                  name: "อัปเดตสถานะ",
-                  icon: FontAwesomeIcons.stethoscope,
-                  function: () async {
-                    //onLoad();
-                  }))
+              // function: ActivityFunctionModel(
+              //   name: "อัปเดตสถานะ",
+              //   icon: FontAwesomeIcons.stethoscope,
+              //   function: () async {
+              //     //onLoad();
+              //   },
+              // ),
+            )
           : null;
     } else {
       return null;
