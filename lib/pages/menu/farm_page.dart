@@ -252,7 +252,7 @@ class FarmPage extends StatelessWidget {
                 children: <Widget>[
                   Expanded(
                     child: AspectRatio(
-                      aspectRatio: 1.3,
+                      aspectRatio: 1.0,
                       child: PieChart(
                         PieChartData(
                           pieTouchData: PieTouchData(
@@ -381,7 +381,7 @@ class FarmPage extends StatelessWidget {
                 children: <Widget>[
                   Expanded(
                     child: AspectRatio(
-                      aspectRatio: 1.3,
+                      aspectRatio: 1.0,
                       child: Stack(
                         children: [
                           if (data["TOTAL"] == 0)
