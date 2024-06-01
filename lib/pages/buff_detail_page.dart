@@ -574,6 +574,8 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
     print("body");
     List<Widget> activeWidget = [];
     List<Widget> activities = [];
+    
+
     for (var item in model.history) {
       Widget? w = getActivityLogWidget(context, item, active: false);
       Widget? wA = getActivityLogWidget(context, item, active: true);
@@ -940,7 +942,7 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
           ? card(context,
               message: "ชนิด: ${getVaccineName(item)}",
               subMessage:
-                  "ครั้งต่อไป: ${item.date != null ? getBirthDate(item.date) : "-"}",
+                  "ครั้งต่อไป: ${item.injected_date != null ? getBirthDate(item.injected_date) : "-"}",
               active: active,
               log: BuffActivityLog.vaccineInjection)
           : null;
@@ -1105,30 +1107,30 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
   }
 
   String getVaccineName(VaccineInjectionActivityModel model) {
-    switch (model.vaccine_name) {
-      case "Foot-mouth Disease":
+    switch (model.name) {
+      case "FOOT_MOUTH_DISEASE":
         {
           return "ปากเท้าเปื่อย";
         }
-      case "Swollen Neck Disease":
+      case "SWOLLEN_NECK_DISEASE":
         {
           return "คอบวม";
         }
-      case "Anthrax Disease":
+      case "ANTHRAX_DISEASE":
         {
           return "แอนแทรกซ์";
         }
-      case "Blackleg Disease":
+      case "BLACKLEG_DISEASE":
         {
           return "แบลคเลก (ไข้ขา)";
         }
-      case "Brucellosis Disease":
+      case "BRUCELLOSIS_DISEASE":
         {
           return "แท้งติดต่อ";
         }
-      case "Other":
+      case "OTHER":
         {
-          return model.vaccine_name ?? "";
+          return model.otherName ?? "";
         }
       default:
         {

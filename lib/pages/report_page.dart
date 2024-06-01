@@ -669,22 +669,73 @@ class _ReportPageState extends State<ReportPage> {
       "ปง",
       "แม่ใจ"
     ];
-    Color color = Colors.purple;
+    Color color = Colors.lightGreen;
+    print("PHAYAO");
 
-    int totalCount = 4;
+    List provinces = data['north']?["farms"]?["provinces"] ?? [];
+    List districts = [];
+    int districtsTotalCount = 0;
+
+    //print(provinces);
+
+    for (var province in provinces) {
+      //print(province);
+      if(province["province"] == "พะเยา"){
+        List x = province["district"];
+        districts.addAll(x);
+        districtsTotalCount = x.length;
+      }
+    }
+
+    districts.sort((a, b) {
+      return a['count'].compareTo(b['count']);
+    });
+
+    List<IndicatorModel> indicators = [];
+    int count = 0;
+    for (String amp in amps) {
+      if(districts.any((district) => district['district'] == amp)){
+        var dist = districts.where((district) => district['district'] == amp).single;
+        indicators.add(IndicatorModel(
+            name: dist['district'],
+            amount: dist['count'],
+            color: Colors.transparent));
+      }else {
+        indicators.add(IndicatorModel(
+            name: amp,
+            amount: 0,
+            color: Colors.transparent));
+      }
+
+
+      count += 1;
+    }
+
+    int totalCount = districts.length;
 
     MapShapeSource _mapPhayaoProvince = MapShapeSource.asset(
       'assets/geojson/phayao_province.json',
       shapeDataField: 'amp_th',
-      dataCount: amps.length,
+      dataCount: indicators.length,
       primaryValueMapper: (int index) {
+        return "${indicators[index].name}";
+      },
+      dataLabelMapper: (int index){
         return amps[index];
       },
+
       shapeColorValueMapper: (int index) {
-        // double opacity = (1.0 / (indicators.length)) * (index + 1);
-        // return northTotalCount == 0
-        //     ? Colors.transparent
-        //     : color.withOpacity(opacity);
+        print(indicators.where((element) => element.amount > 0));
+        print(indicators[index].amount > 0);
+        if(indicators[index].amount > 0){
+          double opacity = (1.0 / (indicators.where((element) => element.amount > 0).length)) * (index + 1);
+          return districtsTotalCount == 0
+              ? Colors.transparent
+              : color.withOpacity(opacity);
+        }else {
+          return Colors.transparent;
+        }
+
       },
     );
     return ReportMapAmpModel(

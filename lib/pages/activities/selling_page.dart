@@ -45,6 +45,14 @@ class _SellingPageState extends State<SellingPage> {
     setState(() {
       isSaving = true;
     });
+    String? response = await FarmService.addSold(
+        buffId: widget.buffId,
+        sold_date: pickedDatetime ?? DateTime.now(),
+        duration: int.tryParse(tfDuration.text) ?? 0,
+        note: sellNoteValue,
+        buyer: tfBuyerDetail.text,
+        channel: tfDistributor.text,
+        style: tfCharacteristics.text);
     // if (tfName.text.isNotEmpty) {
     //   String? response = await FarmService.addDeworming(
     //       buffId: widget.buffId,
@@ -377,7 +385,6 @@ class _SellingPageState extends State<SellingPage> {
       ),
     );
   }
-
 
   distributorBottomDialog() {
     List<String> buffSourceList = [

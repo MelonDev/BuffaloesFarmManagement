@@ -72,16 +72,19 @@ class _AddBuffPage extends State<AddBuffPage> {
   int gender = 0;
 
   onLoad() async {
+    print("ONLOAD");
     if (widget.buffId != null) {
       BuffModel? buff = await FarmService.buff(widget.buffId!);
+      print(buff);
       setState(() {
         initialLoading = false;
         this.buff = buff;
         buffTypeKey = buff?.type;
         tfName.text = buff?.name ?? "";
         tfTag.text = buff?.tag ?? "";
-        tfBlood.text = buff?.blood ?? "";
-        buffSpeciesValue = buff?.species ?? "";
+        tfBlood.text = buff?.bloodline_level ?? "";
+        print(buff?.breed);
+        buffSpeciesValue = buff?.breed ?? "";
         pickedDatetime = getDate(buff?.birth_date);
         tfFather.text = buff?.father_name ?? "";
         tfMother.text = buff?.mother_name ?? "";
@@ -261,6 +264,7 @@ class _AddBuffPage extends State<AddBuffPage> {
     buffTypeKey = widget.buffTypeKey;
     gender = buffTypeKey == "F" ? 1 : 0;
     onLoad();
+
   }
 
   @override

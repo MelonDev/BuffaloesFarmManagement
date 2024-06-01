@@ -271,9 +271,10 @@ class FarmService {
 
   static Future<String?> addInducting(
       {required String buffId,
-      required bool induction, String? method,
+      required bool induction,
+      String? method,
       required DateTime date}) async {
-    if(induction == true && method == null) return "ไม่สามารถบันทึกได้";
+    if (induction == true && method == null) return "ไม่สามารถบันทึกได้";
     try {
       final DateFormat formatter = DateFormat('yyyy-MM-dd');
       final String formatted = formatter.format(date);
@@ -422,16 +423,16 @@ class FarmService {
 
       Map<String, dynamic> body = {
         "buff_id": buffId,
-        "vaccine_name": vaccine_name,
-        "other_vaccine_name": otherVaccineName,
-        "vaccine_duration": otherVaccineDuration,
-        "date": formatted,
+        "name": vaccine_name,
+        "other_name": otherVaccineName,
+        "duration": otherVaccineDuration,
+        "injected_date": formatted,
         "notify": true
       };
 
       print(body);
       var response =
-          await HttpService.postForm(path: '/vaccine_injection', body: body);
+          await HttpService.postForm(path: '/vaccine-injection', body: body);
       print("response: $response");
       if (response != null) {
         print(response.statusCode);
@@ -515,6 +516,50 @@ class FarmService {
       print(body);
       var response =
           await HttpService.postForm(path: '/disease-treatment', body: body);
+      print("response: $response");
+      if (response != null) {
+        print(response.statusCode);
+        if (response.statusCode == 200) {
+          print(response.data);
+          return "SUCCESS";
+        } else {
+          return "เกิดข้อผิดพลาด";
+        }
+      }
+
+      return null;
+    } on Exception catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
+  static Future<String?> addSold(
+      {required String buffId,
+      required DateTime sold_date,
+      int? duration,
+      String? note,
+      String? buyer,
+      String? channel,
+      String? style}) async {
+    try {
+      final DateFormat formatter = DateFormat('yyyy-MM-dd');
+      final String formatted = formatter.format(sold_date);
+
+      Map<String, dynamic> body = {
+        "buff_id": buffId,
+        "sold_date": formatted,
+        "duration": duration,
+        "note": note,
+        "buyer": buyer,
+        "channel": channel,
+        "style": style,
+        "notify": true
+      };
+
+      print(body);
+      var response =
+          await HttpService.postForm(path: '/selling', body: body);
       print("response: $response");
       if (response != null) {
         print(response.statusCode);

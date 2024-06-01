@@ -11,7 +11,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 class HttpService {
-  static const String baseUrl = "https://api.melonkemo.com/v1/buffaloes";
+  static const String baseUrl = "https://api.melonkemo.com/v2/buffaloes";
 
   static const Map<String, String> headers = {
     //'Authorization': 'Basic cGRhX2FwcDpzZWNyZXRrZXk=',

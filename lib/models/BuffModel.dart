@@ -23,60 +23,96 @@ class BuffModel {
   String? image_url;
   String? status;
   String? type;
-  String? species;
-  String? blood;
+  String? breed;
+  String? bloodline_level;
   String? price;
 
+  // List<BaseActivityModel> history = [];
   List<BaseActivityModel> history = [];
 
   BuffModel();
 
   BuffModel.fromJson(Map<String, dynamic> json)
       : id = json['id']?.toString(),
-        name = json['name']?.toString(),
-        tag = json['tag']?.toString(),
-        gender = json['gender']?.toString(),
-        birth_date = json['birth_date']?.toString(),
+        name = json['info']?['name']?.toString(),
+        tag = json['info']?['tag']?.toString(),
+        gender = json['info']?['gender']?.toString(),
+        birth_date = json['info']?['birth_date']?.toString(),
         father_id = json['father_id']?.toString(),
-        father_name = json['father_name']?.toString(),
+        father_name = json['breeding_info']?['father_name']?.toString(),
         mother_id = json['mother_id']?.toString(),
-        mother_name = json['mother_name']?.toString(),
+        mother_name = json['breeding_info']?['mother_name']?.toString(),
         source = json['source']?.toString(),
         status = _getStatusName(json['status']?.toString()),
-  type = json['type']?.toString(),
-  species = json['species']?.toString(),
-        blood = json['blood']?.toString(),
+        type = json['info']?['type']?.toString(),
+        breed = json['breeding_info']?['breed']?.toString(),
+        bloodline_level = json['breeding_info']?['bloodline_level']?.toString(),
         price = json['price']?.toString().toDouble().toStringAsFixed(0),
+        // history = json['history']
+        //         ?.map<BaseActivityModel>((item) => _getActivityModel(item))
+        //         .toList() ??
+        //     [],
+        // history = json['activities']?.map<BaseActivityModel>((map) {
+        //       print("MAP");
+        //       print(map);
+        //       return _getActivityList(map);
+        //     }).toList() ??
+        //     [],
+        history = _getActivityList(json['activities']),
 
-      history = json['history']
-                ?.map<BaseActivityModel>((item) => _getActivityModel(item))
-                .toList() ??
-            [],
+        //history = json['history'] ?? [],
         image_url = json['image_url']?.toString();
 
-  static BaseActivityModel _getActivityModel(item) {
+  static List<BaseActivityModel> _getActivityList(data) {
+    List<BaseActivityModel> result = [];
+
+    for (dynamic i in data?['breeding'] ?? []){
+      result.add(_getActivityModel(i, "BREEDING"));
+    }
+
+    for (dynamic i in data?['vaccine_injection'] ?? []){
+      result.add(_getActivityModel(i, "VACCINE_INJECTION"));
+    }
+
+    for (dynamic i in data?['desease_treatment'] ?? []){
+      result.add(_getActivityModel(i, "DISEASE_TREATMENT"));
+    }
+
+    for (dynamic i in data?['deworming'] ?? []){
+      result.add(_getActivityModel(i, "DEWORMING"));
+    }
+
+    // result.addAll(data['breeding']
+    //         ?.map<BaseActivityModel>(
+    //             (item) => _getActivityModel(item, "BREEDING"))
+    //         .toList() ??
+    //     []);
+
+    return result;
+  }
+
+  static BaseActivityModel _getActivityModel(item, type) {
     String? name = item['name'] ?? "";
 
     print(item);
-    if (name == "INDUCTING") {
+    if (type == "INDUCTING") {
       return InductingActivityModel.fromJson(item);
-    } else if (name == "BREEDING") {
+    } else if (type == "BREEDING") {
       return BreedingActivityModel.fromJson(item);
-    } else if (name == "RETURN_ESTRUS") {
+    } else if (type == "RETURN_ESTRUS") {
       return ReturnEstrusActivityModel.fromJson(item);
-    } else if (name == "VACCINE_INJECTION") {
+    } else if (type == "VACCINE_INJECTION") {
       return VaccineInjectionActivityModel.fromJson(item);
-    } else if (name == "DEWORMING") {
+    } else if (type == "DEWORMING") {
       return DewormingActivityModel.fromJson(item);
-    } else if (name == "DISEASE_TREATMENT") {
+    } else if (type == "DISEASE_TREATMENT") {
       return DiseaseTreatmentActivityModel.fromJson(item);
     } else {
       return ActivityModel.fromJson(item);
     }
   }
 
-  static String _getStatusName(name){
-
+  static String _getStatusName(name) {
     if (name == "INDUCTING") {
       return "รอตรวจการผสม";
     } else if (name == "BREEDING") {
