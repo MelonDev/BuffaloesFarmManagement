@@ -8,6 +8,7 @@ class VaccineInjectionActivityModel extends BaseActivityModel {
   String? name;
   String? otherName;
   String? injected_date;
+  String? target_date;
   String? duration;
 
   String? notify;
@@ -22,7 +23,8 @@ class VaccineInjectionActivityModel extends BaseActivityModel {
         otherName = json['other_name']?.toString(),
         duration = json['duration']?.toString(),
         injected_date = json['injected_date']?.toString(),
-        notify = json['notify']?.toString(),
+        target_date = json['target_date']?.toString(),
+      notify = json['notify']?.toString(),
         status = json['status'],
         delete = json['delete'];
 }

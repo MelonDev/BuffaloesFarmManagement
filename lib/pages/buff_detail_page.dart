@@ -942,16 +942,17 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
           ? card(context,
               message: "ชนิด: ${getVaccineName(item)}",
               subMessage:
-                  "ครั้งต่อไป: ${item.injected_date != null ? getBirthDate(item.injected_date) : "-"}",
+                  "ครั้งต่อไป: ${item.target_date != null ? getBirthDate(item.target_date) : "-"}",
               active: active,
               log: BuffActivityLog.vaccineInjection)
           : null;
     } else if (item is DewormingActivityModel) {
+      print(item.deworming_date);
       return item.status == active
           ? card(context,
-              message: "ชนิด: ${item.name}",
+              message: "ชนิด: ${item.dewormer_type}",
               subMessage:
-                  "ครั้งต่อไป: ${item.next_deworming_date != null ? getBirthDate(item.next_deworming_date) : "-"}",
+                  "ครั้งต่อไป: ${item.deworming_date != null ? getBirthDate(item.deworming_date) : "-"}",
               active: active,
               log: BuffActivityLog.deworming)
           : null;

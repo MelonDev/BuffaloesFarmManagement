@@ -96,129 +96,135 @@ class LoginPage extends StatelessWidget {
                                   )),
                               padding:
                               const EdgeInsets.only(left: 20, right: 20, top: 20),
+                              margin: const EdgeInsets.only(bottom: kIsWeb ? 30 : 0),
                               child: SingleChildScrollView(
-                                  child: Column(children: [
-                                    Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          const Text(
-                                            "การจัดการฟาร์มกระบือ",
-                                            style: TextStyle(
-                                                color: kTextBlack,
-                                                fontWeight: FontWeight.w500,
-                                                fontSize: 26),
-                                          ),
-                                          Container(height: 0),
-                                          Text(
-                                            "Smart Buffaloes Manager",
-                                            style: GoogleFonts.itim(
-                                              color: Colors.black.withOpacity(0.4),
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w400,
-                                            ),
-                                          ),
-                                        ]),
-                                    Container(
-                                      //height: 48,
-                                        margin: const EdgeInsets.only(top: 24),
-                                        child: TextFormField(
-                                          controller: numberController,
-                                          style: textFieldStyle,
-                                          textInputAction: TextInputAction.done,
-                                          //maxLength: 10,
-                                          autovalidateMode:
-                                          AutovalidateMode.always,
-                                          inputFormatters: [
-                                            MaskedInputFormatter('###-###-####')
-                                          ],
-                                          validator: (value) {
-                                            return null;
-                                          },
-                                          keyboardType: TextInputType.phone,
-                                          decoration: const InputDecoration(
-                                            labelText: 'เบอร์โทรศัพท์',
-                                            fillColor: Colors.white,
-                                            filled: true,
-                                            helperText: "กรุณากรอกให้ครบ 10 หลัก",
-                                            helperStyle: textFieldHelperStyle,
-                                            hintStyle: hintText,
-                                            labelStyle: hintText,
-                                            floatingLabelStyle: labelText,
-                                            contentPadding: fieldSearchPadding,
-                                            enabledBorder: textFieldInputBorder,
-                                            focusedBorder: textFieldInputBorder,
-                                            errorBorder: textFieldErrorInputBorder,
-                                            focusedErrorBorder: textFieldErrorInputBorder,
-                                            errorStyle: textFieldErrorStyle,
-                                          ),
-                                        )),
-                                    Container(
-                                      width: MediaQuery.of(context).size.width * 1,
-                                      height: 40,
-                                      margin: const EdgeInsets.only(top: 20),
-                                      child: OutlinedButton(
-                                        style: navyButtonStyle,
-                                        onPressed: () {
-                                          if (numberController.text.length == 12) {
-                                            String x =
-                                            numberController.text.replaceAll("-", "");
-                                            String number = x.replaceRange(0, 1, "+66");
-                                            context
-                                                .read<AuthenticationCubit>()
-                                                .signin(context, number);
-                                          } else {}
-                                        },
-                                        child: const Text(
-                                          'เข้าสู่ระบบ',
-                                          style: whiteTextButton,
-                                        ),
-                                      ),
-                                    ),
-                                    Container(height: 12),
-                                    Divider(
-                                      color: Colors.grey.shade400,
-                                    ),
-                                    Container(height: 8),
-                                    InkResponse(
-                                      onTap: () {},
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: bgColor.withOpacity(0.1),
-                                          borderRadius: BorderRadius.circular(10)
-                                        ),
-                                        padding: EdgeInsets.only(left: 20,right: 16,top: 10,bottom: 9),
-                                        width: double.infinity,
-                                        margin: const EdgeInsets.only(bottom: 16),
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  child: SafeArea(
+                                    child: Column(children: [
+                                      Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
-                                            Text(
-                                              "เพิ่มแอปไปที่หน้าจอหลัก",
+                                            const Text(
+                                              "การจัดการฟาร์มกระบือ",
                                               style: TextStyle(
-                                                  color: kTextBlack.withOpacity(0.9),
+                                                  color: kTextBlack,
                                                   fontWeight: FontWeight.w500,
-                                                  fontSize: 18),
+                                                  fontSize: 26),
                                             ),
-                                            Container(
-                                              decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius: BorderRadius.circular(20)
+                                            Container(height: 0),
+                                            Text(
+                                              "Smart Buffaloes Manager",
+                                              style: GoogleFonts.itim(
+                                                color: Colors.black.withOpacity(0.4),
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w400,
                                               ),
-                                              padding: EdgeInsets.only(top: 5,bottom: 4,left: 22,right: 22),
-                                              child: Text(
-                                                "เพิ่ม",
-                                                style: TextStyle(
-                                                    color: kTextBlack,
-                                                    fontWeight: FontWeight.w500,
-                                                    fontSize: 18),
-                                              ),
-                                            )
-                                          ],
+                                            ),
+                                          ]),
+                                      Container(
+                                        //height: 48,
+                                          margin: const EdgeInsets.only(top: 24),
+                                          child: TextFormField(
+                                            controller: numberController,
+                                            style: textFieldStyle,
+                                            textInputAction: TextInputAction.done,
+                                            //maxLength: 10,
+                                            autovalidateMode:
+                                            AutovalidateMode.always,
+                                            inputFormatters: [
+                                              MaskedInputFormatter('###-###-####')
+                                            ],
+                                            validator: (value) {
+                                              return null;
+                                            },
+                                            keyboardType: TextInputType.phone,
+                                            decoration: const InputDecoration(
+                                              labelText: 'เบอร์โทรศัพท์',
+                                              fillColor: Colors.white,
+                                              filled: true,
+                                              helperText: "กรุณากรอกให้ครบ 10 หลัก",
+                                              helperStyle: textFieldHelperStyle,
+                                              hintStyle: hintText,
+                                              labelStyle: hintText,
+                                              floatingLabelStyle: labelText,
+                                              contentPadding: fieldSearchPadding,
+                                              enabledBorder: textFieldInputBorder,
+                                              focusedBorder: textFieldInputBorder,
+                                              errorBorder: textFieldErrorInputBorder,
+                                              focusedErrorBorder: textFieldErrorInputBorder,
+                                              errorStyle: textFieldErrorStyle,
+                                            ),
+                                          )),
+                                      Container(
+                                        width: MediaQuery.of(context).size.width * 1,
+                                        height: 40,
+                                        margin: const EdgeInsets.only(top: 20),
+                                        child: OutlinedButton(
+                                          style: navyButtonStyle,
+                                          onPressed: () {
+                                            if (numberController.text.length == 12) {
+                                              String x =
+                                              numberController.text.replaceAll("-", "");
+                                              String number = x.replaceRange(0, 1, "+66");
+                                              context
+                                                  .read<AuthenticationCubit>()
+                                                  .signin(context, number);
+                                            } else {}
+                                          },
+                                          child: const Text(
+                                            'เข้าสู่ระบบ',
+                                            style: whiteTextButton,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ])),
+                                      Container(height: 12),
+                                      // if(kIsWeb)
+                                      //   Divider(
+                                      //   color: Colors.grey.shade400,
+                                      // ),
+
+                                      Container(height: 8),
+                                      // if(kIsWeb)
+                                      //   InkResponse(
+                                      //   onTap: () {},
+                                      //   child: Container(
+                                      //     decoration: BoxDecoration(
+                                      //       color: bgColor.withOpacity(0.1),
+                                      //       borderRadius: BorderRadius.circular(10)
+                                      //     ),
+                                      //     padding: EdgeInsets.only(left: 20,right: 16,top: 10,bottom: 9),
+                                      //     width: double.infinity,
+                                      //     margin: const EdgeInsets.only(bottom: 16),
+                                      //     child: Row(
+                                      //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      //       children: [
+                                      //         Text(
+                                      //           "เพิ่มแอปไปที่หน้าจอหลัก",
+                                      //           style: TextStyle(
+                                      //               color: kTextBlack.withOpacity(0.9),
+                                      //               fontWeight: FontWeight.w500,
+                                      //               fontSize: 18),
+                                      //         ),
+                                      //         Container(
+                                      //           decoration: BoxDecoration(
+                                      //             color: Colors.white,
+                                      //             borderRadius: BorderRadius.circular(20)
+                                      //           ),
+                                      //           padding: EdgeInsets.only(top: 5,bottom: 4,left: 22,right: 22),
+                                      //           child: Text(
+                                      //             "เพิ่ม",
+                                      //             style: TextStyle(
+                                      //                 color: kTextBlack,
+                                      //                 fontWeight: FontWeight.w500,
+                                      //                 fontSize: 18),
+                                      //           ),
+                                      //         )
+                                      //       ],
+                                      //     ),
+                                      //   ),
+                                      // ),
+                                    ]),
+                                  )),
                             )
                           ]))),
             )

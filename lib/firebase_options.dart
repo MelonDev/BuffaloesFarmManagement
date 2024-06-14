@@ -55,7 +55,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAGWNq-odpJDT12i9kUh__vSaXRhiibyMo',
-    appId: '1:423348992324:android:3f93a3344278752978ff11',
+    appId: '1:423348992324:android:8d64eb497c654dfd78ff11',
     messagingSenderId: '423348992324',
     projectId: 'buffaloes-estrus-detection',
     storageBucket: 'buffaloes-estrus-detection.appspot.com',
@@ -63,13 +63,12 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDevLNMjkrFwmd29iXj4S6a7b1AbzKYRRI',
-    appId: '1:423348992324:ios:97b28694997b056578ff11',
+    appId: '1:423348992324:ios:8140c98389c4280a78ff11',
     messagingSenderId: '423348992324',
     projectId: 'buffaloes-estrus-detection',
     storageBucket: 'buffaloes-estrus-detection.appspot.com',
-    androidClientId: '423348992324-uvl7407c5gdid5bprofoba0n6kgdhsdg.apps.googleusercontent.com',
-    iosClientId: '423348992324-uebekp12jv1pptltda34sud416mg8fi9.apps.googleusercontent.com',
-    iosBundleId: 'com.melondev.buffaloesFarmManagement',
+    androidClientId: '423348992324-45ec48ojv81liva5ijqqork503ns52v1.apps.googleusercontent.com',
+    iosBundleId: 'com.melonkemo.smartBuffManager',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(

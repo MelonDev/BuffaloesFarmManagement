@@ -1,4 +1,4 @@
-package com.melondev.buffaloes_farm_management
+package com.melonkemo.smart_buff_manager
 
 import io.flutter.embedding.android.FlutterActivity
 

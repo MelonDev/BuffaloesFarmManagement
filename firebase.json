@@ -1,16 +1,1 @@
-{
-  "hosting": {
-    "public": "build/web",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
-    ]
-  }
-}
+{"hosting":{"public":"build/web","ignore":["firebase.json","**/.*","**/node_modules/**"],"rewrites":[{"source":"**","destination":"/index.html"}]},"flutter":{"platforms":{"android":{"default":{"projectId":"buffaloes-estrus-detection","appId":"1:423348992324:android:8d64eb497c654dfd78ff11","fileOutput":"android/app/google-services.json"}},"ios":{"default":{"projectId":"buffaloes-estrus-detection","appId":"1:423348992324:ios:8140c98389c4280a78ff11","uploadDebugSymbols":false,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},"dart":{"lib/firebase_options.dart":{"projectId":"buffaloes-estrus-detection","configurations":{"android":"1:423348992324:android:8d64eb497c654dfd78ff11","ios":"1:423348992324:ios:8140c98389c4280a78ff11","web":"1:423348992324:web:39b43aaf6ea0d10678ff11"}}}}}}

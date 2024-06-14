@@ -64,6 +64,42 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:423348992324:android:8d64eb497c654dfd78ff11",
+        "android_client_info": {
+          "package_name": "com.melonkemo.smart_buff_manager"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "423348992324-v1qeoff3nq8io7ob76u9e6a4sgvpc1l5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGWNq-odpJDT12i9kUh__vSaXRhiibyMo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "423348992324-v1qeoff3nq8io7ob76u9e6a4sgvpc1l5.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "423348992324-uebekp12jv1pptltda34sud416mg8fi9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.melondev.buffaloesFarmManagement"
+              }
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"

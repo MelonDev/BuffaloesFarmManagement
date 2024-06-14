@@ -102,6 +102,7 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
         group: groupName == "เพิ่มกลุ่มใหม่" || groupName == "อื่น ๆ"
             ? groupOtherController.text
             : groupName,
+        address: addressController.text.isNotEmpty ? addressController.text : null,
         province: province?.PROVINCE_NAME ?? "",
         district: district?.DISTRICT_NAME ?? "",
         subDistrict: subDistrict?.SUB_DISTRICT_NAME ?? "");

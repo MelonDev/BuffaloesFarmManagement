@@ -459,12 +459,13 @@ class FarmService {
     try {
       final DateFormat formatter = DateFormat('yyyy-MM-dd');
       final String formatted = formatter.format(date);
+      print(formatted);
 
       Map<String, dynamic> body = {
         "buff_id": buffId,
-        "anthelmintic_drug_name": anthelminticDrugName,
-        "next_deworming_duration": nextDewormingDuration,
-        "date": formatted,
+        "dewormer_type": anthelminticDrugName,
+        "duration": nextDewormingDuration,
+        "deworm_date": formatted,
         "notify": true
       };
 

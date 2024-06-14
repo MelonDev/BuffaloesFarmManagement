@@ -3,10 +3,10 @@ description: A new Flutter project.
 
 publish_to: 'none'
 
-version: 1.0.2+5
+version: 1.0.6+1
 
 environment:
-  sdk: ">=2.17.6 <3.0.0"
+  sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
   flutter:
@@ -32,9 +32,9 @@ dependencies:
   bottom_bar_with_sheet: ^2.4.0
   salomon_bottom_bar: ^3.3.2
   flutter_multi_formatter: ^2.11.1
-  firebase_auth: ^4.19.4
-  firebase_core: ^2.30.1
-  firebase_storage: ^11.7.4
+  firebase_auth: ^5.0.0
+  firebase_core: ^3.0.0
+  firebase_storage: ^12.0.0
   uuid: ^3.0.7
   pin_code_fields: ^7.4.0
   flutter_cupertino_date_picker_fork: ^1.0.7
@@ -62,6 +62,8 @@ dev_dependencies:
 
   flutter_launcher_icons: ^0.13.1
   flutter_lints: ^2.0.1
+  change_app_package_name: ^1.2.0
+  rename: ^3.0.2
 
 
 flutter_icons:
