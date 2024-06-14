@@ -15,10 +15,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: subosito/flutter-action@v2.12.0
+      - name: Clone repository
+        uses: actions/checkout@v3
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2.16.0
         with:
           channel: 'stable' # or: 'beta' or 'master'
+          flutter-version-file: pubspec.yaml
       - run: flutter --version
       - name: 'Run flutter pub get'
         run: flutter pub get
