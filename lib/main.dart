@@ -29,11 +29,11 @@ import 'cubit/authentication/authentication_cubit.dart';
 import 'cubit/service/service_cubit.dart';
 import 'firebase_options.dart';
 
-void main() async{
+void main(){
   Intl.defaultLocale = "th";
 
   WidgetsFlutterBinding.ensureInitialized();
-  initialize();
+  //initialize();
 
 
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
