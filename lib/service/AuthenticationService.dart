@@ -23,22 +23,26 @@ class AuthenticationService {
         print(response.statusCode);
         if (response.statusCode == 200) {
           print(response.data);
-          AuthenticateModel? result =
-          AuthenticateModel.fromJson(response.data);
+          AuthenticateModel? result = AuthenticateModel.fromJson(response.data);
 
           print(result.access_token);
           print(result.refresh_token);
           print(result.farm_name);
 
-
           FlutterSecureStorage storage = const FlutterSecureStorage();
-          await storage.write(key: "access_token".toUpperCase(), value: result.access_token);
-          await storage.write(key: "refresh_token".toUpperCase(), value: result.refresh_token);
-          await storage.write(key: "farm_name".toUpperCase(), value: result.farm_name);
+          await storage.write(
+              key: "access_token".toUpperCase(), value: result.access_token);
+          await storage.write(
+              key: "refresh_token".toUpperCase(), value: result.refresh_token);
+          await storage.write(
+              key: "farm_name".toUpperCase(), value: result.farm_name);
           await storage.write(key: "phone_number".toUpperCase(), value: phone);
+          await storage.write(
+              key: "admin".toUpperCase(),
+              value: result.admin ? "1" : "0");
 
           return result;
-        }else if(response.statusCode == 404){
+        } else if (response.statusCode == 404) {
           print("sTATUS_CodE");
           //Navigator.of(context).push(MaterialPageRoute(builder: (context) => FarmInfoPage()));
 
@@ -86,14 +90,17 @@ class AuthenticationService {
         print(response.statusCode);
         if (response.statusCode == 200) {
           print(response.data);
-          AuthenticateModel? result =
-              AuthenticateModel.fromJson(response.data);
+          AuthenticateModel? result = AuthenticateModel.fromJson(response.data);
 
           FlutterSecureStorage storage = const FlutterSecureStorage();
-          await storage.write(key: "access_token".toUpperCase(), value: result.access_token);
-          await storage.write(key: "refresh_token".toUpperCase(), value: result.refresh_token);
-          await storage.write(key: "farm_name".toUpperCase(), value: result.farm_name);
-          await storage.write(key: "phone_number".toUpperCase(), value: phoneNumber);
+          await storage.write(
+              key: "access_token".toUpperCase(), value: result.access_token);
+          await storage.write(
+              key: "refresh_token".toUpperCase(), value: result.refresh_token);
+          await storage.write(
+              key: "farm_name".toUpperCase(), value: result.farm_name);
+          await storage.write(
+              key: "phone_number".toUpperCase(), value: phoneNumber);
 
           return result;
         }

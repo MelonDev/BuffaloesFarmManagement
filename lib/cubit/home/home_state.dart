@@ -15,8 +15,9 @@ class LoadingHomeFarmState extends HomeFarmState {}
 
 class HomeManagementState extends HomeState {
   List<BuffModel>? data;
+  bool isAdmin = false;
 
-  HomeManagementState({this.data});
+  HomeManagementState({this.data,this.isAdmin = false});
 }
 
 class LoadingHomeManagementState extends HomeManagementState {}

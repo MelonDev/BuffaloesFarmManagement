@@ -116,8 +116,8 @@ class _SellPageState extends State<SellPage> {
     return Container(
       child: RefreshIndicator(
         color: primaryColor,
-        child: Container(),
-        //child: child(context, state),
+        //child: Container(),
+        child: child(context),
         onRefresh: () async {
           //context.read<HomeCubit>().management(code: code);
         },
@@ -125,14 +125,15 @@ class _SellPageState extends State<SellPage> {
     );
   }
 
-  // Widget child(BuildContext context, HomeManagementState state) {
-  //   if (state.data != null) {
-  //     if (state.data!.isNotEmpty) {
-  //       return listView(state);
-  //     }
-  //   }
-  //   return empty(context);
-  // }
+  Widget child(BuildContext context) {
+    // if (state.data != null) {
+    //   if (state.data!.isNotEmpty) {
+    //     //return listView(state);
+    //     return Container();
+    //   }
+    // }
+    return empty(context);
+  }
 
   Widget mapIndicator({required Color color,
     required String text,
@@ -183,7 +184,7 @@ class _SellPageState extends State<SellPage> {
           Text(
             "ไม่พบข้อมูล",
             style: GoogleFonts.itim(
-                color: ColorHelper.lighten(primaryColor, .3).withOpacity(0.8),
+                color: textOuterColor,
                 fontSize: 26),
           ),
           Container(height: 6),
@@ -196,7 +197,7 @@ class _SellPageState extends State<SellPage> {
                   ColorHelper.lighten(primaryColor, .4).withOpacity(0.1)),
               elevation: MaterialStateProperty.all(0),
               backgroundColor: MaterialStateProperty.all(
-                  ColorHelper.lighten(primaryColor, .2).withOpacity(0.1)),
+                  textOuterColor.withOpacity(0.1)),
               shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                 RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30.0),
@@ -208,7 +209,7 @@ class _SellPageState extends State<SellPage> {
               children: [
                 Icon(
                   FontAwesomeIcons.rotateRight,
-                  color: ColorHelper.lighten(primaryColor, .4).withOpacity(0.8),
+                  color: textOuterColor,
                   size: 18,
                 ),
                 Container(width: 12),
@@ -216,8 +217,7 @@ class _SellPageState extends State<SellPage> {
                   "รีเฟรส",
                   style: TextStyle(
                       fontSize: 16,
-                      color: ColorHelper.lighten(primaryColor, .4)
-                          .withOpacity(0.8)),
+                      color: textOuterColor),
                 )
               ],
             ),

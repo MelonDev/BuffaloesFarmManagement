@@ -7,6 +7,7 @@ import 'package:buffaloes_farm_management/models/NotificationModel.dart';
 import 'package:buffaloes_farm_management/service/FarmService.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:meta/meta.dart';
 
 part 'home_state.dart';
@@ -25,13 +26,16 @@ class HomeCubit extends Cubit<HomeState> {
   management({String? code}) async {
     emit(LoadingHomeManagementState());
     print(code);
-    if(code != null) {
+    FlutterSecureStorage storage = const FlutterSecureStorage();
+    String? admin = await storage.read(key: "admin".toUpperCase());
+    bool isAdmin = admin == "1";
+
+    if (code != null) {
       List<BuffModel>? buffs = await FarmService.buffs(code);
 
-      emit(HomeManagementState(data: buffs));
-    }else {
-      emit(HomeManagementState(data: null));
-
+      emit(HomeManagementState(data: buffs, isAdmin: isAdmin));
+    } else {
+      emit(HomeManagementState(data: null, isAdmin: isAdmin));
     }
   }
 

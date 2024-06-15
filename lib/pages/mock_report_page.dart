@@ -33,7 +33,7 @@ class _ReportPageState extends State<ReportPage> {
   }
 
   initialData() async {
-    Map<String, dynamic>? data = await FarmService.report();
+    Map<String, dynamic>? data = await FarmService.mockReport();
     List<ReportBaseModel>? mapModels;
     if (data != null) {
       mapModels = [];
@@ -52,7 +52,8 @@ class _ReportPageState extends State<ReportPage> {
       mapModels.add(mapChiangRai(data: data));
       mapModels.add(mapNan(data: data));
       mapModels.add(mapPhrae(data: data));
-      mapModels.add(ReportPieChartModel(data['TYPE']));
+      mapModels.add(ReportPieChartModel(data['MOCK']));
+      mapModels.add(ReportTableModel(data['TABLE']));
     }
 
     setState(() {
@@ -66,75 +67,76 @@ class _ReportPageState extends State<ReportPage> {
     double statusBarHeight = MediaQuery.of(context).viewPadding.top;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.dark.copyWith(
-            systemNavigationBarColor: primaryColor,
-            systemNavigationBarDividerColor: primaryColor,
-            systemNavigationBarIconBrightness: Brightness.dark,
-            //statusBarIconBrightness: Brightness.dark,
-            //statusBarBrightness: Brightness.light,
-            statusBarColor: primaryColor
-            //systemNavigationBarContrastEnforced: true,
-            ),
-        child: Container(
-            color: primaryColor,
-            child: Center(
-                child: Container(
-                    constraints: const BoxConstraints(maxWidth: 700),
-                    child: GestureDetector(
-                      onTap: () =>
-                          FocusManager.instance.primaryFocus?.unfocus(),
-                      child: Scaffold(
-                        backgroundColor: primaryColor,
-                        appBar: PreferredSize(
-                            preferredSize: const Size.fromHeight(50.0),
-                            child: Container(
-                                height: 60 + statusBarHeight,
-                                child: Center(
-                                    child: Container(
-                                        constraints:
-                                            const BoxConstraints(maxWidth: 700),
-                                        child: AppBar(
-                                          backgroundColor:
-                                              Colors.white.withOpacity(0.0),
-                                          shadowColor: Colors.transparent,
-                                          elevation: 0.0,
-                                          surfaceTintColor: primaryColor,
-                                          systemOverlayStyle: SystemUiOverlayStyle(
-                                              statusBarIconBrightness:
-                                                  Brightness.dark,
-                                              statusBarBrightness:
-                                                  Brightness.light,
-                                              statusBarColor: primaryColor,
-                                              systemNavigationBarColor:
-                                                  primaryColor,
-                                              systemNavigationBarIconBrightness:
-                                                  Brightness.dark),
-                                          shape: const RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.vertical(
-                                              bottom: Radius.circular(22),
-                                            ),
-                                          ),
-                                          centerTitle: true,
-                                          title: Text(
-                                            "รายงาน",
-                                            style: GoogleFonts.itim(
-                                              color: textOuterColor,
-                                              fontSize: 24,
-                                            ),
-                                          ),
-                                          titleSpacing: 0,
-                                          leading: IconButton(
-                                            icon: Icon(FontAwesomeIcons.xmark,
-                                                color: textOuterColor,
-                                                size: 24),
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                          ),
-                                        ))))),
-                        body: body(),
+      value: SystemUiOverlayStyle.dark.copyWith(
+          systemNavigationBarColor: primaryColor,
+          systemNavigationBarDividerColor: primaryColor,
+          systemNavigationBarIconBrightness: Brightness.dark,
+          //statusBarIconBrightness: Brightness.dark,
+          //statusBarBrightness: Brightness.light,
+          statusBarColor: primaryColor
+          //systemNavigationBarContrastEnforced: true,
+          ),
+      child: Container(
+        color: primaryColor,
+        child: Center(
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 800),
+            child: GestureDetector(
+              onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+              child: Scaffold(
+                backgroundColor: primaryColor,
+                appBar: PreferredSize(
+                  preferredSize: const Size.fromHeight(50.0),
+                  child: Container(
+                    height: 60 + statusBarHeight,
+                    child: Center(
+                      child: Container(
+                        constraints: const BoxConstraints(maxWidth: 700),
+                        child: AppBar(
+                          backgroundColor: Colors.white.withOpacity(0.0),
+                          shadowColor: Colors.transparent,
+                          elevation: 0.0,
+                          surfaceTintColor: primaryColor,
+                          systemOverlayStyle: SystemUiOverlayStyle(
+                              statusBarIconBrightness: Brightness.dark,
+                              statusBarBrightness: Brightness.light,
+                              statusBarColor: primaryColor,
+                              systemNavigationBarColor: primaryColor,
+                              systemNavigationBarIconBrightness:
+                                  Brightness.dark),
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(
+                              bottom: Radius.circular(22),
+                            ),
+                          ),
+                          centerTitle: true,
+                          title: Text(
+                            "รายงาน",
+                            style: GoogleFonts.itim(
+                              color: textOuterColor,
+                              fontSize: 24,
+                            ),
+                          ),
+                          titleSpacing: 0,
+                          leading: IconButton(
+                            icon: Icon(FontAwesomeIcons.xmark,
+                                color: textOuterColor, size: 24),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ),
                       ),
-                    )))));
+                    ),
+                  ),
+                ),
+                body: body(),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   Widget loading() {
@@ -158,6 +160,10 @@ class _ReportPageState extends State<ReportPage> {
               return widgetMapFarmAmp(model);
             } else if (model is ReportPieChartModel) {
               return buffTypeCard(model.data);
+            } else if (model is ReportTableModel) {
+              //return Container();
+              print("MODEL");
+              return buffTableCard(model.data);
             } else {
               return Container();
             }
@@ -395,7 +401,7 @@ class _ReportPageState extends State<ReportPage> {
                             ),
                             leftTitles: AxisTitles(
                               sideTitles: SideTitles(
-                                reservedSize: 30,
+                                reservedSize: 50,
                                 showTitles: true,
                               ),
                             ),
@@ -615,12 +621,14 @@ class _ReportPageState extends State<ReportPage> {
       required String title,
       required String surfix,
       Color color = Colors.lightGreen}) {
-    List northProvice = data['north'][key]['provinces'];
-    int northTotalCount = data['north'][key]['count'];
+    List northProvice = data['north']?[key]?['provinces'] ?? [];
+    int northTotalCount = data['north']?[key]?['count'] ?? [];
 
-    northProvice.sort((a, b) {
-      return a['count'].compareTo(b['count']);
-    });
+    if (northProvice.isNotEmpty) {
+      northProvice.sort((a, b) {
+        return a['count'].compareTo(b['count']);
+      });
+    }
 
     List<IndicatorModel> indicators = [];
     int count = 0;
@@ -679,7 +687,7 @@ class _ReportPageState extends State<ReportPage> {
 
     for (var province in provinces) {
       print("PRO: ${province}");
-      if(province["province"] == "พะเยา"){
+      if (province["province"] == "พะเยา") {
         print("PHAYAO");
         List x = province["district"];
         print(x);
@@ -692,33 +700,46 @@ class _ReportPageState extends State<ReportPage> {
       return a['count'].compareTo(b['count']);
     });
 
-
     List<IndicatorModel> indicators = [];
 
     int count = 0;
     for (String amp in amps) {
-      if(districts.any((district) => district['district'] == amp)){
-        var dist = districts.where((district) => district['district'] == amp).single;
+      if (districts.any((district) => district['district'] == amp)) {
+        var dist =
+            districts.where((district) => district['district'] == amp).single;
         print(dist);
         print("${dist['district']}, ${dist['count']}");
         //int amount = dist['count'] ?? 0;
-        indicators.add(IndicatorModel(
-            name: amp,
-            amount: 0,
-            color: Colors.transparent));
+        // indicators.add(
+        //     IndicatorModel(name: amp, amount: 0, color: Colors.transparent));
         // indicators.add(IndicatorModel(
         //   //name: "TEST",
         //     name: dist['district'] ?? "",
         //     //amount: dist['count'] ?? 0,
         //     amount: 20,
         //     color: Colors.transparent));
-      }else {
-        indicators.add(IndicatorModel(
-            name: amp,
-            amount: 0,
-            color: Colors.transparent));
+        // indicators.add(IndicatorModel(
+        //   //name: "TEST",
+        //     name: "จุน",
+        //     //amount: dist['count'] ?? 0,
+        //     amount: 14,
+        //     color: Colors.transparent));
+        // indicators.add(IndicatorModel(
+        //   //name: "TEST",
+        //     name: "เชียงคำ",
+        //     //amount: dist['count'] ?? 0,
+        //     amount: 6,
+        //     color: Colors.transparent));
+        // indicators.add(IndicatorModel(
+        //   //name: "TEST",
+        //     name: "เมืองพะเยา",
+        //     //amount: dist['count'] ?? 0,
+        //     amount: 5,
+        //     color: Colors.transparent));
+      } else {
+        indicators.add(
+            IndicatorModel(name: amp, amount: 0, color: Colors.transparent));
       }
-
 
       count += 1;
     }
@@ -732,22 +753,22 @@ class _ReportPageState extends State<ReportPage> {
       primaryValueMapper: (int index) {
         return indicators[index].name;
       },
-      dataLabelMapper: (int index){
+      dataLabelMapper: (int index) {
         return amps[index];
       },
-
       shapeColorValueMapper: (int index) {
         print(indicators.where((element) => element.amount > 0));
         print(indicators[index].amount > 0);
-        if(indicators[index].amount > 0){
-          double opacity = (1.0 / (indicators.where((element) => element.amount > 0).length)) * (index + 1);
+        if (indicators[index].amount > 0) {
+          double opacity = (1.0 /
+                  (indicators.where((element) => element.amount > 0).length)) *
+              (index + 1);
           return districtsTotalCount == 0
               ? Colors.transparent
               : color.withOpacity(opacity);
-        }else {
+        } else {
           return Colors.transparent;
         }
-
       },
     );
     return ReportMapAmpModel(
@@ -806,7 +827,23 @@ class _ReportPageState extends State<ReportPage> {
   }
 
   ReportMapAmpModel mapNan({required data}) {
-    List<String> amps = ['ปัว', 'ท่าวังผา', 'บ้านหลวง', 'นาน้อย', 'เมืองน่าน', 'แม่จริม', 'ภูเพียง', 'เฉลิมพระเกียรติ', 'บ่อเกลือ', 'สองแคว', 'นาหมื่น', 'สันติสุข', 'เชียงกลาง', 'เวียงสา', 'ทุ่งช้าง'];
+    List<String> amps = [
+      'ปัว',
+      'ท่าวังผา',
+      'บ้านหลวง',
+      'นาน้อย',
+      'เมืองน่าน',
+      'แม่จริม',
+      'ภูเพียง',
+      'เฉลิมพระเกียรติ',
+      'บ่อเกลือ',
+      'สองแคว',
+      'นาหมื่น',
+      'สันติสุข',
+      'เชียงกลาง',
+      'เวียงสา',
+      'ทุ่งช้าง'
+    ];
     Color color = Colors.purple;
 
     int totalCount = 4;
@@ -834,7 +871,16 @@ class _ReportPageState extends State<ReportPage> {
   }
 
   ReportMapAmpModel mapPhrae({required data}) {
-    List<String> amps = ['สอง', 'วังชิ้น', 'สูงเม่น', 'เด่นชัย', 'ร้องกวาง', 'ลอง', 'เมืองแพร่', 'หนองม่วงไข่'];
+    List<String> amps = [
+      'สอง',
+      'วังชิ้น',
+      'สูงเม่น',
+      'เด่นชัย',
+      'ร้องกวาง',
+      'ลอง',
+      'เมืองแพร่',
+      'หนองม่วงไข่'
+    ];
     Color color = Colors.purple;
 
     int totalCount = 4;
@@ -859,6 +905,180 @@ class _ReportPageState extends State<ReportPage> {
         color: color,
         value: totalCount,
         surfix: "คน");
+  }
+
+  buffTableCard(Map<String, dynamic> data) {
+    List<String> titleList = [
+      //'ไอดี',
+      'รายชื่อ',
+      'เบอร์',
+      'ที่อยู่',
+      'ตำบล',
+      'อำเภอ',
+      'จังหวัด',
+      'เพศ',
+      'อายุ',
+      'การศึกษา',
+      'สถานภาพทางสังคม',
+      'การเลี้ยงกระบือ',
+      'อาชีพหลัก',
+      'ทำอาชีพไรบ้าง',
+      'รายได้รวม',
+      'รายได้เฉลี่ยต่อปีของการขายกระบือ',
+      'สมาชิก',
+      'หลักเกณฑ์ในการคัดเลือก',
+      'จำนวนควายทั้งหมด',
+      'เพศผู้',
+      'เพศเมีย',
+      'กระบือรุ่น',
+      'ลูกกระบือ',
+      'ประสบการณ์',
+      'ลักษณะการเลี้ยง',
+      'ลักษณะโรงเรือน',
+      'พื้นโรงเรือน',
+      'คอกกักกระบือ',
+      'ซองบังคับ',
+      'การขึ้นทะเบียน',
+      'ประวัติการตรวจโรค',
+      'โรคระบาดในฟาร์ม',
+    ];
+    List<dynamic> result = [];
+    List<Map<String, dynamic>> resultMore = [];
+
+    print("YURIIE");
+    data.forEach((k, v) {
+      print("$k $v");
+      if (k != "อื่น") {
+        result.addAll(v);
+      }
+      // if (k != "อื่น") {
+      //   result.addAll(v);
+      // } else {
+      //   resultMore.addAll(v);
+      // }
+    });
+
+    return Container(
+        padding: const EdgeInsets.only(left: 0, right: 0, top: 0, bottom: 0),
+        margin: const EdgeInsets.only(bottom: 16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Container(
+                margin: const EdgeInsets.only(
+                    left: 30, right: 20, bottom: 3, top: 16),
+                child: Text(
+                  "ข้อมูลโดยละเอียด",
+                  style: TextStyle(
+                      fontSize: 22, color: Colors.black.withOpacity(0.8)),
+                )),
+            Container(
+              decoration: const BoxDecoration(
+                color: kBGColor,
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(22),
+                  bottom: Radius.circular(22),
+                ),
+              ),
+              margin: const EdgeInsets.only(left: 20, right: 20, bottom: 100),
+              padding: const EdgeInsets.only(
+                  left: 16, right: 16, top: 10, bottom: 20),
+              child:
+                  _tableWidget(context, titleKeys: titleList, dataList: result),
+            )
+          ],
+        ));
+  }
+
+  Widget _tableWidget(BuildContext context,
+      {List<String>? titleKeys, List<dynamic>? dataList}) {
+    return Container(
+      height: 1000,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children: [
+          DataTable(
+              columns: _createColumns(titleKeys ?? []),
+              rows: _createRows(dataList ?? []))
+        ],
+      ),
+    );
+    // return DataTable(
+    //     columns: _createColumns(titleKeys ?? []), rows: _createRows());
+  }
+
+  List<DataColumn> _createColumns(List<String> titleKeys) {
+    List<DataColumn> column = [];
+    print("TEST: $titleKeys");
+
+    titleKeys.forEach((element) {
+      column.add(DataColumn(label: Text(element,style: GoogleFonts.itim(fontWeight: FontWeight.bold,fontSize: 16),)));
+    });
+    print("TEST2: $column");
+    return column;
+    // return [
+    //   DataColumn(label: Text('ID')),
+    //   DataColumn(label: Text('Book')),
+    //   DataColumn(label: Text('Author'))
+    // ];
+  }
+
+  List<DataRow> _createRows(List<dynamic>? dataList) {
+    print("_createRows");
+    //print(dataList);
+    List<DataRow> row = [];
+    dataList?.forEach((element) {
+      row.add(DataRow(cells: [
+        //DataCell(Text(element['ไอดี']?.toString() ?? "")),
+        DataCell(Text(element['รายชื่อ']?.toString() ?? "")),
+        DataCell(Text(element['เบอร์']?.toString() ?? "")),
+        DataCell(Text(element['ที่อยู่']?.toString() ?? "")),
+        DataCell(Text(element['ตำบล']?.toString() ?? "")),
+        DataCell(Text(element['อำเภอ']?.toString() ?? "")),
+        DataCell(Text(element['จังหวัด']?.toString() ?? "")),
+        DataCell(Text(element['เพศ']?.toString() ?? "")),
+        DataCell(Text(element['อายุ']?.toString() ?? "")),
+        DataCell(Text(element['การศึกษา']?.toString() ?? "")),
+        DataCell(Text(element['สถานภาพทางสังคม']?.toString() ?? "")),
+        DataCell(Text(element['การเลี้ยงกระบือ']?.toString() ?? "")),
+        DataCell(Text(element['อาชีพหลัก']?.toString() ?? "")),
+        DataCell(Text(element['ทำอาชีพไรบ้าง']?.toString() ?? "")),
+        DataCell(Text(element['รายได้รวม']?.toString() ?? "")),
+        DataCell(Text(element['รายได้เฉลี่ยต่อปีของการขายกระบือ']?.toString() ?? "")),
+        DataCell(Text(element['สมาชิก']?.toString() ?? "")),
+        DataCell(Text(element['หลักเกณฑ์ในการคัดเลือก']?.toString() ?? "")),
+        DataCell(Text(element['จำนวนควายทั้งหมด']?.toString() ?? "")),
+        DataCell(Text(element['เพศผู้']?.toString() ?? "")),
+        DataCell(Text(element['เพศเมีย']?.toString() ?? "")),
+        DataCell(Text(element['กระบือรุ่น']?.toString() ?? "")),
+        DataCell(Text(element['ลูกกระบือ']?.toString() ?? "")),
+        DataCell(Text(element['ประสบการณ์']?.toString() ?? "")),
+        DataCell(Text(element['ลักษณะการเลี้ยง']?.toString() ?? "")),
+        DataCell(Text(element['ลักษณะโรงเรือน']?.toString() ?? "")),
+        DataCell(Text(element['พื้นโรงเรือน']?.toString() ?? "")),
+        DataCell(Text(element['คอกกักกระบือ']?.toString() ?? "")),
+        DataCell(Text(element['ซองบังคับ']?.toString() ?? "")),
+        DataCell(Text(element['การขึ้นทะเบียน']?.toString() ?? "")),
+        DataCell(Text(element['ประวัติการตรวจโรค']?.toString() ?? "")),
+        DataCell(Text(element['โรคระบาดในฟาร์ม']?.toString() ?? "")),
+      ]));
+
+    });
+    return row;
+    return [
+      // DataRow(cells: [
+      //   DataCell(Text('#100')),
+      //   DataCell(Text('Flutter Basics')),
+      //   DataCell(Text('David John'))
+      // ]),
+      // DataRow(cells: [
+      //   DataCell(Text('#101')),
+      //   DataCell(Text('Dart Internals')),
+      //   DataCell(Text('Alex Wick'))
+      // ])
+    ];
   }
 }
 
@@ -911,4 +1131,10 @@ class ReportMapAmpModel extends ReportBaseModel {
       required this.mapSource,
       required this.color,
       required this.surfix});
+}
+
+class ReportTableModel extends ReportBaseModel {
+  Map<String, dynamic> data;
+
+  ReportTableModel(this.data);
 }

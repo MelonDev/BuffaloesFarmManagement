@@ -11,7 +11,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import '../buff_menu_detail.dart';
-import '../report_page.dart';
+import '../mock_report_page.dart';
 
 class NewManagementPage extends StatelessWidget {
   NewManagementPage({Key? key}) : super(key: key);
@@ -20,6 +20,31 @@ class NewManagementPage extends StatelessWidget {
   bool loaded = false;
 
   List<Map<String, dynamic>> listMapMenus = [
+    {
+      "title": TitleManagementMenu("ชนิดกระบือ"),
+      "children": [
+        TileManagementMenu("พ่อพันธุ์",
+            modal: "assets/image_icon/male-gender.png", code: "M"),
+        TileManagementMenu(
+            "แม่พันธุ์", modal: "assets/image_icon/female.png", code: "F"),
+        TileManagementMenu(
+            "กระบือรุ่น", modal: "assets/image_icon/star.png", code: "T"),
+        TileManagementMenu(
+            "กระบือขุน", modal: "assets/image_icon/wheat.png", code: "G"),
+        TileManagementMenu("ลูกกระบือแรกเกิด",
+            modal: "assets/image_icon/pacifier.png", code: "B")
+      ]
+    },
+    {
+      "title": TitleManagementMenu("เครื่องมือ"),
+      "children": [
+        TileManagementMenu("การจำหน่าย",
+            icon: "assets/image_icon/money-bag.png", code: "S"),
+      ]
+    }
+  ];
+
+  List<Map<String, dynamic>> listMapAdminMenus = [
     {
       "title": TitleManagementMenu("ชนิดกระบือ"),
       "children": [
@@ -94,7 +119,9 @@ class NewManagementPage extends StatelessWidget {
   Widget listView(BuildContext context, HomeManagementState state) {
     List<Widget> children = [];
 
-    for (Map<String, dynamic> mapMenu in listMapMenus) {
+    List<Map<String, dynamic>> menus = state.isAdmin ? listMapAdminMenus : listMapMenus;
+
+    for (Map<String, dynamic> mapMenu in menus) {
       TitleManagementMenu title = mapMenu['title'];
       children.add(_head(title.name));
 
