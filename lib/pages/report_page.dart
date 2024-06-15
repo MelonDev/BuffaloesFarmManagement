@@ -670,18 +670,19 @@ class _ReportPageState extends State<ReportPage> {
       "แม่ใจ"
     ];
     Color color = Colors.lightGreen;
-    print("PHAYAO");
 
-    List provinces = data['north']?["farms"]?["provinces"] ?? [];
+    List provinces = data["north"]?["farms"]?["provinces"] ?? [];
     List districts = [];
     int districtsTotalCount = 0;
 
     //print(provinces);
 
     for (var province in provinces) {
-      //print(province);
+      print("PRO: ${province}");
       if(province["province"] == "พะเยา"){
+        print("PHAYAO");
         List x = province["district"];
+        print(x);
         districts.addAll(x);
         districtsTotalCount = x.length;
       }
@@ -691,15 +692,26 @@ class _ReportPageState extends State<ReportPage> {
       return a['count'].compareTo(b['count']);
     });
 
+
     List<IndicatorModel> indicators = [];
+
     int count = 0;
     for (String amp in amps) {
       if(districts.any((district) => district['district'] == amp)){
         var dist = districts.where((district) => district['district'] == amp).single;
+        print(dist);
+        print("${dist['district']}, ${dist['count']}");
+        //int amount = dist['count'] ?? 0;
         indicators.add(IndicatorModel(
-            name: dist['district'],
-            amount: dist['count'],
+            name: amp,
+            amount: 0,
             color: Colors.transparent));
+        // indicators.add(IndicatorModel(
+        //   //name: "TEST",
+        //     name: dist['district'] ?? "",
+        //     //amount: dist['count'] ?? 0,
+        //     amount: 20,
+        //     color: Colors.transparent));
       }else {
         indicators.add(IndicatorModel(
             name: amp,
@@ -718,7 +730,7 @@ class _ReportPageState extends State<ReportPage> {
       shapeDataField: 'amp_th',
       dataCount: indicators.length,
       primaryValueMapper: (int index) {
-        return "${indicators[index].name}";
+        return indicators[index].name;
       },
       dataLabelMapper: (int index){
         return amps[index];

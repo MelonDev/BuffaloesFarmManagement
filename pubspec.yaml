@@ -33,9 +33,9 @@ dependencies:
   bottom_bar_with_sheet: ^2.4.0
   salomon_bottom_bar: ^3.3.2
   flutter_multi_formatter: ^2.11.1
-  firebase_auth: ^5.0.0
-  firebase_core: ^3.0.0
-  firebase_storage: ^12.0.0
+  firebase_auth: ^5.1.0
+  firebase_core: ^3.1.0
+  firebase_storage: ^12.0.1
   uuid: ^3.0.7
   pin_code_fields: ^7.4.0
   flutter_cupertino_date_picker_fork: ^1.0.7
@@ -56,6 +56,7 @@ dependencies:
       url: https://github.com/duythien0912/modal_bottom_sheet.git
       ref: main
       path: modal_bottom_sheet
+  firebase_app_check: ^0.3.0+1
 
 dev_dependencies:
   flutter_test:

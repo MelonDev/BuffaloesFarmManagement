@@ -10,6 +10,7 @@ import 'package:buffaloes_farm_management/pages/authentication/initial_farm_page
 import 'package:buffaloes_farm_management/pages/authentication/login_page.dart';
 import 'package:buffaloes_farm_management/pages/loading/main_initial_loading_page.dart';
 import 'package:buffaloes_farm_management/pages/menu/farm_page.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -28,16 +29,41 @@ import 'cubit/authentication/authentication_cubit.dart';
 import 'cubit/service/service_cubit.dart';
 import 'firebase_options.dart';
 
-void main() {
+void main() async{
   Intl.defaultLocale = "th";
 
   WidgetsFlutterBinding.ensureInitialized();
+  initialize();
+
 
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       systemNavigationBarColor: Colors.white,
       statusBarColor: Colors.black,
       statusBarIconBrightness: Brightness.dark));
+  runApp(RootApp());
 
+}
+
+Future<void> initialize() async {
+  //await Firebase.initializeApp();
+  await FirebaseAppCheck.instance.activate(
+    // You can also use a `ReCaptchaEnterpriseProvider` provider instance as an
+    // argument for `webProvider`
+    //webProvider: ReCaptchaV3Provider('recaptcha-v3-site-key'),
+    // Default provider for Android is the Play Integrity provider. You can use the "AndroidProvider" enum to choose
+    // your preferred provider. Choose from:
+    // 1. Debug provider
+    // 2. Safety Net provider
+    // 3. Play Integrity provider
+    androidProvider: AndroidProvider.debug,
+    // Default provider for iOS/macOS is the Device Check provider. You can use the "AppleProvider" enum to choose
+    // your preferred provider. Choose from:
+    // 1. Debug provider
+    // 2. Device Check provider
+    // 3. App Attest provider
+    // 4. App Attest provider with fallback to Device Check provider (App Attest provider is only available on iOS 14.0+, macOS 14.0+)
+    appleProvider: AppleProvider.appAttest,
+  );
   runApp(RootApp());
 }
 
@@ -121,9 +147,7 @@ class _MyAppState extends State<MyApp> {
         ],
         locale: const Locale.fromSubtags(languageCode: 'th'),
         debugShowCheckedModeBanner: false,
-        home: uid != null
-            ? FarmInfoPage()
-            : LoginPage(),
+        home: uid != null ? FarmInfoPage() : LoginPage(),
         theme: ThemeData(
           useMaterial3: true,
           fontFamily: "Itim",
