@@ -49,12 +49,12 @@ class _FarmInfoPageState extends State<FarmInfoPage> {
   DistrictModel? district;
   SubDistrictModel? subDistrict;
 
-  String? uid;
+  String? phone;
   Map<String, dynamic>? data;
   bool isLoading = false;
 
   Future<String?> _initLoad() async {
-    uid = await AuthenticationCubit().currentUserUid();
+    phone = await AuthenticationCubit().currentPhoneNumber();
     String? farmName = await storage.read(key: "farm_name".toUpperCase());
 
     return farmName;
@@ -86,16 +86,20 @@ class _FarmInfoPageState extends State<FarmInfoPage> {
     });
   }
 
-  _loadInfo() async {
+  _loadInfo({VoidCallback? onFail}) async {
     String? farmName = await _initLoad();
 
     if (farmName == null) {
-      AuthenticateModel? model = await AuthenticationService.login(token: uid);
-
+      String? phone_number =
+          await storage.read(key: "phone_number".toUpperCase());
+      AuthenticateModel? model = await AuthenticationService.login(
+          phone: phone_number);
+      print(model);
       if (model != null) {
-        if (model.access_token != null && model.refresh_token != null) {
-          toHomePage();
-        }
+          if (model.access_token != null && model.refresh_token != null) {
+            toHomePage();
+          }
+
       }
       setState(() {
         isLoading = false;
@@ -120,7 +124,7 @@ class _FarmInfoPageState extends State<FarmInfoPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (uid != null && isLoading == false) {
+    if (phone != null && isLoading == false) {
       return AnnotatedRegion<SystemUiOverlayStyle>(
           value: SystemUiOverlayStyle.light.copyWith(
               systemNavigationBarColor: kBGColor,
@@ -314,20 +318,19 @@ class _FarmInfoPageState extends State<FarmInfoPage> {
 
     AuthenticateModel? authentication;
 
-    if(widget.isEditMode == true){
+    if (widget.isEditMode == true) {
       bool response = await FarmService.changeInfo(
           farmName: farmNameController.text,
           firstName: firstNameController.text,
           lastName: lastNameController.text,
           phoneNumber: phoneNumber ?? "",
-          token: uid ?? "",
+          //token: uid ?? "",
           group: groupName == "เพิ่มกลุ่มใหม่" || groupName == "อื่น ๆ"
               ? groupOtherController.text
               : groupName,
           province: province?.PROVINCE_NAME ?? "",
           district: district?.DISTRICT_NAME ?? "",
-          subDistrict: subDistrict?.SUB_DISTRICT_NAME ?? ""
-      );
+          subDistrict: subDistrict?.SUB_DISTRICT_NAME ?? "");
       if (response) {
         toHomePage();
       } else {
@@ -335,13 +338,13 @@ class _FarmInfoPageState extends State<FarmInfoPage> {
           isLoading = false;
         });
       }
-    }else {
+    } else {
       authentication = await AuthenticationService.register(
           farmName: farmNameController.text,
           firstName: firstNameController.text,
           lastName: lastNameController.text,
           phoneNumber: phoneNumber ?? "",
-          token: uid ?? "",
+          //token: uid ?? "",
           group: groupName == "เพิ่มกลุ่มใหม่" || groupName == "อื่น ๆ"
               ? groupOtherController.text
               : groupName,
@@ -357,9 +360,6 @@ class _FarmInfoPageState extends State<FarmInfoPage> {
         });
       }
     }
-
-
-
   }
 
   isEnabledConfirmButton() {

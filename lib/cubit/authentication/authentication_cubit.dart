@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:buffaloes_farm_management/models/AuthenticateModel.dart';
 import 'package:buffaloes_farm_management/pages/add_buff_page.dart';
 import 'package:buffaloes_farm_management/pages/farm/farm_info_page.dart';
 import 'package:buffaloes_farm_management/pages/home_page.dart';
@@ -6,6 +7,7 @@ import 'package:buffaloes_farm_management/pages/authentication/initial_farm_page
 import 'package:buffaloes_farm_management/pages/authentication/login_page.dart';
 import 'package:buffaloes_farm_management/pages/authentication/sms_pin_page.dart';
 import 'package:buffaloes_farm_management/pages/menu/farm_page.dart';
+import 'package:buffaloes_farm_management/service/AuthenticationService.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -26,7 +28,8 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
   test(BuildContext context) async {
     print("TEST");
     Dio dio = Dio();
-    String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWJqZWN0Ijp7InVzZXJuYW1lIjoidXNlcm5hbWUiLCJyb2xlIjoidXNlciJ9LCJ0eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjcwMzYxOTU3LCJpYXQiOjE2NzAzNTgzNTcsImp0aSI6IjUzNmEzNDhjLWUyNzctNGE4OC04YTJiLWIxMjQyZDhhMDcyNCJ9.LTSk9jS_clOi1V_mkqOE0N3ebQgjQa_UI0cVzV96Fdc";
+    String token =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWJqZWN0Ijp7InVzZXJuYW1lIjoidXNlcm5hbWUiLCJyb2xlIjoidXNlciJ9LCJ0eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjcwMzYxOTU3LCJpYXQiOjE2NzAzNTgzNTcsImp0aSI6IjUzNmEzNDhjLWUyNzctNGE4OC04YTJiLWIxMjQyZDhhMDcyNCJ9.LTSk9jS_clOi1V_mkqOE0N3ebQgjQa_UI0cVzV96Fdc";
     String url = "https://api.melonkemo.com/poc/jwt/users/me";
     dio.options.headers['content-Type'] = 'application/json';
     dio.options.headers["Authorization"] = "Bearer $token";
@@ -35,11 +38,11 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     print(response);
   }
 
-  checking(BuildContext context, {bool useNavigator = true}) async{
+  checking(BuildContext context, {bool useNavigator = true}) async {
     //signOut(context);
-    String? uid = await currentUserUid();
-    print("uid: $uid");
-    if (uid != null) {
+    String? phone = await currentPhoneNumber();
+    print("phone: $phone");
+    if (phone != null) {
       //emit(UnauthenticationState());
       emit(AuthenticatedState());
       if (useNavigator) {
@@ -59,12 +62,20 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
   signin(BuildContext context, String number) async {
     emit(AuthenticatingState());
     print("signin");
+    AuthenticateModel? model = await AuthenticationService.login(phone: number);
 
-    if (kIsWeb) {
-      await _sendWeb(context, number);
+    if (model != null) {
+      emit(AuthenticatedState());
+      checking(context);
     } else {
-      await _send(context, number);
+      emit(UnauthenticationState());
     }
+
+    // if (kIsWeb) {
+    //   await _sendWeb(context, number);
+    // } else {
+    //   await _send(context, number);
+    // }
   }
 
   pining(
@@ -100,8 +111,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
           await storage.write(
               key: "phone_number".toUpperCase(), value: phoneNumber);
           String? uid = auth.currentUser?.uid;
-          await storage.write(
-              key: "user_uid".toUpperCase(), value: uid);
+          await storage.write(key: "user_uid".toUpperCase(), value: uid);
           checking(context);
         });
       }
@@ -150,8 +160,8 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
           context,
           MaterialPageRoute(
               builder: (context) => SMSPinPage(
-                phoneNumber: number,
-              ),
+                    phoneNumber: number,
+                  ),
               fullscreenDialog: true),
         );
 
@@ -173,14 +183,11 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
         context,
         MaterialPageRoute(
             builder: (context) => SMSPinPage(
-              phoneNumber: number,
-            ),
+                  phoneNumber: number,
+                ),
             fullscreenDialog: true),
       );
-      emit(WaitSMSState(
-          verificationId: "",
-          resendToken: null,
-          loading: false));
+      emit(WaitSMSState(verificationId: "", resendToken: null, loading: false));
       return value;
     });
 
@@ -206,8 +213,13 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
         (Route<dynamic> route) => false);
   }
 
-  Future<String?> currentUserUid() async{
+  // Future<String?> currentUserUid() async{
+  //   FlutterSecureStorage storage = const FlutterSecureStorage();
+  //   return await storage.read(key: "user_uid".toUpperCase());
+  // }
+
+  Future<String?> currentPhoneNumber() async {
     FlutterSecureStorage storage = const FlutterSecureStorage();
-    return await storage.read(key: "user_uid".toUpperCase());
+    return await storage.read(key: "phone_number".toUpperCase());
   }
 }

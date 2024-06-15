@@ -97,7 +97,7 @@ class _MyAppState extends State<MyApp> {
   Color bgColor = bgButtonColor;
   TextEditingController numberController = TextEditingController();
 
-  String? uid;
+  String? phone;
 
   @override
   void initState() {
@@ -117,11 +117,11 @@ class _MyAppState extends State<MyApp> {
       }
     }
 
-    String? uid = await AuthenticationCubit().currentUserUid();
+    String? phone = await AuthenticationCubit().currentPhoneNumber();
 
     setState(() {
       loaded = true;
-      this.uid = uid;
+      this.phone = phone;
     });
   }
 
@@ -129,7 +129,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     if (loaded) {
       //print(FirebaseAuth.instance.currentUser?.uid);
-      print(AuthenticationCubit().currentUserUid());
+      print(AuthenticationCubit().currentPhoneNumber());
 
       context
           .read<AuthenticationCubit>()
@@ -147,7 +147,7 @@ class _MyAppState extends State<MyApp> {
         ],
         locale: const Locale.fromSubtags(languageCode: 'th'),
         debugShowCheckedModeBanner: false,
-        home: uid != null ? FarmInfoPage() : LoginPage(),
+        home: phone != null ? FarmInfoPage() : LoginPage(),
         theme: ThemeData(
           useMaterial3: true,
           fontFamily: "Itim",

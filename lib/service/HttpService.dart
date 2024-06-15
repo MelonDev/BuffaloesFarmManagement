@@ -197,13 +197,13 @@ class HttpService {
   static Future<String?> uploadToFirebaseByBytes(Uint8List bytes) async {
     FirebaseStorage storage = FirebaseStorage.instance;
     FirebaseAuth auth = FirebaseAuth.instance;
-    String? uid = await AuthenticationCubit().currentUserUid();
+    String? phone = await AuthenticationCubit().currentPhoneNumber();
 
-    if (uid != null) {
+    if (phone != null) {
       Reference ref = storage
           .ref()
           .child("images")
-          .child(uid)
+          .child(phone)
           .child("${DateTime.now().millisecondsSinceEpoch}.jpg");
 
       // var metadata = SettableMetadata(
@@ -237,13 +237,13 @@ class HttpService {
   static Future<String?> uploadToFirebase(File file) async {
     FirebaseStorage storage = FirebaseStorage.instance;
     FirebaseAuth auth = FirebaseAuth.instance;
-    String? uid = await AuthenticationCubit().currentUserUid();
+    String? phone = await AuthenticationCubit().currentPhoneNumber();
 
-    if (uid != null) {
+    if (phone != null) {
       Reference ref = storage
           .ref()
           .child("images")
-          .child(uid)
+          .child(phone)
           .child("${DateTime.now().millisecondsSinceEpoch}.jpg");
 
       // var metadata = SettableMetadata(

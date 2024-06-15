@@ -1,17 +1,21 @@
 import 'dart:convert';
 
 import 'package:buffaloes_farm_management/models/AuthenticateModel.dart';
+import 'package:buffaloes_farm_management/pages/authentication/login_page.dart';
+import 'package:buffaloes_farm_management/pages/farm/farm_info_page.dart';
 import 'package:buffaloes_farm_management/service/HttpService.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart';
 
 class AuthenticationService {
-  static Future<AuthenticateModel?> login({required String? token}) async {
+  static Future<AuthenticateModel?> login({required String? phone}) async {
     try {
       Map<String, String> body = {
         //"email": "",
         //"password": "",
-        "token": token ?? ""
+        "phone": phone ?? ""
       };
       var response = await HttpService.postForm(path: '/login', body: body);
       print(response);
@@ -31,8 +35,16 @@ class AuthenticationService {
           await storage.write(key: "access_token".toUpperCase(), value: result.access_token);
           await storage.write(key: "refresh_token".toUpperCase(), value: result.refresh_token);
           await storage.write(key: "farm_name".toUpperCase(), value: result.farm_name);
+          await storage.write(key: "phone_number".toUpperCase(), value: phone);
 
           return result;
+        }else if(response.statusCode == 404){
+          print("sTATUS_CodE");
+          //Navigator.of(context).push(MaterialPageRoute(builder: (context) => FarmInfoPage()));
+
+          // Navigator.of(context).pushAndRemoveUntil(
+          //     MaterialPageRoute(builder: (context) => FarmInfoPage()),
+          //         (Route<dynamic> route) => route is LoginPage);
         }
       }
 
@@ -49,7 +61,7 @@ class AuthenticationService {
     required String? phoneNumber,
     String? address,
     String? group,
-    required String? token,
+    String? token,
     required String? province,
     required String? district,
     required String? subDistrict,
@@ -81,6 +93,7 @@ class AuthenticationService {
           await storage.write(key: "access_token".toUpperCase(), value: result.access_token);
           await storage.write(key: "refresh_token".toUpperCase(), value: result.refresh_token);
           await storage.write(key: "farm_name".toUpperCase(), value: result.farm_name);
+          await storage.write(key: "phone_number".toUpperCase(), value: phoneNumber);
 
           return result;
         }

@@ -61,18 +61,21 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
     print("LOAD");
 
     String? farm_name = await storage.read(key: "farm_name".toUpperCase());
+    String? phone_number =
+        await storage.read(key: "phone_number".toUpperCase());
 
     if (farm_name == null) {
-      String? uid = await AuthenticationCubit().currentUserUid();
+      //String? uid = await AuthenticationCubit().currentUserUid();
 
-      print("UID: $uid");
+      //print("UID: $uid");
 
-      AuthenticateModel? model = await AuthenticationService.login(token: uid);
+      AuthenticateModel? model = await AuthenticationService.login(
+          phone: phone_number);
 
       if (model != null) {
-        if (model.access_token != null && model.refresh_token != null) {
-          toHomePage();
-        }
+          if (model.access_token != null && model.refresh_token != null) {
+            toHomePage();
+          }
       }
       setState(() {
         loaded = true;
@@ -91,18 +94,19 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
     FlutterSecureStorage storage = FlutterSecureStorage();
     String? phoneNumber = await storage.read(key: "phone_number".toUpperCase());
 
-    String? uid = await AuthenticationCubit().currentUserUid();
+    //String? uid = await AuthenticationCubit().currentUserUid();
 
     AuthenticateModel? authentication = await AuthenticationService.register(
         farmName: farmNameController.text,
         firstName: firstNameController.text,
         lastName: lastNameController.text,
         phoneNumber: phoneNumber ?? "",
-        token: uid ?? "",
+        //token: uid ?? "",
         group: groupName == "เพิ่มกลุ่มใหม่" || groupName == "อื่น ๆ"
             ? groupOtherController.text
             : groupName,
-        address: addressController.text.isNotEmpty ? addressController.text : null,
+        address:
+            addressController.text.isNotEmpty ? addressController.text : null,
         province: province?.PROVINCE_NAME ?? "",
         district: district?.DISTRICT_NAME ?? "",
         subDistrict: subDistrict?.SUB_DISTRICT_NAME ?? "");
@@ -120,7 +124,8 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
   @override
   void initState() {
     super.initState();
-    load();
+
+
   }
 
   @override
