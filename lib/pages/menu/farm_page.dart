@@ -253,30 +253,45 @@ class FarmPage extends StatelessWidget {
                   Expanded(
                     child: AspectRatio(
                       aspectRatio: 1.3,
-                      child: PieChart(
-                        PieChartData(
-                          pieTouchData: PieTouchData(
-                            touchCallback:
-                                (FlTouchEvent event, pieTouchResponse) {
-                              // setState(() {
-                              //   if (!event.isInterestedForInteractions ||
-                              //       pieTouchResponse == null ||
-                              //       pieTouchResponse.touchedSection == null) {
-                              //     touchedIndex = -1;
-                              //     return;
-                              //   }
-                              //   touchedIndex = pieTouchResponse
-                              //       .touchedSection!.touchedSectionIndex;
-                              // });
-                            },
+                      child: Stack(
+                        children: [
+                          if (data["TOTAL"] == 0)
+                            Center(
+                              child: Text(
+                                "ไม่พบข้อมูล",
+                                style: TextStyle(
+                                    fontSize: 22,
+                                    color: ColorHelper.lighten(primaryColor, .6)
+                                        .withOpacity(0.7)),
+                              ),
+                            ),
+                          if (data["TOTAL"] > 0)
+                          PieChart(
+                            PieChartData(
+                              pieTouchData: PieTouchData(
+                                touchCallback:
+                                    (FlTouchEvent event, pieTouchResponse) {
+                                  // setState(() {
+                                  //   if (!event.isInterestedForInteractions ||
+                                  //       pieTouchResponse == null ||
+                                  //       pieTouchResponse.touchedSection == null) {
+                                  //     touchedIndex = -1;
+                                  //     return;
+                                  //   }
+                                  //   touchedIndex = pieTouchResponse
+                                  //       .touchedSection!.touchedSectionIndex;
+                                  // });
+                                },
+                              ),
+                              borderData: FlBorderData(
+                                show: false,
+                              ),
+                              sectionsSpace: 8,
+                              centerSpaceRadius: 32,
+                              sections: showingBuffTypeSections(data),
+                            ),
                           ),
-                          borderData: FlBorderData(
-                            show: false,
-                          ),
-                          sectionsSpace: 8,
-                          centerSpaceRadius: 32,
-                          sections: showingBuffTypeSections(data),
-                        ),
+                        ],
                       ),
                     ),
                   ),
@@ -394,31 +409,32 @@ class FarmPage extends StatelessWidget {
                                         .withOpacity(0.7)),
                               ),
                             ),
-                          PieChart(
-                            PieChartData(
-                              pieTouchData: PieTouchData(
-                                touchCallback:
-                                    (FlTouchEvent event, pieTouchResponse) {
-                                  // setState(() {
-                                  //   if (!event.isInterestedForInteractions ||
-                                  //       pieTouchResponse == null ||
-                                  //       pieTouchResponse.touchedSection == null) {
-                                  //     touchedIndex = -1;
-                                  //     return;
-                                  //   }
-                                  //   touchedIndex = pieTouchResponse
-                                  //       .touchedSection!.touchedSectionIndex;
-                                  // });
-                                },
+                          if (data["TOTAL"] > 0)
+                            PieChart(
+                              PieChartData(
+                                pieTouchData: PieTouchData(
+                                  touchCallback:
+                                      (FlTouchEvent event, pieTouchResponse) {
+                                    // setState(() {
+                                    //   if (!event.isInterestedForInteractions ||
+                                    //       pieTouchResponse == null ||
+                                    //       pieTouchResponse.touchedSection == null) {
+                                    //     touchedIndex = -1;
+                                    //     return;
+                                    //   }
+                                    //   touchedIndex = pieTouchResponse
+                                    //       .touchedSection!.touchedSectionIndex;
+                                    // });
+                                  },
+                                ),
+                                borderData: FlBorderData(
+                                  show: false,
+                                ),
+                                sectionsSpace: 8,
+                                centerSpaceRadius: 32,
+                                sections: showingBuffsSections(data),
                               ),
-                              borderData: FlBorderData(
-                                show: false,
-                              ),
-                              sectionsSpace: 8,
-                              centerSpaceRadius: 32,
-                              sections: showingBuffsSections(data),
                             ),
-                          ),
                         ],
                       ),
                     ),
