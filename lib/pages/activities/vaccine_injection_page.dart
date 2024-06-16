@@ -60,6 +60,10 @@ class _VaccineInjectionPageState extends State<VaccineInjectionPage> {
             buffId: widget.buffId,
             vaccine_name: vaccine!.key,
             date: DateTime.now());
+        messageDialog(context, title: "แจ้งเตือน", message: "บันทึกเรียบร้อย",
+            function: () {
+              Navigator.of(context).pop(true);
+            });
       } else {
         if (tfSpecifyName.text.isEmpty) {
           messageDialog(
@@ -75,6 +79,10 @@ class _VaccineInjectionPageState extends State<VaccineInjectionPage> {
               otherVaccineName: tfSpecifyName.text,
               otherVaccineDuration: int.tryParse(tfSpecifyDuration.text) ?? 0,
               date: DateTime.now());
+          messageDialog(context, title: "แจ้งเตือน", message: "บันทึกเรียบร้อย",
+              function: () {
+                Navigator.of(context).pop(true);
+              });
         }
       }
 

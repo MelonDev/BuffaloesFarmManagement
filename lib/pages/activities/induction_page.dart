@@ -53,46 +53,57 @@ class _InductionPageState extends State<InductionPage> {
 
   onSubmit() async {
     //messageDialog(context, title: "แจ้งเตือน", message: "เกิดข้อผิดพลาด");
-    messageDialog(context, title: "แจ้งเตือน", message: "บันทึกเรียบร้อย");
+    //messageDialog(context, title: "แจ้งเตือน", message: "บันทึกเรียบร้อย");
 
-    // setState(() {
-    //   isSaving = true;
-    // });
-    // if (tfName.text.isNotEmpty || type == 1) {
-    //   String? result = await FarmService.addInducting(
-    //       buffId: widget.buffId,
-    //       induction: type == 0 ? true : false,
-    //       method: type == 0 ? tfName.text : null,
-    //       date: pickedReturnDatetime ?? DateTime.now());
-    //
-    //   if (result != null) {
-    //     if (result == "SUCCESS") {
-    //       isSaved = true;
-    //
-    //       if (!mounted) return;
-    //       messageDialog(context, title: "แจ้งเตือน", message: "บันทึกเรียบร้อย",
-    //           function: () {
-    //         //context.read<HomeCubit>().management();
-    //         Navigator.of(context).pop(true);
-    //       });
-    //     } else {
-    //       if (!mounted) return;
-    //       messageDialog(context, title: "แจ้งเตือน", message: result);
-    //     }
-    //   } else {
-    //     if (!mounted) return;
-    //     messageDialog(context,
-    //         title: "แจ้งเตือน", message: "ไม่สามารถเชื่อมต่อได้");
-    //   }
-    // } else {
-    //   if (tfName.text.isEmpty) {
-    //     messageDialog(context,
-    //         title: "แจ้งเตือน", message: "กรุณากรอกวิธีเหนี่ยวนำ");
-    //   }
-    // }
-    // setState(() {
-    //   isSaving = false;
-    // });
+    setState(() {
+      isSaving = true;
+    });
+    if (tfName.text.isNotEmpty || type == 1) {
+      String? result;
+      if (type == 0) {
+        result = await FarmService.addInducting(
+            buffId: widget.buffId,
+            method: type == 0 ? tfName.text : null,
+            date: pickedReturnDatetime ?? DateTime.now(),
+            estrusReturnDate: (pickedReturnDatetime ?? DateTime.now())
+                .add(const Duration(days: 21 + 1)));
+      } else {
+        result = await FarmService.addNonInducting(
+            buffId: widget.buffId,
+            date: pickedReturnDatetime ?? DateTime.now(),
+            artificialInsemination: insemination == true ? true : false,
+            estrusReturnDate: (pickedReturnDatetime ?? DateTime.now())
+                .add(const Duration(days: 21 + 1)));
+      }
+
+      if (result != null) {
+        if (result == "SUCCESS") {
+          isSaved = true;
+
+          if (!mounted) return;
+          messageDialog(context, title: "แจ้งเตือน", message: "บันทึกเรียบร้อย",
+              function: () {
+            //context.read<HomeCubit>().management();
+            Navigator.of(context).pop(true);
+          });
+        } else {
+          if (!mounted) return;
+          messageDialog(context, title: "แจ้งเตือน", message: result);
+        }
+      } else {
+        if (!mounted) return;
+        messageDialog(context,
+            title: "แจ้งเตือน", message: "ไม่สามารถเชื่อมต่อได้");
+      }
+    } else {
+      if (tfName.text.isEmpty) {
+        messageDialog(context,
+            title: "แจ้งเตือน", message: "กรุณากรอกวิธีเหนี่ยวนำ");
+      }
+    }
+    setState(() {
+      isSaving = false;
+    });
   }
 
   @override

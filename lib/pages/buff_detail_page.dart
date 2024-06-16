@@ -574,7 +574,6 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
     print("body");
     List<Widget> activeWidget = [];
     List<Widget> activities = [];
-    
 
     for (var item in model.history) {
       Widget? w = getActivityLogWidget(context, item, active: false);
@@ -890,43 +889,57 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
       {bool active = false}) {
     if (item is InductingActivityModel) {
       return item.status == active
-          ? card(context,
+          ? card(
+              context,
               message: "วิธีที่ใช้เหนี่ยวนำ: ${item.induction_message}",
               subMessage: "วันที่กลับสัด: ${getBirthDate(item.date)}",
               active: active,
               log: BuffActivityLog.inducting,
-              function: item.induction == true ? ActivityFunctionModel(
-                  name: "เริ่มต้นการผสมพันธุ์",
-                  icon: FontAwesomeIcons.stethoscope,
-                  function: () async {
-                    await Navigator.of(context)
-                        .push(NavigatorHelper.slide(BreedingPage(
-                      buffId: widget.id,
-                    )));
-
-                    onLoad();
-                  }) : null)
+              // function: item.induction == true ? ActivityFunctionModel(
+              //     name: "เริ่มต้นการผสมพันธุ์",
+              //     icon: FontAwesomeIcons.stethoscope,
+              //     function: () async {
+              //       await Navigator.of(context)
+              //           .push(NavigatorHelper.slide(BreedingPage(
+              //         buffId: widget.id,
+              //       )));
+              //
+              //       onLoad();
+              //     })
+              //    : null
+            )
           : null;
     } else if (item is BreedingActivityModel) {
-      return item.status == active
-          ? card(context,
-              message: "กลับสัด: ${getBirthDate(item.date)}",
-              subMessage:
-                  "รูปแบบ: ${item.artificial_insemination! ? "ผสมเทียม" : "ผสมจริง"}",
+      if (item.status == active) {
+        if (item.induction ?? false) {
+          return card(
+            context,
+            message: "กลับสัด: ${getBirthDate(item.estrus_return_date)}",
+            subMessage: "วิธีที่ใช้: ${item.induction_method}",
+            active: active,
+            log: BuffActivityLog.inducting,
+          );
+        } else {
+          if (item.artificial_insemination ?? false) {
+            return card(
+              context,
+              message: "กลับสัด: ${getBirthDate(item.estrus_return_date)}",
+              subMessage: "รูปแบบ: ${(item.artificial_insemination ?? false) ? "ผสมเทียม" :"ผสมธรรมชาติ"}",
               active: active,
-              log: BuffActivityLog.breeding,
-              function: ActivityFunctionModel(
-                  name: "สถานะการกลัับสัด",
-                  icon: FontAwesomeIcons.stethoscope,
-                  function: () async {
-                    await Navigator.of(context)
-                        .push(NavigatorHelper.slide(BirthPage(
-                      buffId: widget.id,
-                    )));
-
-                    onLoad();
-                  }))
-          : null;
+              log: BuffActivityLog.breeding_ai,
+            );
+          } else {
+            return card(
+              context,
+              message: "กลับสัด: ${getBirthDate(item.estrus_return_date)}",
+              subMessage: "รูปแบบ: ${(item.artificial_insemination ?? false) ? "ผสมเทียม" :"ผสมธรรมชาติ"}",
+              active: active,
+              log: BuffActivityLog.breeding_non_ai,
+            );
+          }
+        }
+      }
+      return null;
     } else if (item is ReturnEstrusActivityModel) {
       return item.status == active
           ? card(context,
@@ -1012,9 +1025,13 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
     switch (log) {
       case BuffActivityLog.inducting:
         {
-          return FontAwesomeIcons.tableList;
+          return FontAwesomeIcons.venusMars;
         }
-      case BuffActivityLog.breeding:
+      case BuffActivityLog.breeding_ai:
+        {
+          return FontAwesomeIcons.venusMars;
+        }
+      case BuffActivityLog.breeding_non_ai:
         {
           return FontAwesomeIcons.venusMars;
         }
@@ -1045,12 +1062,17 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
     switch (log) {
       case BuffActivityLog.inducting:
         {
-          return Colors.pink;
+          return Colors.indigo;
         }
-      case BuffActivityLog.breeding:
+      case BuffActivityLog.breeding_non_ai:
         {
           return Colors.pink;
         }
+      case BuffActivityLog.breeding_ai:
+        {
+          return Colors.pink;
+        }
+
       case BuffActivityLog.returnEstrus:
         {
           return Colors.indigo;
@@ -1080,7 +1102,11 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
         {
           return "เหนื่ยวนำ";
         }
-      case BuffActivityLog.breeding:
+      case BuffActivityLog.breeding_ai:
+        {
+          return "ผสมพันธุ์";
+        }
+      case BuffActivityLog.breeding_non_ai:
         {
           return "ผสมพันธุ์";
         }
@@ -1143,7 +1169,8 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
 
 enum BuffActivityLog {
   inducting,
-  breeding,
+  breeding_ai,
+  breeding_non_ai,
   returnEstrus,
   vaccineInjection,
   deworming,

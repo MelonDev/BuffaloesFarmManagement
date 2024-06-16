@@ -53,31 +53,31 @@ class _LegacyBreedingPageState extends State<LegacyBreedingPage> {
       isSaving = true;
     });
     if (tfName.text.isNotEmpty) {
-      String? result = await FarmService.addBreeding(
-          buffId: widget.buffId,
-          artificialInsemination: type == 0 ? true : false,
-          breederName: tfName.text,
-          date: pickedDatetime ?? DateTime.now());
+      // String? result = await FarmService.addBreeding(
+      //     buffId: widget.buffId,
+      //     artificialInsemination: type == 0 ? true : false,
+      //     breederName: tfName.text,
+      //     date: pickedDatetime ?? DateTime.now());
 
-      if (result != null) {
-        if (result == "SUCCESS") {
-          isSaved = true;
-
-          if (!mounted) return;
-          messageDialog(context, title: "แจ้งเตือน", message: "บันทึกเรียบร้อย",
-              function: () {
-            //context.read<HomeCubit>().management();
-            Navigator.of(context).pop(true);
-          });
-        } else {
-          if (!mounted) return;
-          messageDialog(context, title: "แจ้งเตือน", message: result);
-        }
-      } else {
-        if (!mounted) return;
-        messageDialog(context,
-            title: "แจ้งเตือน", message: "ไม่สามารถเชื่อมต่อได้");
-      }
+      // if (result != null) {
+      //   if (result == "SUCCESS") {
+      //     isSaved = true;
+      //
+      //     if (!mounted) return;
+      //     messageDialog(context, title: "แจ้งเตือน", message: "บันทึกเรียบร้อย",
+      //         function: () {
+      //       //context.read<HomeCubit>().management();
+      //       Navigator.of(context).pop(true);
+      //     });
+      //   } else {
+      //     if (!mounted) return;
+      //     messageDialog(context, title: "แจ้งเตือน", message: result);
+      //   }
+      // } else {
+      //   if (!mounted) return;
+      //   messageDialog(context,
+      //       title: "แจ้งเตือน", message: "ไม่สามารถเชื่อมต่อได้");
+      // }
     } else {
       if (tfName.text.isEmpty) {
         messageDialog(context,

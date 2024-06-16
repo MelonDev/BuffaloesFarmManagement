@@ -14,7 +14,7 @@ class FarmService {
       if (response != null) {
         if (response.statusCode == 200) {
           var data = response.data['data'];
-          print(data);
+          print("DATA: $data");
           if (data != null) {
             BuffModel buff = BuffModel.fromJson(data);
             return buff;
@@ -292,24 +292,27 @@ class FarmService {
 
   static Future<String?> addInducting(
       {required String buffId,
-      required bool induction,
       String? method,
-      required DateTime date}) async {
-    if (induction == true && method == null) return "ไม่สามารถบันทึกได้";
+      required DateTime date,
+      required DateTime estrusReturnDate}) async {
+    if (method == null) return "ไม่สามารถบันทึกได้";
     try {
       final DateFormat formatter = DateFormat('yyyy-MM-dd');
       final String formatted = formatter.format(date);
+      final String estrusReturnFormatted = formatter.format(date);
 
       Map<String, dynamic> body = {
         "buff_id": buffId,
-        "induction": induction,
-        "method": method,
-        "date": formatted,
+        "induction": true,
+        "induction_method": method,
+        "induction_date": formatted,
+        "estrus_return_check_date": estrusReturnFormatted,
         "notify": true
       };
 
+      print("BODY");
       print(body);
-      var response = await HttpService.postForm(path: '/inducting', body: body);
+      var response = await HttpService.postForm(path: '/breeding', body: body);
       print("response: $response");
       if (response != null) {
         print(response.statusCode);
@@ -340,21 +343,24 @@ class FarmService {
     }
   }
 
-  static Future<String?> addBreeding(
+  static Future<String?> addNonInducting(
       {required String buffId,
-      required bool artificialInsemination,
-      required String breederName,
-      required DateTime date}) async {
+      bool artificialInsemination = false,
+      String? breederBreed,
+      required DateTime date,
+      required DateTime estrusReturnDate}) async {
     try {
       final DateFormat formatter = DateFormat('yyyy-MM-dd');
       final String formatted = formatter.format(date);
+      final String estrusReturnFormatted = formatter.format(date);
+
 
       Map<String, dynamic> body = {
         "buff_id": buffId,
-        "artificial_insemination": artificialInsemination,
-        "breeder_name": breederName ?? "",
-        "breeder_id": "",
-        "date": formatted,
+        "induction": false,
+        "artificialInsemination": artificialInsemination,
+        "estrus_return_check_date": estrusReturnFormatted,
+        "breeder_breed": breederBreed,
         "notify": true
       };
 
@@ -369,7 +375,7 @@ class FarmService {
         } else if (response.statusCode == 406) {
           return "อยู่ในสถานะรอการกลับสัด ไม่สามารถผสมพันธุ์เพิ่มได้";
         } else {
-          String message = response.data['detail'];
+          String? message = response.data['detail']?.toString();
           if (message == "MALE CAN'T NOT BREEDING") {
             return "เพศผู้ไม่สามารถเป็นแม่พันธุ์";
           }
@@ -580,8 +586,7 @@ class FarmService {
       };
 
       print(body);
-      var response =
-          await HttpService.postForm(path: '/selling', body: body);
+      var response = await HttpService.postForm(path: '/selling', body: body);
       print("response: $response");
       if (response != null) {
         print(response.statusCode);

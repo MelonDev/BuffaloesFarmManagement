@@ -66,6 +66,12 @@ class BuffModel {
   static List<BaseActivityModel> _getActivityList(data) {
     List<BaseActivityModel> result = [];
 
+    print("_getActivityList: $data");
+
+    for (dynamic i in data?['inducting'] ?? []){
+      result.add(_getActivityModel(i, "INDUCTING"));
+    }
+
     for (dynamic i in data?['breeding'] ?? []){
       result.add(_getActivityModel(i, "BREEDING"));
     }
@@ -114,7 +120,7 @@ class BuffModel {
 
   static String _getStatusName(name) {
     if (name == "INDUCTING") {
-      return "รอตรวจการผสม";
+      return "รอตรวจการกลับสัด";
     } else if (name == "BREEDING") {
       return "รอตรวจการกลับสัด";
     } else if (name == "RETURN_ESTRUS") {

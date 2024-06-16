@@ -57,11 +57,22 @@ class _BreedingPageState extends State<BreedingPage> {
       isSaving = true;
     });
     if (tfName.text.isNotEmpty || type == 1) {
-      String? result = await FarmService.addInducting(
-          buffId: widget.buffId,
-          induction: type == 0 ? true : false,
-          method: type == 0 ? tfName.text : null,
-          date: pickedReturnDatetime ?? DateTime.now());
+      String? result;
+      if (type == 0) {
+        result = await FarmService.addInducting(
+            buffId: widget.buffId,
+            method: type == 0 ? tfName.text : null,
+            date: pickedReturnDatetime ?? DateTime.now(),
+            estrusReturnDate: (pickedReturnDatetime ?? DateTime.now())
+                .add(const Duration(days: 21 + 1)));
+      } else {
+        result = await FarmService.addNonInducting(
+            buffId: widget.buffId,
+            date: pickedReturnDatetime ?? DateTime.now(),
+            artificialInsemination: insemination == true ? true : false,
+            estrusReturnDate: (pickedReturnDatetime ?? DateTime.now())
+                .add(const Duration(days: 21 + 1)));
+      }
 
       if (result != null) {
         if (result == "SUCCESS") {
@@ -225,7 +236,7 @@ class _BreedingPageState extends State<BreedingPage> {
                 value: getReturnDate(days: 21 + 1),
                 //hint: "วัน/เดือน/ปี",
                 readOnly: true,
-                //controller: tfReturnDateTime,
+                controller: tfReturnDateTime,
               ),
               const SizedBox(height: 16),
               tabBar(

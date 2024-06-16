@@ -44,6 +44,10 @@ class _DiseaseTreatmentPageState extends State<DiseaseTreatmentPage> {
   int status = 0;
 
   onSubmit() async {
+    messageDialog(context, title: "แจ้งเตือน", message: "บันทึกเรียบร้อย",
+        function: () {
+          Navigator.of(context).pop(true);
+        });
     setState(() {
       isSaving = true;
     });

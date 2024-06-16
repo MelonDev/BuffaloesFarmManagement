@@ -53,6 +53,12 @@ class _SellingPageState extends State<SellingPage> {
         buyer: tfBuyerDetail.text,
         channel: tfDistributor.text,
         style: tfCharacteristics.text);
+
+    messageDialog(context, title: "แจ้งเตือน", message: "บันทึกเรียบร้อย",
+        function: () {
+      Navigator.of(context).pop(true);
+    });
+
     // if (tfName.text.isNotEmpty) {
     //   String? response = await FarmService.addDeworming(
     //       buffId: widget.buffId,
