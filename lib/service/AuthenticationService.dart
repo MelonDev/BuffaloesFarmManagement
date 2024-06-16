@@ -38,12 +38,11 @@ class AuthenticationService {
               key: "farm_name".toUpperCase(), value: result.farm_name);
           await storage.write(key: "phone_number".toUpperCase(), value: phone);
           await storage.write(
-              key: "admin".toUpperCase(),
-              value: result.admin ? "1" : "0");
+              key: "admin".toUpperCase(), value: result.admin ? "1" : "0");
 
           return result;
         } else if (response.statusCode == 404) {
-          print("sTATUS_CodE");
+          return NotFoundAuthenticateModel.fromJson({});
           //Navigator.of(context).push(MaterialPageRoute(builder: (context) => FarmInfoPage()));
 
           // Navigator.of(context).pushAndRemoveUntil(

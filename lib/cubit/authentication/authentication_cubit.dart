@@ -59,14 +59,19 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     }
   }
 
-  signin(BuildContext context, String number) async {
+  signin(BuildContext context, String number,{Function? callback}) async {
     emit(AuthenticatingState());
     print("signin");
     AuthenticateModel? model = await AuthenticationService.login(phone: number);
 
     if (model != null) {
-      emit(AuthenticatedState());
-      checking(context);
+      if(model is NotFoundAuthenticateModel){
+        emit(UnauthenticationState());
+        callback?.call();
+      }else {
+        emit(AuthenticatedState());
+        checking(context);
+      }
     } else {
       emit(UnauthenticationState());
     }

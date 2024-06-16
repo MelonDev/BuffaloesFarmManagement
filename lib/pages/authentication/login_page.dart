@@ -9,6 +9,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../farm/farm_info_page.dart';
+
 class LoginPage extends StatelessWidget {
   LoginPage({Key? key}) : super(key: key);
 
@@ -42,6 +44,7 @@ class LoginPage extends StatelessWidget {
     if (state is AuthenticatingState) {
       return AuthenticateLoadingPage();
     } else if (state is UnauthenticationState) {
+
       return Material(child: InkResponse(
           onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
           child: Scaffold(
@@ -168,7 +171,10 @@ class LoginPage extends StatelessWidget {
                                               String number = x.replaceRange(0, 1, "+66");
                                               context
                                                   .read<AuthenticationCubit>()
-                                                  .signin(context, number);
+                                                  .signin(context, number,callback: (){
+                                                Navigator.of(context).push(MaterialPageRoute(builder: (context) => FarmInfoPage(phoneNumber: number,)));
+
+                                              });
                                             } else {}
                                           },
                                           child: const Text(

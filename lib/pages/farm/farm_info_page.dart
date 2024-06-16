@@ -25,9 +25,10 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart'
 import '../../tools/ColorHelper.dart';
 
 class FarmInfoPage extends StatefulWidget {
-  FarmInfoPage({super.key, this.isEditMode = false});
+  FarmInfoPage({super.key, this.isEditMode = false,this.phoneNumber});
 
   bool isEditMode;
+  String? phoneNumber;
 
   @override
   State<FarmInfoPage> createState() => _FarmInfoPageState();
@@ -88,19 +89,19 @@ class _FarmInfoPageState extends State<FarmInfoPage> {
 
   _loadInfo({VoidCallback? onFail}) async {
     String? farmName = await _initLoad();
-
+  print("FARM_NAME: $farmName");
     if (farmName == null) {
       String? phone_number =
           await storage.read(key: "phone_number".toUpperCase());
-      AuthenticateModel? model = await AuthenticationService.login(
-          phone: phone_number);
-      print(model);
-      if (model != null) {
-          if (model.access_token != null && model.refresh_token != null) {
-            toHomePage();
-          }
-
-      }
+      // AuthenticateModel? model = await AuthenticationService.login(
+      //     phone: phone_number);
+      // print(model);
+      // if (model != null) {
+      //     if (model.access_token != null && model.refresh_token != null) {
+      //       toHomePage();
+      //     }
+      //
+      // }
       setState(() {
         isLoading = false;
       });
@@ -124,7 +125,8 @@ class _FarmInfoPageState extends State<FarmInfoPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (phone != null && isLoading == false) {
+    print("${phone} $isLoading");
+    if (isLoading == false) {
       return AnnotatedRegion<SystemUiOverlayStyle>(
           value: SystemUiOverlayStyle.light.copyWith(
               systemNavigationBarColor: kBGColor,
@@ -314,7 +316,8 @@ class _FarmInfoPageState extends State<FarmInfoPage> {
       isLoading = true;
     });
 
-    String? phoneNumber = await storage.read(key: "phone_number".toUpperCase());
+    String? phoneNumber = widget.phoneNumber ?? (await storage.read(key: "phone_number".toUpperCase()));
+    print("phoneNumber: ${phoneNumber}");
 
     AuthenticateModel? authentication;
 

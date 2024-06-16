@@ -5,8 +5,13 @@ class AuthenticateModel {
   bool admin;
 
   AuthenticateModel.fromJson(json)
-      : access_token = json['data']['token']['access_token'],
-        refresh_token = json['data']['token']['refresh_token'],
-        farm_name = json['data']['farm_name'],
-        admin = json['data']['admin'] ?? false;
+      : access_token = json['data']?['token']?['access_token'],
+        refresh_token = json['data']?['token']?['refresh_token'],
+        farm_name = json['data']?['farm_name'],
+        admin = json['data']?['admin'] ?? false;
+}
+
+class NotFoundAuthenticateModel extends AuthenticateModel {
+  NotFoundAuthenticateModel.fromJson(super.json) : super.fromJson();
+
 }
