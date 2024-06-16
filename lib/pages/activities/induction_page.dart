@@ -71,7 +71,7 @@ class _InductionPageState extends State<InductionPage> {
         result = await FarmService.addNonInducting(
             buffId: widget.buffId,
             date: pickedReturnDatetime ?? DateTime.now(),
-            artificialInsemination: insemination == true ? true : false,
+            artificialInsemination: insemination == 1 ? true : false,
             estrusReturnDate: (pickedReturnDatetime ?? DateTime.now())
                 .add(const Duration(days: 21 + 1)));
       }

@@ -358,7 +358,7 @@ class FarmService {
       Map<String, dynamic> body = {
         "buff_id": buffId,
         "induction": false,
-        "artificialInsemination": artificialInsemination,
+        "artificial_insemination": artificialInsemination,
         "estrus_return_check_date": estrusReturnFormatted,
         "breeder_breed": breederBreed,
         "notify": true
