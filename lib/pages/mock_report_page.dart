@@ -667,11 +667,11 @@ class _ReportPageState extends State<ReportPage> {
 
   ReportMapAmpModel mapPhayao({required data}) {
     List<String> amps = [
-      "เชียงม่วน",
-      "ดอกคำใต้",
       "จุน",
       "เชียงคำ",
       "เมืองพะเยา",
+      "ดอกคำใต้",
+      "เชียงม่วน",
       "ภูซาง",
       "ภูกามยาว",
       "ปง",
@@ -723,10 +723,11 @@ class _ReportPageState extends State<ReportPage> {
         color: Colors.transparent));
     for (String amp in amps) {
       if (districts.any((district) => district['district'] == amp)) {
-        var dist =
-            districts.where((district) => district['district'] == amp).single;
-        print(dist);
-        print("${dist['district']}, ${dist['count']}");
+        print("PHAYAO: $amp");
+        // var dist =
+        //     districts.where((district) => district['district'] == amp).single;
+        // print(dist);
+        // print("${dist['district']}, ${dist['count']}");
         //int amount = dist['count'] ?? 0;
         // indicators.add(
         //     IndicatorModel(name: amp, amount: 0, color: Colors.transparent));
@@ -782,7 +783,28 @@ class _ReportPageState extends State<ReportPage> {
   }
 
   ReportMapAmpModel mapChiangRai({required data}) {
+    // List<String> amps = [
+    //   'ดอยหลวง',
+    //   'แม่ลาว',
+    //   'เวียงเชียงรุ้ง',
+    //   'เชียงของ',
+    //   'เทิง',
+    //   'เมืองเชียงราย',
+    //   'เวียงชัย',
+    //   'ขุนตาล',
+    //   'แม่ฟ้าหลวง',
+    //   'พญาเม็งราย',
+    //   'เวียงแก่น',
+    //   'แม่สรวย',
+    //   'เวียงป่าเป้า',
+    //   'แม่สาย',
+    //   'แม่จัน',
+    //   'เชียงแสน',
+    //   'พาน',
+    //   'ป่าแดด'
+    // ];
     List<String> amps = [
+      'พาน',
       'ดอยหลวง',
       'แม่ลาว',
       'เวียงเชียงรุ้ง',
@@ -799,7 +821,6 @@ class _ReportPageState extends State<ReportPage> {
       'แม่สาย',
       'แม่จัน',
       'เชียงแสน',
-      'พาน',
       'ป่าแดด'
     ];
     Color color = Colors.lightGreen;
