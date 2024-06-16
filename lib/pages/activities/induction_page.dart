@@ -52,8 +52,8 @@ class _InductionPageState extends State<InductionPage> {
   }
 
   onSubmit() async {
-    messageDialog(context,
-        title: "แจ้งเตือน", message: "เกิดข้อผิดพลาด");
+    //messageDialog(context, title: "แจ้งเตือน", message: "เกิดข้อผิดพลาด");
+    messageDialog(context, title: "แจ้งเตือน", message: "บันทึกเรียบร้อย");
 
     // setState(() {
     //   isSaving = true;

@@ -703,6 +703,24 @@ class _ReportPageState extends State<ReportPage> {
     List<IndicatorModel> indicators = [];
 
     int count = 0;
+    indicators.add(IndicatorModel(
+      //name: "TEST",
+        name: "จุน",
+        //amount: dist['count'] ?? 0,
+        amount: 14,
+        color: Colors.transparent));
+    indicators.add(IndicatorModel(
+      //name: "TEST",
+        name: "เชียงคำ",
+        //amount: dist['count'] ?? 0,
+        amount: 6,
+        color: Colors.transparent));
+    indicators.add(IndicatorModel(
+      //name: "TEST",
+        name: "เมืองพะเยา",
+        //amount: dist['count'] ?? 0,
+        amount: 5,
+        color: Colors.transparent));
     for (String amp in amps) {
       if (districts.any((district) => district['district'] == amp)) {
         var dist =
@@ -718,24 +736,8 @@ class _ReportPageState extends State<ReportPage> {
         //     //amount: dist['count'] ?? 0,
         //     amount: 20,
         //     color: Colors.transparent));
-        // indicators.add(IndicatorModel(
-        //   //name: "TEST",
-        //     name: "จุน",
-        //     //amount: dist['count'] ?? 0,
-        //     amount: 14,
-        //     color: Colors.transparent));
-        // indicators.add(IndicatorModel(
-        //   //name: "TEST",
-        //     name: "เชียงคำ",
-        //     //amount: dist['count'] ?? 0,
-        //     amount: 6,
-        //     color: Colors.transparent));
-        // indicators.add(IndicatorModel(
-        //   //name: "TEST",
-        //     name: "เมืองพะเยา",
-        //     //amount: dist['count'] ?? 0,
-        //     amount: 5,
-        //     color: Colors.transparent));
+
+
       } else {
         indicators.add(
             IndicatorModel(name: amp, amount: 0, color: Colors.transparent));
@@ -800,24 +802,78 @@ class _ReportPageState extends State<ReportPage> {
       'พาน',
       'ป่าแดด'
     ];
-    Color color = Colors.purple;
+    Color color = Colors.lightGreen;
 
-    int totalCount = 4;
+    List provinces = data["north"]?["farms"]?["provinces"] ?? [];
+    List districts = [];
+    int districtsTotalCount = 0;
+
+    //print(provinces);
+
+    for (var province in provinces) {
+      print("PRO: ${province}");
+      if (province["province"] == "เชียงราย") {
+        List x = province["district"];
+        print(x);
+        districts.addAll(x);
+        districtsTotalCount = x.length;
+      }
+    }
+
+    districts.sort((a, b) {
+      return a['count'].compareTo(b['count']);
+    });
+
+    List<IndicatorModel> indicators = [];
+
+    int count = 0;
+    indicators.add(IndicatorModel(
+      //name: "TEST",
+        name: "พาน",
+        //amount: dist['count'] ?? 0,
+        amount: 12,
+        color: Colors.transparent));
+
+    for (String amp in amps) {
+
+      print("amp: $amp districts: $districts");
+      if (districts.any((district) => district['district'] == amp)) {
+
+      } else {
+        indicators.add(
+            IndicatorModel(name: amp, amount: 0, color: Colors.transparent));
+      }
+
+      count += 1;
+    }
+
+    int totalCount = districts.length;
 
     MapShapeSource _map = MapShapeSource.asset(
       'assets/geojson/chiangrai_province.json',
       shapeDataField: 'amp_th',
-      dataCount: amps.length,
+      dataCount: indicators.length,
       primaryValueMapper: (int index) {
+        return indicators[index].name;
+      },
+      dataLabelMapper: (int index) {
         return amps[index];
       },
       shapeColorValueMapper: (int index) {
-        // double opacity = (1.0 / (indicators.length)) * (index + 1);
-        // return northTotalCount == 0
-        //     ? Colors.transparent
-        //     : color.withOpacity(opacity);
+
+        if (indicators[index].amount > 0) {
+          double opacity = (1.0 /
+              (indicators.where((element) => element.amount > 0).length)) *
+              (index + 1);
+          return districtsTotalCount == 0
+              ? Colors.transparent
+              : color.withOpacity(opacity);
+        } else {
+          return Colors.transparent;
+        }
       },
     );
+
     return ReportMapAmpModel(
         title: "จังหวัดเชียงราย",
         mapSource: _map,
@@ -844,24 +900,69 @@ class _ReportPageState extends State<ReportPage> {
       'เวียงสา',
       'ทุ่งช้าง'
     ];
-    Color color = Colors.purple;
+    Color color = Colors.lightGreen;
 
-    int totalCount = 4;
+    List provinces = data["north"]?["farms"]?["provinces"] ?? [];
+    List districts = [];
+    int districtsTotalCount = 0;
+
+    //print(provinces);
+
+    for (var province in provinces) {
+      print("PRO: ${province}");
+      if (province["province"] == "เชียงราย") {
+        List x = province["district"];
+        print(x);
+        districts.addAll(x);
+        districtsTotalCount = x.length;
+      }
+    }
+
+    districts.sort((a, b) {
+      return a['count'].compareTo(b['count']);
+    });
+
+    List<IndicatorModel> indicators = [];
+
+    int count = 0;
+
+    for (String amp in amps) {
+      if (districts.any((district) => district['district'] == amp)) {
+      } else {
+        indicators.add(
+            IndicatorModel(name: amp, amount: 0, color: Colors.transparent));
+      }
+
+      count += 1;
+    }
+
+    int totalCount = districts.length;
 
     MapShapeSource _map = MapShapeSource.asset(
       'assets/geojson/nan_province.json',
       shapeDataField: 'amp_th',
-      dataCount: amps.length,
+      dataCount: indicators.length,
       primaryValueMapper: (int index) {
+        return indicators[index].name;
+      },
+      dataLabelMapper: (int index) {
         return amps[index];
       },
       shapeColorValueMapper: (int index) {
-        // double opacity = (1.0 / (indicators.length)) * (index + 1);
-        // return northTotalCount == 0
-        //     ? Colors.transparent
-        //     : color.withOpacity(opacity);
+
+        if (indicators[index].amount > 0) {
+          double opacity = (1.0 /
+              (indicators.where((element) => element.amount > 0).length)) *
+              (index + 1);
+          return districtsTotalCount == 0
+              ? Colors.transparent
+              : color.withOpacity(opacity);
+        } else {
+          return Colors.transparent;
+        }
       },
     );
+
     return ReportMapAmpModel(
         title: "จังหวัดน่าน",
         mapSource: _map,
@@ -881,22 +982,66 @@ class _ReportPageState extends State<ReportPage> {
       'เมืองแพร่',
       'หนองม่วงไข่'
     ];
-    Color color = Colors.purple;
+    Color color = Colors.lightGreen;
 
-    int totalCount = 4;
+    List provinces = data["north"]?["farms"]?["provinces"] ?? [];
+    List districts = [];
+    int districtsTotalCount = 0;
+
+    //print(provinces);
+
+    for (var province in provinces) {
+      print("PRO: ${province}");
+      if (province["province"] == "เชียงราย") {
+        List x = province["district"];
+        print(x);
+        districts.addAll(x);
+        districtsTotalCount = x.length;
+      }
+    }
+
+    districts.sort((a, b) {
+      return a['count'].compareTo(b['count']);
+    });
+
+    List<IndicatorModel> indicators = [];
+
+    int count = 0;
+
+    for (String amp in amps) {
+      if (districts.any((district) => district['district'] == amp)) {
+      } else {
+        indicators.add(
+            IndicatorModel(name: amp, amount: 0, color: Colors.transparent));
+      }
+
+      count += 1;
+    }
+
+    int totalCount = districts.length;
 
     MapShapeSource _map = MapShapeSource.asset(
       'assets/geojson/phrae_province.json',
       shapeDataField: 'amp_th',
-      dataCount: amps.length,
+      dataCount: indicators.length,
       primaryValueMapper: (int index) {
+        return indicators[index].name;
+      },
+      dataLabelMapper: (int index) {
         return amps[index];
       },
       shapeColorValueMapper: (int index) {
-        // double opacity = (1.0 / (indicators.length)) * (index + 1);
-        // return northTotalCount == 0
-        //     ? Colors.transparent
-        //     : color.withOpacity(opacity);
+
+        if (indicators[index].amount > 0) {
+          double opacity = (1.0 /
+              (indicators.where((element) => element.amount > 0).length)) *
+              (index + 1);
+          return districtsTotalCount == 0
+              ? Colors.transparent
+              : color.withOpacity(opacity);
+        } else {
+          return Colors.transparent;
+        }
       },
     );
     return ReportMapAmpModel(
