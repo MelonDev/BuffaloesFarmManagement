@@ -162,7 +162,8 @@ class NotificationPage extends StatelessWidget {
               decoration: BoxDecoration(
                   // color: ColorHelper.lighten(primaryColor, .5)
                   //     .withOpacity(0.1),
-                  color: ColorHelper.lighten(primaryColor, .45).withOpacity(0.99),
+                  color:
+                      ColorHelper.lighten(primaryColor, .45).withOpacity(0.99),
                   borderRadius: BorderRadius.circular(12)),
               //width: 10,
               //height: 150,
@@ -177,15 +178,15 @@ class NotificationPage extends StatelessWidget {
                     alignment: Alignment.center,
                     margin: const EdgeInsets.only(left: 10, top: 10),
                     decoration: BoxDecoration(
-                      color: ColorHelper.darken(primaryColor, .2)
-                          .withOpacity(0.9),
-
+                      color:
+                          ColorHelper.darken(primaryColor, .2).withOpacity(0.9),
                       borderRadius: BorderRadius.circular(14),
                     ),
                     child: Icon(
                       icon,
                       size: 19,
-                      color: ColorHelper.lighten(primaryColor, .44).withOpacity(0.99),
+                      color: ColorHelper.lighten(primaryColor, .44)
+                          .withOpacity(0.99),
                     ),
                   ),
                   Container(
@@ -198,7 +199,7 @@ class NotificationPage extends StatelessWidget {
                           Text(
                             getNotificationTitle(type),
                             style: GoogleFonts.itim(
-                              fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.bold,
                                 color: ColorHelper.darken(primaryColor, .2)
                                     .withOpacity(0.9),
                                 fontSize: 24),
@@ -405,7 +406,15 @@ class NotificationPage extends StatelessWidget {
 
   IconData getNotificationTypeIcon(BuffNotificationType type) {
     switch (type) {
-      case BuffNotificationType.breeding:
+      case BuffNotificationType.inducting:
+        {
+          return FontAwesomeIcons.venusMars;
+        }
+      case BuffNotificationType.breedingNonAI:
+        {
+          return FontAwesomeIcons.venusMars;
+        }
+      case BuffNotificationType.breedingAI:
         {
           return FontAwesomeIcons.venusMars;
         }
@@ -434,7 +443,11 @@ class NotificationPage extends StatelessWidget {
 
   Color getNotificationTypeColor(BuffNotificationType type) {
     switch (type) {
-      case BuffNotificationType.breeding:
+      case BuffNotificationType.breedingNonAI:
+        {
+          return Colors.pink;
+        }
+      case BuffNotificationType.breedingAI:
         {
           return Colors.pink;
         }
@@ -462,12 +475,20 @@ class NotificationPage extends StatelessWidget {
   }
 
   BuffNotificationType getNotificationCardType(NotificationModel model) {
+    print("SADJK");
     print(model);
     String? name = model.value ?? "";
+
     print(name);
 
     if (name == "BREEDING") {
-      return BuffNotificationType.breeding;
+      return BuffNotificationType.breedingNonAI;
+    } else if (name == "NEXT_INDUCTING") {
+      return BuffNotificationType.inducting;
+    } else if (name == "NEXT_BREEDING_AI") {
+      return BuffNotificationType.breedingAI;
+    } else if (name == "NEXT_BREEDING_NON_AI") {
+      return BuffNotificationType.breedingNonAI;
     } else if (name == "RETURN_ESTRUS") {
       return BuffNotificationType.returnEstrus;
     } else if (name == "INJECTION") {
@@ -482,10 +503,19 @@ class NotificationPage extends StatelessWidget {
   }
 
   String getNotificationTitle(BuffNotificationType type) {
+    print("HEdskfsdfjd: ${type}");
     switch (type) {
-      case BuffNotificationType.breeding:
+      case BuffNotificationType.inducting:
         {
-          return "ผสมพันธุ์";
+          return "ตรวจการเหนี่ยวนำ";
+        }
+      case BuffNotificationType.breedingAI:
+        {
+          return "ตรวจการผสมเทียม";
+        }
+      case BuffNotificationType.breedingNonAI:
+        {
+          return "ตรวจการผสมธรรมชาติ";
         }
       case BuffNotificationType.returnEstrus:
         {
@@ -512,7 +542,9 @@ class NotificationPage extends StatelessWidget {
 }
 
 enum BuffNotificationType {
-  breeding,
+  inducting,
+  breedingAI,
+  breedingNonAI,
   returnEstrus,
   vaccineInjection,
   deworming,

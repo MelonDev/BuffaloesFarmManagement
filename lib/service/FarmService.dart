@@ -616,6 +616,8 @@ class FarmService {
       if (response != null) {
         if (response.statusCode == 200) {
           var data = response.data['data'];
+          print("DATA");
+          print(data);
           if (data != null) {
             List<NotificationModel> list = data.map<NotificationModel>((item) {
               return NotificationModel.fromJson(item);
