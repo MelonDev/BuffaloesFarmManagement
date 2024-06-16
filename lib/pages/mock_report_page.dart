@@ -1140,7 +1140,7 @@ class _ReportPageState extends State<ReportPage> {
   Widget _tableWidget(BuildContext context,
       {List<String>? titleKeys, List<dynamic>? dataList}) {
     return Container(
-      height: 1000,
+      height: 1800,
       child: ListView(
         scrollDirection: Axis.horizontal,
         children: [
