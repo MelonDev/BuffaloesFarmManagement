@@ -1,5 +1,9 @@
+import 'package:buffaloes_farm_management/components/MessagesDialog.dart';
 import 'package:buffaloes_farm_management/cubit/authentication/authentication_cubit.dart';
 import 'package:buffaloes_farm_management/cubit/home/home_cubit.dart';
+import 'package:buffaloes_farm_management/pages/menu/farming_page.dart';
+import 'package:buffaloes_farm_management/pages/menu/financial_page.dart';
+import 'package:buffaloes_farm_management/pages/menu/technical_support_page.dart';
 import 'package:buffaloes_farm_management/tools/ColorHelper.dart';
 import 'package:buffaloes_farm_management/tools/NavigatorHelper.dart';
 import 'package:flutter/material.dart';
@@ -51,6 +55,52 @@ class MorePage extends StatelessWidget {
       children: [
         button(
           context,
+          "การทำฟาร์ม",
+          icon: FontAwesomeIcons.leaf,
+          color: ColorHelper.lighten(primaryColor, .45).withOpacity(0.99),
+          onTap: () async {
+            Navigator.of(context).push(
+              NavigatorHelper.slide(
+                  const FarmingPage()
+              ),
+            );
+          },
+        ),
+        const SizedBox(height: 12),
+        button(
+          context,
+          "การเงินของฟาร์ม",
+          icon: FontAwesomeIcons.institution,
+          color: ColorHelper.lighten(primaryColor, .45).withOpacity(0.99),
+          onTap: () async {
+            Navigator.of(context).push(
+              NavigatorHelper.slide(
+                const FinancialPage()
+              ),
+            );
+          },
+        ),
+        const SizedBox(height: 12),
+        button(
+          context,
+          "การสนับสนุนทางเทคนิค",
+          icon: FontAwesomeIcons.solidEnvelope,
+          color: ColorHelper.lighten(primaryColor, .45).withOpacity(0.99),
+          onTap: () async {
+            messageDialog(context, title: "การติดต่อ", message: "บันทึกเรียบร้อย",
+                function: () {
+                  //context.read<HomeCubit>().management();
+                });
+            // Navigator.of(context).push(
+            //   NavigatorHelper.slide(
+            //       const TechnicalSupportPage()
+            //   ),
+            // );
+          },
+        ),
+        const SizedBox(height: 12),
+        button(
+          context,
           "ลงชื่อออก",
           icon: FontAwesomeIcons.doorOpen,
           color: ColorHelper.lighten(primaryColor, .45).withOpacity(0.99),
@@ -63,8 +113,10 @@ class MorePage extends StatelessWidget {
   }
 
   Widget button(BuildContext context,String title, {Function? onTap, IconData? icon, Color? color}) {
-    return SizedBox(
-        height: 64, // <-- Your height
+    return Container(
+      constraints: BoxConstraints(
+        minHeight: 64
+      ),
         child: ElevatedButton(
           onPressed: () {
             onTap?.call();
@@ -97,12 +149,16 @@ class MorePage extends StatelessWidget {
                     size: 22,
                   ),
                   Container(width: 16),
-                  Text(
-                    title,
-                    style: TextStyle(
-                        fontSize: 22,
-                        color: Colors.white.withOpacity(0.99)),
-                  ),
+                  Expanded(child: Container(
+                    padding: EdgeInsets.only(top: 10,bottom: 10),
+                    child: Text(
+                      title,
+                      maxLines: 3,
+                      style: TextStyle(
+                          fontSize: 22,
+                          color: Colors.white.withOpacity(0.99)),
+                    ),
+                  )),
 
                 ],
               )),

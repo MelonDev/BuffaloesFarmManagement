@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart';
+import 'package:intl/intl.dart';
 
 class AuthenticationService {
   static Future<AuthenticateModel?> login({required String? phone}) async {
@@ -68,8 +69,12 @@ class AuthenticationService {
     required String? province,
     required String? district,
     required String? subDistrict,
+    DateTime? birthDate,
+    DateTime? farmDate,
   }) async {
     try {
+      final DateFormat formatter = DateFormat('yyyy-MM-dd');
+
       Map<String, String> body = {
         "farm_name": farmName ?? "",
         "first_name": firstName ?? "",
@@ -80,7 +85,9 @@ class AuthenticationService {
         "group": group ?? "",
         "province": province ?? "",
         "district": district ?? "",
-        "sub_district": subDistrict ?? ""
+        "sub_district": subDistrict ?? "",
+        "birth_date": birthDate != null ? formatter.format(birthDate) : "",
+        "farm_date": farmDate != null ? formatter.format(farmDate) : ""
       };
       print(body);
       var response = await HttpService.postForm(path: '/register', body: body);

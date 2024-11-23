@@ -26,6 +26,10 @@ class BuffModel {
   String? breed;
   String? bloodline_level;
   String? price;
+  bool? sick;
+
+  String? healthCheckupType;
+  String? healthCheckupDate;
 
   // List<BaseActivityModel> history = [];
   List<BaseActivityModel> history = [];
@@ -48,6 +52,10 @@ class BuffModel {
         breed = json['breeding_info']?['breed']?.toString(),
         bloodline_level = json['breeding_info']?['bloodline_level']?.toString(),
         price = json['price']?.toString().toDouble().toStringAsFixed(0),
+        sick = json['sick'],
+
+        healthCheckupType = json['health_checkup']?['type']?.toString(),
+        healthCheckupDate = json['health_checkup_date']?['date']?.toString(),
         // history = json['history']
         //         ?.map<BaseActivityModel>((item) => _getActivityModel(item))
         //         .toList() ??
@@ -68,23 +76,23 @@ class BuffModel {
 
     print("_getActivityList: $data");
 
-    for (dynamic i in data?['inducting'] ?? []){
+    for (dynamic i in data?['inducting'] ?? []) {
       result.add(_getActivityModel(i, "INDUCTING"));
     }
 
-    for (dynamic i in data?['breeding'] ?? []){
+    for (dynamic i in data?['breeding'] ?? []) {
       result.add(_getActivityModel(i, "BREEDING"));
     }
 
-    for (dynamic i in data?['vaccine_injection'] ?? []){
+    for (dynamic i in data?['vaccine_injection'] ?? []) {
       result.add(_getActivityModel(i, "VACCINE_INJECTION"));
     }
 
-    for (dynamic i in data?['desease_treatment'] ?? []){
+    for (dynamic i in data?['desease_treatment'] ?? []) {
       result.add(_getActivityModel(i, "DISEASE_TREATMENT"));
     }
 
-    for (dynamic i in data?['deworming'] ?? []){
+    for (dynamic i in data?['deworming'] ?? []) {
       result.add(_getActivityModel(i, "DEWORMING"));
     }
 

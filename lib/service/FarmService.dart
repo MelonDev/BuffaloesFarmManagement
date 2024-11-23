@@ -1,9 +1,37 @@
 import 'package:buffaloes_farm_management/models/BuffModel.dart';
 import 'package:buffaloes_farm_management/models/NotificationModel.dart';
+import 'package:buffaloes_farm_management/models/financial_model.dart';
 import 'package:buffaloes_farm_management/service/HttpService.dart';
 import 'package:intl/intl.dart';
 
 class FarmService {
+
+  static Future<List<FinancialModel>?> financial() async {
+    try {
+      Map<String, String> body = {
+        //"email": "",
+        //"password": "",
+      };
+      var response = await HttpService.getForm(path: '/financial', body: body);
+      if (response != null) {
+        if (response.statusCode == 200) {
+          var data = response.data['data'];
+          print("DATA: $data");
+          if (data != null) {
+            List<FinancialModel> list = data.map<FinancialModel>((item) {
+              return FinancialModel.fromJson(item);
+            }).toList();
+            return list;
+          }
+        }
+      }
+
+      return null;
+    } on Exception catch (_) {
+      return null;
+    }
+  }
+
   static Future<BuffModel?> buff(String id) async {
     try {
       Map<String, String> body = {
@@ -60,8 +88,12 @@ class FarmService {
     String? province,
     String? district,
     String? subDistrict,
+    DateTime? birthDate,
+    DateTime? farmDate,
   }) async {
     try {
+      final DateFormat formatter = DateFormat('yyyy-MM-dd');
+
       Map<String, String> body = {
         "farm_name": farmName ?? "",
         "first_name": firstName ?? "",
@@ -70,7 +102,9 @@ class FarmService {
         "group": group ?? "",
         "province": province ?? "",
         "district": district ?? "",
-        "sub_district": subDistrict ?? ""
+        "sub_district": subDistrict ?? "",
+        "birth_date": birthDate != null ? formatter.format(birthDate) : "",
+        "farm_date": farmDate != null ? formatter.format(farmDate) : ""
       };
       var response =
           await HttpService.patchForm(path: '/change-info', body: body);
@@ -190,20 +224,63 @@ class FarmService {
     }
   }
 
-  static Future<bool?> addBuff(
-      {required String? name,
-      String? tag,
-      required String? datetime,
-      required String? gender,
-      String? father,
-      String? mother,
-      String? source,
-      String? type,
-      String? species,
-      String? price,
-      String? blood,
-      String? image}) async {
+  static Future<bool?> addFinancial({
+    String? name,
+    String? type,
+    String? date,
+    String? price,
+    String? weight,
+  }) async {
     try {
+      final DateFormat formatter = DateFormat('yyyy-MM-dd');
+
+      Map<String, dynamic> body = {
+        "name": name ?? "",
+        "type": type ?? "",
+        "price": price,
+        "weight": weight,
+        "date": date,
+      };
+
+      print(body);
+      var response = await HttpService.postForm(path: '/financial', body: body);
+      print("response: $response");
+      if (response != null) {
+        print(response.statusCode);
+        if (response.statusCode == 200) {
+          print(response.data);
+          return true;
+        } else {
+          return false;
+        }
+      }
+
+      return null;
+    } on Exception catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
+  static Future<bool?> addBuff({
+    required String? name,
+    String? tag,
+    required String? datetime,
+    required String? gender,
+    String? father,
+    String? mother,
+    String? source,
+    String? type,
+    String? species,
+    String? price,
+    String? blood,
+    String? image,
+    String? healthCheckupDate,
+    String? healthCheckupType,
+  }) async {
+    try {
+      final DateFormat formatter = DateFormat('yyyy-MM-dd');
+
       Map<String, String> body = {
         "name": name ?? "",
         "tag": tag ?? "",
@@ -217,6 +294,8 @@ class FarmService {
         "price": price ?? "",
         "blood_percent": blood ?? "",
         "image_url": image ?? "",
+        "health_checkup_type": healthCheckupType ?? "NULL",
+        "health_checkup_date": healthCheckupDate ?? ""
       };
 
       print(body);
@@ -239,21 +318,26 @@ class FarmService {
     }
   }
 
-  static Future<bool?> updateBuff(
-      {required String? id,
-      required String? name,
-      String? tag,
-      required String? datetime,
-      required String? gender,
-      String? father,
-      String? mother,
-      String? source,
-      String? type,
-      String? species,
-      String? price,
-      String? blood,
-      String? image}) async {
+  static Future<bool?> updateBuff({
+    required String? id,
+    required String? name,
+    String? tag,
+    required String? datetime,
+    required String? gender,
+    String? father,
+    String? mother,
+    String? source,
+    String? type,
+    String? species,
+    String? price,
+    String? blood,
+    String? image,
+    String? healthCheckupDate,
+    String? healthCheckupType,
+  }) async {
     try {
+      final DateFormat formatter = DateFormat('yyyy-MM-dd');
+
       Map<String, String> body = {
         "name": name ?? "",
         "tag": tag ?? "",
@@ -267,6 +351,36 @@ class FarmService {
         "price": price ?? "",
         "blood_percent": blood ?? "",
         "image_url": image ?? "",
+        "health_checkup_type": healthCheckupType ?? "NULL",
+        "health_checkup_date": healthCheckupDate ?? ""
+      };
+
+      print(body);
+      var response =
+          await HttpService.patchForm(path: '/buffs/$id', body: body);
+      print("response: $response");
+      if (response != null) {
+        print(response.statusCode);
+        if (response.statusCode == 200) {
+          print(response.data);
+          return true;
+        } else {
+          return false;
+        }
+      }
+
+      return null;
+    } on Exception catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
+  static Future<bool?> updateSickBuff(
+      {required String? id, bool sick = false}) async {
+    try {
+      Map<String, String> body = {
+        "sick": sick.toString(),
       };
 
       print(body);
@@ -353,7 +467,6 @@ class FarmService {
       final DateFormat formatter = DateFormat('yyyy-MM-dd');
       final String formatted = formatter.format(date);
       final String estrusReturnFormatted = formatter.format(date);
-
 
       Map<String, dynamic> body = {
         "buff_id": buffId,

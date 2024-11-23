@@ -52,6 +52,7 @@ class _AddBuffPage extends State<AddBuffPage> {
   };
 
   DateTime? pickedDatetime;
+  DateTime? heathCheckupDatetime;
 
   TextEditingController tfName = TextEditingController();
   TextEditingController tfTag = TextEditingController();
@@ -63,7 +64,7 @@ class _AddBuffPage extends State<AddBuffPage> {
 
   TextEditingController tfSource = TextEditingController();
 
-  String? buffTypeKey, buffSpeciesValue, buffSourceValue;
+  String? buffTypeKey, buffSpeciesValue, buffSourceValue, healthCheckupType;
 
   File? image;
   Uint8List? bytesImage;
@@ -89,7 +90,10 @@ class _AddBuffPage extends State<AddBuffPage> {
         tfFather.text = buff?.father_name ?? "";
         tfMother.text = buff?.mother_name ?? "";
 
-        if((buff?.source?.contains("อื่น ๆ")) ?? false){
+        heathCheckupDatetime = getDate(buff?.healthCheckupDate);
+        healthCheckupType = buff?.healthCheckupType;
+
+        if ((buff?.source?.contains("อื่น ๆ")) ?? false) {
           buffSourceValue = "อื่น ๆ";
 
           String source = buff?.source ?? "";
@@ -97,7 +101,7 @@ class _AddBuffPage extends State<AddBuffPage> {
           final startIndex = source.indexOf("(");
           final endIndex = source.indexOf(")", startIndex + "(".length);
           tfSource.text = source.substring(startIndex + "(".length, endIndex);
-        }else {
+        } else {
           buffSourceValue = buff?.source ?? "";
         }
 
@@ -132,7 +136,7 @@ class _AddBuffPage extends State<AddBuffPage> {
         buffSpeciesValue != null &&
         tfName.text.isNotEmpty &&
         tfTag.text.isNotEmpty &&
-        pickedDatetime != null) {
+        pickedDatetime != null && (healthCheckupType != null && heathCheckupDatetime != null)) {
       String? url;
 
       if (bytesImage != null) {
@@ -165,33 +169,44 @@ class _AddBuffPage extends State<AddBuffPage> {
 
       if (buff?.id == null) {
         result = await FarmService.addBuff(
-            name: tfName.text,
-            tag: tfTag.text,
-            type: buffTypeKey,
-            species: buffSpeciesValue,
-            blood: tfBlood.text,
-            price: tfPrice.text,
-            father: tfFather.text,
-            mother: tfMother.text,
-            source: buffSourceValue == "อื่น ๆ" ? "$buffSourceValue (${tfSource.text})" : tfSource.text,
-            gender: buffTypeKey == "F" ? "Female" : "Male",
-            image: url,
-            datetime: DateFormat('yyyy-MM-dd').format(pickedDatetime!));
+          name: tfName.text,
+          tag: tfTag.text,
+          type: buffTypeKey,
+          species: buffSpeciesValue,
+          blood: tfBlood.text,
+          price: tfPrice.text,
+          father: tfFather.text,
+          mother: tfMother.text,
+          source: buffSourceValue == "อื่น ๆ"
+              ? "$buffSourceValue (${tfSource.text})"
+              : tfSource.text,
+          gender: buffTypeKey == "F" ? "Female" : "Male",
+          image: url,
+          datetime: DateFormat('yyyy-MM-dd').format(pickedDatetime!),
+          healthCheckupType: healthCheckupType,
+          healthCheckupDate:
+              DateFormat('yyyy-MM-dd').format(heathCheckupDatetime!),
+        );
       } else {
         result = await FarmService.updateBuff(
-            id: buff!.id,
-            name: tfName.text,
-            tag: tfTag.text,
-            type: buffTypeKey,
-            species: buffSpeciesValue,
-            blood: tfBlood.text,
-            price: tfPrice.text,
-            father: tfFather.text,
-            mother: tfMother.text,
-            source: buffSourceValue == "อื่น ๆ" ? "$buffSourceValue (${tfSource.text})" : buffSourceValue,
-            gender: buffTypeKey == "F" ? "Female" : "Male",
-            image: url,
-            datetime: DateFormat('yyyy-MM-dd').format(pickedDatetime!));
+          id: buff!.id,
+          name: tfName.text,
+          tag: tfTag.text,
+          type: buffTypeKey,
+          species: buffSpeciesValue,
+          blood: tfBlood.text,
+          price: tfPrice.text,
+          father: tfFather.text,
+          mother: tfMother.text,
+          source: buffSourceValue == "อื่น ๆ"
+              ? "$buffSourceValue (${tfSource.text})"
+              : buffSourceValue,
+          gender: buffTypeKey == "F" ? "Female" : "Male",
+          image: url,
+          datetime: DateFormat('yyyy-MM-dd').format(pickedDatetime!),
+          healthCheckupType: healthCheckupType,
+          healthCheckupDate: DateFormat('yyyy-MM-dd').format(heathCheckupDatetime!),
+        );
       }
 
       if (result != null) {
@@ -226,11 +241,13 @@ class _AddBuffPage extends State<AddBuffPage> {
       } else if (tfName.text.isEmpty) {
         messageDialog(context,
             title: "แจ้งเตือน", message: "กรุณากรอกชื่อให้ครบถ้วน");
-      } else if (pickedDatetime != null) {
+      } else if (pickedDatetime == null) {
         messageDialog(context,
             title: "แจ้งเตือน", message: "กรุณาเลือกวันเดือนปีเกิด");
       } else if (tfTag.text.isEmpty) {
         messageDialog(context, title: "แจ้งเตือน", message: "กรุณาใส่เบอร์หู");
+      } else if(healthCheckupType != null && heathCheckupDatetime == null){
+        messageDialog(context, title: "แจ้งเตือน", message: "กรุณาเลือกวันเดือนที่เริ่มตรวจ");
       }
     }
     setState(() {
@@ -264,7 +281,6 @@ class _AddBuffPage extends State<AddBuffPage> {
     buffTypeKey = widget.buffTypeKey;
     gender = buffTypeKey == "F" ? 1 : 0;
     onLoad();
-
   }
 
   @override
@@ -301,14 +317,13 @@ class _AddBuffPage extends State<AddBuffPage> {
                                   shadowColor: Colors.transparent,
                                   elevation: 0.0,
                                   surfaceTintColor: primaryColor,
-                                  systemOverlayStyle:
-                                  SystemUiOverlayStyle(
-                                        statusBarColor: primaryColor,
-                                    statusBarIconBrightness: Brightness.light,
-                                    statusBarBrightness: Brightness.light,
-                                    systemNavigationBarIconBrightness: Brightness.light,
-                                    systemNavigationBarColor: primaryColor
-                                  ),
+                                  systemOverlayStyle: SystemUiOverlayStyle(
+                                      statusBarColor: primaryColor,
+                                      statusBarIconBrightness: Brightness.light,
+                                      statusBarBrightness: Brightness.light,
+                                      systemNavigationBarIconBrightness:
+                                          Brightness.light,
+                                      systemNavigationBarColor: primaryColor),
                                   shape: const RoundedRectangleBorder(
                                     borderRadius: BorderRadius.vertical(
                                       bottom: Radius.circular(22),
@@ -316,7 +331,9 @@ class _AddBuffPage extends State<AddBuffPage> {
                                   ),
                                   centerTitle: true,
                                   title: Text(
-                                    "เพิ่มกระบือ",
+                                    widget.buffId != null
+                                        ? "แก้ไขกระบือ"
+                                        : "เพิ่มกระบือ",
                                     style: GoogleFonts.itim(
                                       color: Colors.white,
                                       fontSize: 24,
@@ -524,6 +541,32 @@ class _AddBuffPage extends State<AddBuffPage> {
                     controller: tfPrice,
                     keyboardType: TextInputType.number,
                     inputFormats: [FilteringTextInputFormatter.digitsOnly]),
+                const SizedBox(height: 20),
+                textHeader(title: "ตรวจสุขภาพ"),
+                const SizedBox(height: 8),
+                tabHeathCheckupBar(),
+                if (healthCheckupType != null) const SizedBox(height: 8),
+                if (healthCheckupType != null)
+                  textField(
+                    hint: "วัน/เดือน/ปี ที่เริ่มตรวจ",
+                    required: healthCheckupType != null,
+                    readOnly: true,
+                    value: heathCheckupDatetime != null
+                        ? DateFormat('d MMMM y', 'th')
+                            .format(heathCheckupDatetime!)
+                        : null,
+                    onTap: () async {
+                      DateTime? selectdDateTime = await SlidingTimePicker(
+                          context,
+                          dateTime: heathCheckupDatetime);
+                      if (selectdDateTime != null) {
+                        setState(() {
+                          heathCheckupDatetime = selectdDateTime;
+                        });
+                        //x = "${DateFormat.Hm().format(selectdDateTime)}:00";
+                      }
+                    },
+                  ),
                 const SizedBox(
                   height: 40,
                 ),
@@ -687,6 +730,53 @@ class _AddBuffPage extends State<AddBuffPage> {
             },
           ),
         ));
+  }
+
+  Widget tabHeathCheckupBar() {
+    return Container(
+      alignment: Alignment.topLeft,
+      margin: const EdgeInsets.only(left: 0, right: 0),
+      padding: const EdgeInsets.all(4),
+      child: CustomSlidingSegmentedControl<String>(
+        decoration: BoxDecoration(
+          color: Colors.black.withOpacity(0.04),
+          borderRadius: BorderRadius.circular(40),
+        ),
+        //thumbColor: Colors.white,
+        thumbDecoration: BoxDecoration(
+          color: primaryColor,
+          borderRadius: BorderRadius.circular(40),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(.0),
+              blurRadius: 1.0,
+              spreadRadius: 1.0,
+              offset: const Offset(
+                0.0,
+                2.0,
+              ),
+            ),
+          ],
+        ),
+        innerPadding: const EdgeInsets.all(0),
+        initialValue: healthCheckupType ?? "NULL",
+        children: {
+          "NULL": buildHeathCheckupSegment("ไม่ตรวจ", "NULL"),
+          "MONTH": buildHeathCheckupSegment("เดือน", "MONTH"),
+          "YEAR": buildHeathCheckupSegment("ปี", "YEAR"),
+        },
+        onValueChanged: (value) {
+          setState(() {
+            if (value == "NULL") {
+              heathCheckupDatetime = null;
+              healthCheckupType = null;
+            } else {
+              healthCheckupType = value;
+            }
+          });
+        },
+      ),
+    );
   }
 
   buffTypeBottomDialog() {
@@ -920,6 +1010,21 @@ class _AddBuffPage extends State<AddBuffPage> {
             color: gender == number
                 ? Colors.white
                 : Colors.black.withOpacity(0.4)),
+      ),
+    );
+  }
+
+  Widget buildHeathCheckupSegment(String text, String value) {
+    String type = healthCheckupType != null ? healthCheckupType! : "NULL";
+    return Container(
+      padding: const EdgeInsets.only(left: 16, right: 16, top: 4, bottom: 4),
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+            fontSize: type == value ? 20 : 16,
+            color:
+                type == value ? Colors.white : Colors.black.withOpacity(0.4)),
       ),
     );
   }

@@ -19,6 +19,7 @@ import 'package:buffaloes_farm_management/service/FarmService.dart';
 import 'package:buffaloes_farm_management/tools/ColorHelper.dart';
 import 'package:buffaloes_farm_management/tools/NavigatorHelper.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:custom_sliding_segmented_control/custom_sliding_segmented_control.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -51,6 +52,7 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
   BuffModel? buff;
   bool initialLoading = true;
 
+
   @override
   void initState() {
     super.initState();
@@ -65,6 +67,7 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
     setState(() {
       initialLoading = false;
       this.buff = buff;
+
     });
   }
 
@@ -612,6 +615,27 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
               titleArea(model),
               const SizedBox(width: 0, height: 8),
               columnBody(context, model),
+              const SizedBox(width: 0, height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  tabBar(
+                    initialValue: false,
+                    children: {
+                      false: buildSegment("ปกติ", false, model.sick ?? false),
+                      true: buildSegment("ป่วย", true, model.sick ?? false),
+                    },
+                    callback: (value) {
+                      setState(() async {
+                        model.sick = value;
+                        await FarmService.updateSickBuff(
+                            id: buff!.id, sick: model.sick ?? false);
+                        await onLoad();
+                      });
+                    },
+                  ),
+                ],
+              )
               //card(context, model, log: BuffActivityLog.breeding),
               //card(context, model, log: BuffActivityLog.returnEstrus),
               //card(context, model, log: BuffActivityLog.vaccineInjection),
@@ -687,6 +711,58 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
     );
   }
 
+  Widget tabBar(
+      {required Map<bool, Widget> children,
+      required bool initialValue,
+      required Function(bool) callback}) {
+    return Container(
+      alignment: Alignment.topLeft,
+      margin: const EdgeInsets.only(left: 0, right: 0),
+      padding: const EdgeInsets.all(4),
+      child: CustomSlidingSegmentedControl<bool>(
+        decoration: BoxDecoration(
+          color: ColorHelper.lighten(Colors.white.withOpacity(0.1), .14),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        //thumbColor: Colors.white,
+        thumbDecoration: BoxDecoration(
+          color: ColorHelper.lighten(Colors.white, .0).withOpacity(0.9),
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(.0),
+              blurRadius: 1.0,
+              spreadRadius: 1.0,
+              offset: const Offset(
+                0.0,
+                2.0,
+              ),
+            ),
+          ],
+        ),
+        innerPadding: const EdgeInsets.all(0),
+        initialValue: initialValue,
+        children: children,
+        onValueChanged: callback,
+      ),
+    );
+  }
+
+  Widget buildSegment(String text, bool number, bool selectedValue) {
+    return Container(
+      padding: const EdgeInsets.only(left: 16, right: 16, top: 4, bottom: 4),
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+            fontSize: selectedValue == number ? 18 : 16,
+            color: selectedValue == number
+                ? Colors.black
+                : Colors.white.withOpacity(0.4)),
+      ),
+    );
+  }
+
   Widget columnBody(BuildContext context, BuffModel model) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -707,6 +783,8 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
                 titleHeader("พ่อ:", model.father_name ?? "-"),
                 const SizedBox(width: 0, height: 6),
                 titleHeader("แม่:", model.mother_name ?? "-"),
+                const SizedBox(width: 0, height: 6),
+                titleHeader("แหล่งที่มา:", model.source ?? "-"),
               ],
             ),
           ),
@@ -742,13 +820,22 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
                 const SizedBox(width: 0, height: 6),
                 titleHeader("อายุ:", getAge(model.birth_date)),
                 const SizedBox(width: 0, height: 6),
-                titleHeader("แหล่งที่มา:", model.source ?? "-"),
+                titleHeader("ตรวจสุขภาพ", _healthCheckWording(model.healthCheckupType)),
               ],
             ),
           ),
         ),
       ],
     );
+  }
+
+  String _healthCheckWording(String? type){
+    if(type == "MONTH"){
+      return "ประจำเดือน";
+    }else if(type == "YEAR"){
+      return "ประจำปี";
+    }
+    return "ไม่ตรวจ";
   }
 
   Widget titleHeader(String title, String message) {
@@ -857,7 +944,7 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
         ));
   }
 
-  String getBirthDate(String? birthDate) {
+  getBirthDate(String? birthDate) {
     if (birthDate != null) {
       DateTime tempDate = DateFormat("yyyy-MM-dd").parse(birthDate);
       DateFormat format = DateFormat("dd MMMM yyyy");
@@ -885,9 +972,35 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
     return "ไม่ระบุ";
   }
 
+  bool isInThePast(String? dateTime) {
+    if(dateTime == null) return false;
+    DateTime date = DateFormat("yyyy-MM-dd").parse(dateTime);
+    return date.isBefore(DateTime.now());
+  }
+
   Widget? getActivityLogWidget(BuildContext context, BaseActivityModel item,
       {bool active = false}) {
+
     if (item is InductingActivityModel) {
+      return !isInThePast(item.date)  == active ? card(
+        context,
+        message: "วิธีที่ใช้เหนี่ยวนำ: ${item.induction_message}",
+        subMessage: "วันที่กลับสัด: ${getBirthDate(item.date)}",
+        active: active,
+        log: BuffActivityLog.inducting,
+        // function: item.induction == true ? ActivityFunctionModel(
+        //     name: "เริ่มต้นการผสมพันธุ์",
+        //     icon: FontAwesomeIcons.stethoscope,
+        //     function: () async {
+        //       await Navigator.of(context)
+        //           .push(NavigatorHelper.slide(BreedingPage(
+        //         buffId: widget.id,
+        //       )));
+        //
+        //       onLoad();
+        //     })
+        //    : null
+      ) : null;
       return item.status == active
           ? card(
               context,
@@ -910,37 +1023,46 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
             )
           : null;
     } else if (item is BreedingActivityModel) {
-      if (item.status == active) {
-        if (item.induction ?? false) {
-          return card(
+      //if (item.status == active) {
+      if (item.induction ?? false) {
+        return !isInThePast(item.estrus_return_date) == active ? card(
+          context,
+          message: "กลับสัด: ${getBirthDate(item.estrus_return_date)}",
+          subMessage: "วิธีที่ใช้: ${item.induction_method}",
+          active: !isInThePast(item.date) == active,
+          log: BuffActivityLog.inducting,
+        ) : null;
+      } else {
+        if (item.artificial_insemination ?? false) {
+          return !isInThePast(item.estrus_return_date) == active ? card(
             context,
             message: "กลับสัด: ${getBirthDate(item.estrus_return_date)}",
-            subMessage: "วิธีที่ใช้: ${item.induction_method}",
+            subMessage:
+                "รูปแบบ: ${(item.artificial_insemination ?? false) ? "ผสมเทียม" : "ผสมธรรมชาติ"}",
             active: active,
-            log: BuffActivityLog.inducting,
-          );
+            log: BuffActivityLog.breeding_ai,
+          ) : null;
         } else {
-          if (item.artificial_insemination ?? false) {
-            return card(
-              context,
-              message: "กลับสัด: ${getBirthDate(item.estrus_return_date)}",
-              subMessage: "รูปแบบ: ${(item.artificial_insemination ?? false) ? "ผสมเทียม" :"ผสมธรรมชาติ"}",
-              active: active,
-              log: BuffActivityLog.breeding_ai,
-            );
-          } else {
-            return card(
-              context,
-              message: "กลับสัด: ${getBirthDate(item.estrus_return_date)}",
-              subMessage: "รูปแบบ: ${(item.artificial_insemination ?? false) ? "ผสมเทียม" :"ผสมธรรมชาติ"}",
-              active: active,
-              log: BuffActivityLog.breeding_non_ai,
-            );
-          }
+          return !isInThePast(item.date) && active == false ? card(
+            context,
+            message: "กลับสัด: ${getBirthDate(item.estrus_return_date)}",
+            subMessage:
+                "รูปแบบ: ${(item.artificial_insemination ?? false) ? "ผสมเทียม" : "ผสมธรรมชาติ"}",
+            active: active,
+            log: BuffActivityLog.breeding_non_ai,
+          ) : null;
         }
+        //}
       }
       return null;
     } else if (item is ReturnEstrusActivityModel) {
+      return !isInThePast(item.end_date)  == active ? card(context,
+          message: "คาดว่าจะคลอด: ${getBirthDate(item.date)}",
+          subMessage: item.end_date != null
+              ? "ถึง: ${getBirthDate(item.end_date)}"
+              : null,
+          active: active,
+          log: BuffActivityLog.returnEstrus) : null;
       return item.status == active
           ? card(context,
               message: "คาดว่าจะคลอด: ${getBirthDate(item.date)}",
@@ -951,6 +1073,14 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
               log: BuffActivityLog.returnEstrus)
           : null;
     } else if (item is VaccineInjectionActivityModel) {
+      print(item.target_date);
+      print(isInThePast(item.target_date));
+      return !isInThePast(item.target_date) == active ? card(context,
+          message: "ชนิด: ${getVaccineName(item)}",
+          subMessage:
+              "ครั้งต่อไป: ${item.target_date != null ? getBirthDate(item.target_date) : "-"}",
+          active: active,
+          log: BuffActivityLog.vaccineInjection) : null;
       return item.status == active
           ? card(context,
               message: "ชนิด: ${getVaccineName(item)}",
@@ -961,6 +1091,12 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
           : null;
     } else if (item is DewormingActivityModel) {
       print(item.deworming_date);
+      return !isInThePast(item.date)  == active ? card(context,
+          message: "ชนิด: ${item.dewormer_type}",
+          subMessage:
+              "ครั้งต่อไป: ${item.deworming_date != null ? getBirthDate(item.deworming_date) : "-"}",
+          active: active,
+          log: BuffActivityLog.deworming) : null;
       return item.status == active
           ? card(context,
               message: "ชนิด: ${item.dewormer_type}",
@@ -970,6 +1106,20 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
               log: BuffActivityLog.deworming)
           : null;
     } else if (item is DiseaseTreatmentActivityModel) {
+      return !isInThePast(item.date) == active ? card(
+        context,
+        message: "อาการ: ${item.symptom}",
+        subMessage: "ยาที่ใช้: ${item.drugs ?? "-"}",
+        active: active,
+        log: BuffActivityLog.diseaseTreatment,
+        // function: ActivityFunctionModel(
+        //   name: "อัปเดตสถานะ",
+        //   icon: FontAwesomeIcons.stethoscope,
+        //   function: () async {
+        //     //onLoad();
+        //   },
+        // ),
+      ) : null;
       return item.status == active
           ? card(
               context,
@@ -1175,5 +1325,6 @@ enum BuffActivityLog {
   vaccineInjection,
   deworming,
   diseaseTreatment,
+  healthCheckup,
   unknown
 }

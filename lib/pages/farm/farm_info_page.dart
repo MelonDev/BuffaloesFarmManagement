@@ -1,4 +1,5 @@
 import 'package:buffaloes_farm_management/components/CustomTextFormField.dart';
+import 'package:buffaloes_farm_management/components/SlidingTimePicker.dart';
 import 'package:buffaloes_farm_management/constants/ColorConstants.dart';
 import 'package:buffaloes_farm_management/cubit/authentication/authentication_cubit.dart';
 import 'package:buffaloes_farm_management/cubit/home/home_cubit.dart';
@@ -19,13 +20,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:buffaloes_farm_management/constants/StyleConstants.dart';
+import 'package:intl/intl.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart'
     as modal_bottom_sheet;
 
 import '../../tools/ColorHelper.dart';
 
 class FarmInfoPage extends StatefulWidget {
-  FarmInfoPage({super.key, this.isEditMode = false,this.phoneNumber});
+  FarmInfoPage({super.key, this.isEditMode = false, this.phoneNumber});
 
   bool isEditMode;
   String? phoneNumber;
@@ -49,6 +51,9 @@ class _FarmInfoPageState extends State<FarmInfoPage> {
   ProvinceModel? province;
   DistrictModel? district;
   SubDistrictModel? subDistrict;
+
+  DateTime? birthDatetime;
+  DateTime? createFarmDatetime;
 
   String? phone;
   Map<String, dynamic>? data;
@@ -81,15 +86,23 @@ class _FarmInfoPageState extends State<FarmInfoPage> {
           district?.PROVINCE_ID,
           district?.DISTRICT_ID,
           data!["address"]["sub_district"]);
+      birthDatetime = getDate(data!["info"]['birth_date']);
+      createFarmDatetime = getDate(data!['farm_date']);
     }
     setState(() {
       isLoading = false;
     });
   }
 
+  DateTime? getDate(String? birthDate) {
+    if (birthDate == null) return null;
+    DateTime tempDate = DateFormat("yyyy-MM-dd").parse(birthDate!);
+    return tempDate;
+  }
+
   _loadInfo({VoidCallback? onFail}) async {
     String? farmName = await _initLoad();
-  print("FARM_NAME: $farmName");
+    print("FARM_NAME: $farmName");
     if (farmName == null) {
       String? phone_number =
           await storage.read(key: "phone_number".toUpperCase());
@@ -201,6 +214,39 @@ class _FarmInfoPageState extends State<FarmInfoPage> {
                                   hint: "ชื่อฟาร์ม",
                                   controller: farmNameController,
                                   required: true),
+                              const SizedBox(height: 8),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  textField(
+                                    hint: "วัน/เดือน/ปี เริ่มทำฟาร์ม",
+                                    required: false,
+                                    readOnly: true,
+                                    value: createFarmDatetime != null
+                                        ? DateFormat('d MMMM y', 'th')
+                                            .format(createFarmDatetime!)
+                                        : null,
+                                    onTap: () async {
+                                      DateTime? selectdDateTime =
+                                          await SlidingTimePicker(context,
+                                              dateTime: createFarmDatetime);
+                                      if (selectdDateTime != null) {
+                                        setState(() {
+                                          createFarmDatetime = selectdDateTime;
+                                        });
+                                      }
+                                    },
+                                  ),
+                                  Container(height: 8),
+                                  Container(
+                                    child: Text(
+                                      "ระยะเวลา: ${createFarmDatetime != null ? _calculateYearsAndMonths(createFarmDatetime!, DateTime.now()) : "ไม่พบข้อมูล"}",
+                                      style: const TextStyle(
+                                          color: bgButtonColor, fontSize: 16),
+                                    ),
+                                  )
+                                ],
+                              ),
                               const SizedBox(height: 12),
                               const Padding(
                                 padding: EdgeInsets.only(left: 30, right: 30),
@@ -219,6 +265,42 @@ class _FarmInfoPageState extends State<FarmInfoPage> {
                                   hint: "นามสกุล",
                                   controller: lastNameController,
                                   required: true),
+                              const SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: textField(
+                                      hint: "วัน/เดือน/ปี เกิด",
+                                      required: false,
+                                      readOnly: true,
+                                      value: birthDatetime != null
+                                          ? DateFormat('d MMMM y', 'th')
+                                              .format(birthDatetime!)
+                                          : null,
+                                      onTap: () async {
+                                        DateTime? selectdDateTime =
+                                            await SlidingTimePicker(context,
+                                                dateTime: birthDatetime);
+                                        if (selectdDateTime != null) {
+                                          setState(() {
+                                            birthDatetime = selectdDateTime;
+                                          });
+                                          //x = "${DateFormat.Hm().format(selectdDateTime)}:00";
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                  Container(width: 10),
+                                  Container(
+                                      width: 76,
+                                      child: textField(
+                                          hint: birthDatetime != null
+                                              ? "${DateTime.now().year - birthDatetime!.year} ปี"
+                                              : "0 ปี",
+                                          textAlign: TextAlign.center,
+                                          enabled: false))
+                                ],
+                              ),
                               const SizedBox(height: 8),
                               textField(
                                   hint: "กลุ่มวิสาหกิจชุมชน",
@@ -311,12 +393,25 @@ class _FarmInfoPageState extends State<FarmInfoPage> {
     }
   }
 
+  String _calculateYearsAndMonths(DateTime startDate, DateTime endDate) {
+    int years = endDate.year - startDate.year;
+    int months = endDate.month - startDate.month;
+
+    if (months < 0) {
+      years -= 1;
+      months += 12;
+    }
+
+    return '$months เดือน $years ปี';
+  }
+
   onSubmit() async {
     setState(() {
       isLoading = true;
     });
 
-    String? phoneNumber = widget.phoneNumber ?? (await storage.read(key: "phone_number".toUpperCase()));
+    String? phoneNumber = widget.phoneNumber ??
+        (await storage.read(key: "phone_number".toUpperCase()));
     print("phoneNumber: ${phoneNumber}");
 
     AuthenticateModel? authentication;
@@ -333,7 +428,10 @@ class _FarmInfoPageState extends State<FarmInfoPage> {
               : groupName,
           province: province?.PROVINCE_NAME ?? "",
           district: district?.DISTRICT_NAME ?? "",
-          subDistrict: subDistrict?.SUB_DISTRICT_NAME ?? "");
+          subDistrict: subDistrict?.SUB_DISTRICT_NAME ?? "",
+        farmDate: createFarmDatetime,
+        birthDate: birthDatetime,
+      );
       if (response) {
         toHomePage();
       } else {
@@ -353,7 +451,10 @@ class _FarmInfoPageState extends State<FarmInfoPage> {
               : groupName,
           province: province?.PROVINCE_NAME ?? "",
           district: district?.DISTRICT_NAME ?? "",
-          subDistrict: subDistrict?.SUB_DISTRICT_NAME ?? "");
+          subDistrict: subDistrict?.SUB_DISTRICT_NAME ?? "",
+        farmDate: createFarmDatetime,
+        birthDate: birthDatetime,
+      );
       print("authentication != null: ${authentication != null}");
       if (authentication != null) {
         toHomePage();

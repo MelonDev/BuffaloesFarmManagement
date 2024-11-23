@@ -1,4 +1,5 @@
 import 'package:buffaloes_farm_management/components/CustomTextFormField.dart';
+import 'package:buffaloes_farm_management/components/SlidingTimePicker.dart';
 import 'package:buffaloes_farm_management/constants/ColorConstants.dart';
 import 'package:buffaloes_farm_management/cubit/authentication/authentication_cubit.dart';
 import 'package:buffaloes_farm_management/cubit/home/home_cubit.dart';
@@ -18,8 +19,9 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:buffaloes_farm_management/constants/StyleConstants.dart';
+import 'package:intl/intl.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart'
-as modal_bottom_sheet;
+    as modal_bottom_sheet;
 
 import '../home_page.dart';
 import '../loading/main_initial_loading_page.dart';
@@ -28,9 +30,7 @@ import '../main_home_page.dart';
 class InitialFarmPage extends StatefulWidget {
   const InitialFarmPage({Key? key}) : super(key: key);
 
-  static openPage(){
-
-  }
+  static openPage() {}
 
   @override
   _InitialFarmPageState createState() => _InitialFarmPageState();
@@ -57,6 +57,9 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
 
   bool initial = false;
 
+  DateTime? birthDatetime;
+  DateTime? createFarmDatetime;
+
   load() async {
     print("LOAD");
 
@@ -69,13 +72,13 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
 
       //print("UID: $uid");
 
-      AuthenticateModel? model = await AuthenticationService.login(
-          phone: phone_number);
+      AuthenticateModel? model =
+          await AuthenticationService.login(phone: phone_number);
 
       if (model != null) {
-          if (model.access_token != null && model.refresh_token != null) {
-            toHomePage();
-          }
+        if (model.access_token != null && model.refresh_token != null) {
+          toHomePage();
+        }
       }
       setState(() {
         loaded = true;
@@ -97,19 +100,22 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
     //String? uid = await AuthenticationCubit().currentUserUid();
 
     AuthenticateModel? authentication = await AuthenticationService.register(
-        farmName: farmNameController.text,
-        firstName: firstNameController.text,
-        lastName: lastNameController.text,
-        phoneNumber: phoneNumber ?? "",
-        //token: uid ?? "",
-        group: groupName == "เพิ่มกลุ่มใหม่" || groupName == "อื่น ๆ"
-            ? groupOtherController.text
-            : groupName,
-        address:
-            addressController.text.isNotEmpty ? addressController.text : null,
-        province: province?.PROVINCE_NAME ?? "",
-        district: district?.DISTRICT_NAME ?? "",
-        subDistrict: subDistrict?.SUB_DISTRICT_NAME ?? "");
+      farmName: farmNameController.text,
+      firstName: firstNameController.text,
+      lastName: lastNameController.text,
+      phoneNumber: phoneNumber ?? "",
+      //token: uid ?? "",
+      group: groupName == "เพิ่มกลุ่มใหม่" || groupName == "อื่น ๆ"
+          ? groupOtherController.text
+          : groupName,
+      address:
+          addressController.text.isNotEmpty ? addressController.text : null,
+      province: province?.PROVINCE_NAME ?? "",
+      district: district?.DISTRICT_NAME ?? "",
+      subDistrict: subDistrict?.SUB_DISTRICT_NAME ?? "",
+      birthDate: birthDatetime,
+      farmDate: createFarmDatetime,
+    );
 
     print("authentication != null: ${authentication != null}");
     if (authentication != null) {
@@ -124,8 +130,6 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
   @override
   void initState() {
     super.initState();
-
-
   }
 
   @override
@@ -219,6 +223,39 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
                                   hint: "ชื่อฟาร์ม",
                                   controller: farmNameController,
                                   required: true),
+                              const SizedBox(height: 8),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  textField(
+                                    hint: "วัน/เดือน/ปี เริ่มทำฟาร์ม",
+                                    required: true,
+                                    readOnly: true,
+                                    value: createFarmDatetime != null
+                                        ? DateFormat('d MMMM y', 'th')
+                                            .format(createFarmDatetime!)
+                                        : null,
+                                    onTap: () async {
+                                      DateTime? selectdDateTime =
+                                          await SlidingTimePicker(context,
+                                              dateTime: createFarmDatetime);
+                                      if (selectdDateTime != null) {
+                                        setState(() {
+                                          createFarmDatetime = selectdDateTime;
+                                        });
+                                      }
+                                    },
+                                  ),
+                                  Container(height: 8),
+                                  Container(
+                                    child: Text(
+                                      "ระยะเวลา: ${createFarmDatetime != null ? _calculateYearsAndMonths(createFarmDatetime!, DateTime.now()) : "ไม่พบข้อมูล"}",
+                                      style: const TextStyle(
+                                          color: bgButtonColor, fontSize: 16),
+                                    ),
+                                  )
+                                ],
+                              ),
                               const SizedBox(height: 12),
                               const Padding(
                                 padding: EdgeInsets.only(left: 30, right: 30),
@@ -237,6 +274,42 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
                                   hint: "นามสกุล",
                                   controller: lastNameController,
                                   required: true),
+                              const SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: textField(
+                                      hint: "วัน/เดือน/ปี เกิด",
+                                      required: true,
+                                      readOnly: true,
+                                      value: birthDatetime != null
+                                          ? DateFormat('d MMMM y', 'th')
+                                              .format(birthDatetime!)
+                                          : null,
+                                      onTap: () async {
+                                        DateTime? selectdDateTime =
+                                            await SlidingTimePicker(context,
+                                                dateTime: birthDatetime);
+                                        if (selectdDateTime != null) {
+                                          setState(() {
+                                            birthDatetime = selectdDateTime;
+                                          });
+                                          //x = "${DateFormat.Hm().format(selectdDateTime)}:00";
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                  Container(width: 10),
+                                  Container(
+                                      width: 76,
+                                      child: textField(
+                                          hint: birthDatetime != null
+                                              ? "${DateTime.now().year - birthDatetime!.year} ปี"
+                                              : "0 ปี",
+                                          textAlign: TextAlign.center,
+                                          enabled: false))
+                                ],
+                              ),
                               const SizedBox(height: 8),
                               textField(
                                   hint: "กลุ่มวิสาหกิจชุมชน",
@@ -327,6 +400,18 @@ class _InitialFarmPageState extends State<InitialFarmPage> {
     } else {
       return AuthenticateLoadingPage();
     }
+  }
+
+  String _calculateYearsAndMonths(DateTime startDate, DateTime endDate) {
+    int years = endDate.year - startDate.year;
+    int months = endDate.month - startDate.month;
+
+    if (months < 0) {
+      years -= 1;
+      months += 12;
+    }
+
+    return '$months เดือน $years ปี';
   }
 
   isEnabledConfirmButton() {
