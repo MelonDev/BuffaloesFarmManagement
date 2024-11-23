@@ -87,7 +87,7 @@ class MorePage extends StatelessWidget {
           icon: FontAwesomeIcons.solidEnvelope,
           color: ColorHelper.lighten(primaryColor, .45).withOpacity(0.99),
           onTap: () async {
-            messageDialog(context, title: "การติดต่อ", message: "บันทึกเรียบร้อย",
+            messageDialog(context, title: "การติดต่อ", message: "sureeporn.sa@up.ac.th",
                 function: () {
                   //context.read<HomeCubit>().management();
                 });

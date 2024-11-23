@@ -135,7 +135,8 @@ class _FinancialPageState extends State<FinancialPage> {
               elevation: 20,
               backgroundColor: Colors.white,
               child: Icon(
-                FontAwesomeIcons.plus,
+                position == 0
+                    ? FontAwesomeIcons.plus : FontAwesomeIcons.minus,
                 color: primaryColor,
               ),
             ),

@@ -758,7 +758,7 @@ class _BuffDetailPageState extends State<BuffDetailPage> {
             fontSize: selectedValue == number ? 18 : 16,
             color: selectedValue == number
                 ? Colors.black
-                : Colors.white.withOpacity(0.4)),
+                : Colors.white.withOpacity(0.9)),
       ),
     );
   }

@@ -1,10 +1,15 @@
 import 'package:age_calculator/age_calculator.dart';
 import 'package:buffaloes_farm_management/components/MelonStickyListView.dart';
+import 'package:buffaloes_farm_management/components/MessagesDialog.dart';
 import 'package:buffaloes_farm_management/cubit/home/home_cubit.dart';
 import 'package:buffaloes_farm_management/extensions/ExtensionBuddhistDateformat.dart';
+import 'package:buffaloes_farm_management/models/BuffModel.dart';
 import 'package:buffaloes_farm_management/models/NotificationModel.dart';
 import 'package:buffaloes_farm_management/models/activity/ActivityFunctionModel.dart';
+import 'package:buffaloes_farm_management/pages/buff_detail_page.dart';
+import 'package:buffaloes_farm_management/service/FarmService.dart';
 import 'package:buffaloes_farm_management/tools/ColorHelper.dart';
+import 'package:buffaloes_farm_management/tools/NavigatorHelper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -292,7 +297,11 @@ class NotificationPage extends StatelessWidget {
                   )
                 ],
               ))),
-      onTap: () {},
+      onTap: () {
+        if(model.buff != null) {
+          openBuffPage(context, model.buff!);
+        }
+      },
     );
   }
 
@@ -472,6 +481,19 @@ class NotificationPage extends StatelessWidget {
           return Colors.blueGrey;
         }
     }
+  }
+
+  openBuffPage(BuildContext context,BuffModel buff) async{
+      Navigator.of(context).push(
+        NavigatorHelper.slide(
+          BuffDetailPage(
+            id: buff.id ?? "",
+            buff: buff,
+          ),
+        ),
+      );
+
+
   }
 
   BuffNotificationType getNotificationCardType(NotificationModel model) {
